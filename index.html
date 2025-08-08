@@ -1,0 +1,130 @@
+import React from "react";
+
+export default function MediaKit() {
+  const geo = [
+    { country: "US", pct: 19.6 },
+    { country: "IN", pct: 8.5 },
+    { country: "DE", pct: 8.4 },
+    { country: "GB", pct: 5.6 },
+    { country: "BR", pct: 3.9 },
+    { country: "CA", pct: 3.3 },
+    { country: "AU", pct: 3.1 },
+    { country: "PH", pct: 2.5 },
+    { country: "NL", pct: 2.5 },
+    { country: "ID", pct: 2.2 },
+    { country: "PL", pct: 2.1 },
+    { country: "FR", pct: 2.0 },
+  ];
+
+  return (
+    <div className="min-h-screen bg-white text-neutral-900">
+      {/* Header */}
+      <header className="max-w-4xl mx-auto px-6 py-8">
+        <div className="flex items-center justify-between">
+          <div className="text-sm font-medium tracking-wide">Design Lovers — Sponsor Media Kit</div>
+          <span className="px-3 py-1 rounded-full text-xs bg-neutral-100">Brand‑safe · Documentary · Design</span>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-6 pb-16 space-y-8">
+        {/* Hero */}
+        <section className="space-y-2">
+          <h1 className="text-6xl font-extrabold tracking-tight">148K</h1>
+          <p className="text-xl">monthly unique viewers</p>
+          <p className="text-sm text-neutral-500">Last 28 days · as of Aug 6, 2025 · 90‑day avg: 139K</p>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs">
+            <span className="px-2.5 py-1 rounded-full bg-neutral-100">Core age 25–44</span>
+            <span className="px-2.5 py-1 rounded-full bg-neutral-100">Tier‑1 markets dominate</span>
+            <span className="px-2.5 py-1 rounded-full bg-neutral-100">Newsletter add‑on (53% OR)</span>
+          </div>
+        </section>
+
+        {/* KPIs 2x2 */}
+        <section className="grid md:grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-neutral-200 p-5">
+            <div className="text-sm text-neutral-500">Impressions / 90 days</div>
+            <div className="text-3xl font-semibold">10M</div>
+            <div className="text-xs text-neutral-500 mt-1">CTR 5.2%</div>
+          </div>
+          <div className="rounded-2xl border border-neutral-200 p-5">
+            <div className="text-sm text-neutral-500">Discovery</div>
+            <div className="text-3xl font-semibold">100% organic</div>
+            <div className="text-xs text-neutral-500 mt-1">90%+ from recommendations</div>
+          </div>
+          <div className="rounded-2xl border border-neutral-200 p-5">
+            <div className="text-sm text-neutral-500">Average view duration</div>
+            <div className="text-3xl font-semibold">3:42</div>
+            <div className="text-xs text-neutral-500 mt-1">≈43–44% viewed</div>
+          </div>
+          <div className="rounded-2xl border border-neutral-200 p-5">
+            <div className="text-sm text-neutral-500">Subscribers (last 90 days)</div>
+            <div className="text-3xl font-semibold">+18.9K</div>
+          </div>
+        </section>
+
+        {/* Audience & Markets */}
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Audience & Markets</h2>
+          <div className="rounded-2xl border border-neutral-200 p-5">
+            <div className="text-5xl font-extrabold">55.5%</div>
+            <div className="text-sm text-neutral-600">Tier‑1 (Eng + W/N Europe) <span className="opacity-70">(+2.3% JP/KR/SG)</span></div>
+          </div>
+
+          <details className="rounded-2xl border border-neutral-200 p-5">
+            <summary className="cursor-pointer select-none text-sm font-medium">Country breakdown (watch time share)</summary>
+            <div className="mt-4 space-y-2">
+              {geo.map((c) => (
+                <div key={c.country} className="flex items-center gap-3 text-sm">
+                  <div className="w-24 shrink-0 text-neutral-700">{c.country}</div>
+                  <div className="flex-1 h-2 rounded bg-neutral-200 overflow-hidden">
+                    <div className="h-2 rounded bg-neutral-900" style={{ width: `${c.pct}%` }} />
+                  </div>
+                  <div className="w-12 shrink-0 text-right text-neutral-600">{c.pct}%</div>
+                </div>
+              ))}
+            </div>
+          </details>
+        </section>
+
+        {/* Packages */}
+        <section className="grid md:grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-neutral-200 p-5">
+            <h3 className="text-lg font-semibold mb-2">Integrated (60–90s) — default</h3>
+            <ul className="list-disc pl-5 text-sm space-y-1">
+              <li>Placement in a safe retention window</li>
+              <li>On‑screen CTA + pinned comment + top‑of‑description link</li>
+              <li>End‑screen feature (logo/URL)</li>
+              <li>Performance recap after 30 days</li>
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-neutral-200 p-5">
+            <h3 className="text-lg font-semibold mb-2">Partner Series (3–8 videos)</h3>
+            <p className="text-sm mb-2">Co‑created documentary series around your theme, integrated into our main content flow.</p>
+            <ul className="list-disc pl-5 text-sm space-y-1">
+              <li>Shared creative development</li>
+              <li>Branded narrative integration</li>
+              <li>Distributed over weeks/months for sustained impact</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Why now */}
+        <section className="rounded-2xl border border-neutral-200 p-5">
+          <h3 className="text-lg font-semibold">Why now</h3>
+          <p className="text-sm text-neutral-600 mt-1">High‑growth window: audience and impressions are growing fast; rates are reviewed quarterly. Partners who come in now can lock the current rate for 2–3 videos.</p>
+        </section>
+
+        {/* Contact */}
+        <section className="rounded-2xl border border-neutral-200 p-5">
+          <h2 className="text-xl font-semibold mb-3">Contact</h2>
+          <div className="flex flex-wrap gap-3">
+            <a className="px-4 py-2 rounded-2xl bg-neutral-900 text-white text-sm" href="mailto:aidesignedutech@gmail.com">Email</a>
+            <a className="px-4 py-2 rounded-2xl bg-neutral-100 text-sm" href="https://wa.me/996771760510" target="_blank" rel="noreferrer">WhatsApp</a>
+            <a className="px-4 py-2 rounded-2xl bg-neutral-100 text-sm" href="https://t.me/simplygreen" target="_blank" rel="noreferrer">Telegram</a>
+          </div>
+          <div className="text-xs text-neutral-500 mt-4">Legal entity: DELO STUDIO LTD (UK)</div>
+        </section>
+      </main>
+    </div>
+  );
+}
