@@ -86,20 +86,32 @@
     }
 
     .interactive-card::after {
-      inset: -30%;
-      background: radial-gradient(circle at var(--glare-x) var(--glare-y), rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 65%);
+      inset: 0;
+      background: radial-gradient(
+        70% 70% at var(--glare-x) var(--glare-y),
+        rgba(255, 255, 255, 0.38) 0%,
+        rgba(255, 255, 255, 0.18) 32%,
+        rgba(255, 255, 255, 0) 70%
+      );
       opacity: var(--glare-opacity);
       mix-blend-mode: screen;
+      filter: saturate(130%);
     }
 
     .interactive-card::before {
-      inset: -6px;
-      background: radial-gradient(220% 220% at var(--glare-x) var(--glare-y), rgba(255, 255, 255, 0.65), transparent 70%);
+      inset: 0;
+      background: radial-gradient(
+          130% 130% at var(--glare-x) var(--glare-y),
+          rgba(255, 255, 255, 0.45) 0%,
+          rgba(255, 255, 255, 0.2) 35%,
+          rgba(255, 255, 255, 0) 65%
+        )
+        top left / 100% 100% no-repeat;
       opacity: var(--glare-edge-opacity);
       mix-blend-mode: screen;
-      filter: blur(18px) saturate(140%);
-      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 14px), rgba(0, 0, 0, 0.85) calc(100% - 6px));
-      mask: radial-gradient(farthest-side, transparent calc(100% - 14px), rgba(0, 0, 0, 0.85) calc(100% - 6px));
+      filter: blur(14px) saturate(140%);
+      -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 14px), rgba(0, 0, 0, 0.95) calc(100% - 6px));
+      mask: radial-gradient(closest-side, transparent calc(100% - 14px), rgba(0, 0, 0, 0.95) calc(100% - 6px));
     }
 
     .fade-section {
@@ -304,8 +316,8 @@
 
       card.addEventListener('pointerenter', (event) => {
         setGlarePosition(event);
-        card.style.setProperty('--glare-opacity', '0.85');
-        card.style.setProperty('--glare-edge-opacity', '0.55');
+        card.style.setProperty('--glare-opacity', '0.6');
+        card.style.setProperty('--glare-edge-opacity', '0.45');
       });
 
       card.addEventListener('pointermove', setGlarePosition);
