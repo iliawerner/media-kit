@@ -189,7 +189,7 @@
       display: flex;
       gap: 1.5rem;
       width: max-content;
-      animation: marquee-left-right 45s linear infinite reverse;
+      animation: marquee-right-left 90s linear infinite;
     }
 
     .marquee-wrapper:hover .marquee-track,
@@ -218,7 +218,7 @@
       transform: translateY(-4px);
     }
 
-    @keyframes marquee-left-right {
+    @keyframes marquee-right-left {
       0% {
         transform: translateX(0);
       }
@@ -402,8 +402,7 @@
 
     <section class="fade-section space-y-7">
       <div class="text-center">
-        <h2 class="text-2xl font-bold tracking-tight text-white">What partners & viewers say</h2>
-        <p class="mt-2 text-sm text-neutral-400">A steady stream of feedback from founders, designers, and loyal subscribers.</p>
+        <h2 class="text-2xl font-bold tracking-tight text-white">What viewers say</h2>
       </div>
       <div class="marquee-wrapper">
         <div class="marquee-track">
