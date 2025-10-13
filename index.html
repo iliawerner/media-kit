@@ -125,6 +125,113 @@
       mask-composite: exclude;
     }
 
+    .contact-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.65rem 1.3rem;
+      transition: background-color 0.35s ease, color 0.35s ease,
+        box-shadow 0.35s ease, transform 0.35s ease, border-color 0.35s ease;
+      box-shadow: none;
+    }
+
+    .contact-cta[data-variant="solid"] {
+      background-color: #ffffff;
+      color: #050507;
+    }
+
+    .contact-cta[data-variant="outline"] {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .contact-cta:hover {
+      background-color: #ffffff;
+      color: #050507;
+      box-shadow: 0 18px 40px rgba(10, 10, 15, 0.45);
+      transform: translateY(-2px);
+      border-color: transparent;
+    }
+
+    .marquee-wrapper {
+      position: relative;
+      overflow: hidden;
+      padding: 1.5rem 0;
+      mask-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.88) 12%, rgba(0, 0, 0, 0.88) 88%, transparent);
+    }
+
+    .marquee-wrapper::before,
+    .marquee-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 140px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .marquee-wrapper::before {
+      left: 0;
+      background: linear-gradient(to right, #050507, rgba(5, 5, 7, 0));
+    }
+
+    .marquee-wrapper::after {
+      right: 0;
+      background: linear-gradient(to left, #050507, rgba(5, 5, 7, 0));
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 1.5rem;
+      width: max-content;
+      animation: marquee-right-left 90s linear infinite;
+      will-change: transform;
+    }
+
+    .marquee-wrapper:hover .marquee-track,
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    .marquee-track.is-kinetic {
+      animation: none;
+    }
+
+    .marquee-group {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .testimonial-card {
+      min-width: 280px;
+      max-width: 320px;
+      padding: 1.3rem 1.5rem;
+      border-radius: 1.25rem;
+      background-color: var(--surface-base);
+      border: 1px solid var(--border-soft);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow-2);
+      transition: transform 0.4s ease;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+    }
+
+    @keyframes marquee-right-left {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
     @supports not (mask-composite: exclude) {
       .interactive-card::after {
         padding: 0;
@@ -149,6 +256,11 @@
       .interactive-card,
       .fade-section {
         transition: none !important;
+      }
+      .marquee-track {
+        animation: none !important;
+        transform: none !important;
+        will-change: auto;
       }
       body::before {
         background-size: 120px 120px, 120px 120px, 100% 100%, 100% 100%;
@@ -288,13 +400,363 @@
         <h2 class="text-2xl font-bold">Ready to collaborate?</h2>
         <p class="max-w-xl mx-auto text-neutral-300 mt-2">Let's discuss how we can feature your product in front of a highly engaged design audience.</p>
         <div class="mt-6 flex flex-wrap gap-3 justify-center">
-          <a class="px-5 py-2.5 rounded-xl bg-white text-neutral-900 text-sm font-semibold" href="mailto:hello@iliawerner.com">Send an Email</a>
-          <a class="px-4 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-sm" href="https://wa.me/447944473843" target="_blank" rel="noreferrer">WhatsApp</a>
-          <a class="px-4 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-sm" href="https://t.me/simplygreen" target="_blank" rel="noreferrer">Telegram</a>
-          <a class="px-4 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-sm" href="https://www.youtube.com/@design_lovers" target="_blank" rel="noreferrer">YouTube</a>
-          <a class="px-4 py-2 rounded-xl bg-white/10 ring-1 ring-white/15 text-sm" href="https://www.linkedin.com/in/ilia-werner/" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a class="contact-cta" data-variant="solid" href="mailto:hello@iliawerner.com">Send an Email</a>
+          <a class="contact-cta" data-variant="outline" href="https://wa.me/447944473843" target="_blank" rel="noreferrer">WhatsApp</a>
+          <a class="contact-cta" data-variant="outline" href="https://t.me/simplygreen" target="_blank" rel="noreferrer">Telegram</a>
+          <a class="contact-cta" data-variant="outline" href="https://www.youtube.com/@design_lovers" target="_blank" rel="noreferrer">YouTube</a>
+          <a class="contact-cta" data-variant="outline" href="https://www.linkedin.com/in/ilia-werner/" target="_blank" rel="noreferrer">LinkedIn</a>
         </div>
         <div class="text-xs text-neutral-500 mt-6">Legal entity: DELO STUDIO LTD (UK)</div>
+      </div>
+    </section>
+
+    <section class="fade-section space-y-7">
+      <div class="text-center">
+        <h2 class="text-2xl font-bold tracking-tight text-white">What viewers say</h2>
+      </div>
+      <div class="marquee-wrapper">
+        <div class="marquee-track">
+          <div class="marquee-group">
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">sashamoroz8711</span>
+                <span>October 12, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">This channel is so goated, don't stop man, keep going.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">Astrotase</span>
+                <span>October 12, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Incredible video.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">deimoskrijgsman</span>
+                <span>October 7, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">I had to come back to say that this video has completely humbled me on my design skills and changed the way I see design. Thank you!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">jalengonel</span>
+                <span>October 4, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">You are grossly under appreciated. Love hearing how you think.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">Kolmir</span>
+                <span>September 14, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Excellent clip, explains design, sociology, and marketing at once. Thank you!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">zoganje</span>
+                <span>September 11, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">That was a true sociological analysis. Simply the best review of the new iPhone line I've come across to this day.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">UltraDoug</span>
+                <span>September 10, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">I love how you get right to the point and express your experience-based viewpoints. Thank you for cutting through the noise.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">gravesddd</span>
+                <span>September 10, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Good content is so hard to find. Your channel is a needle in the haystack. Thanks for a fundamental design breakdown.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">FinlayZaech</span>
+                <span>September 8, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">It really is “cutting through the noise.” Thanks very much!! 🔥👍🏼</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">AlexVain</span>
+                <span>September 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">You have the most sophisticated analysis out there, always sharp and fresh. Thank you!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@ambreenashraf9567</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Honestly, this video doesn’t just entertain—it educates. I’ll be thinking about it long after it ends. Thank you for making something that matters so much.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@riyansiddiqi3476</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Bruh, genuinely never realised this. This breakdown video is insanely good.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@kamranashraf1547</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Sherlock stuff! Loved the video.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@NatureandPeaceLover</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Another great upload.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@kamranashraf1547</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Love your videos, underrated channel.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@Arnavxxr</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">I never knew this was so deep. I love videos like this.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@iFoxAir</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Putting this here so I can be an OG of this channel when you hit 1M.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@ohmypixeltv</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">These videos are gold.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@yperokeanios</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">He leveraged the ad as another case study in design thinking. Awesome presentation, Ilia!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@sebfontan</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Brilliant as always.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@duro_moto</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">You introduce and break down such interesting concepts clearly and succinctly. Subscribed!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@imanalius7691</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Brilliant explainer.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@Sleezy.Design</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">I knew the iPhone 4 was a sick design, but I didn't realize it was such a huge technical revolution.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@DavidHurtadoToran</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Sold to me. Great ad.</p>
+            </div>
+          </div>
+          <div class="marquee-group" aria-hidden="true">
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">sashamoroz8711</span>
+                <span>October 12, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">This channel is so goated, don't stop man, keep going.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">Astrotase</span>
+                <span>October 12, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Incredible video.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">deimoskrijgsman</span>
+                <span>October 7, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">I had to come back to say that this video has completely humbled me on my design skills and changed the way I see design. Thank you!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">jalengonel</span>
+                <span>October 4, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">You are grossly under appreciated. Love hearing how you think.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">Kolmir</span>
+                <span>September 14, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Excellent clip, explains design, sociology, and marketing at once. Thank you!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">zoganje</span>
+                <span>September 11, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">That was a true sociological analysis. Simply the best review of the new iPhone line I've come across to this day.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">UltraDoug</span>
+                <span>September 10, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">I love how you get right to the point and express your experience-based viewpoints. Thank you for cutting through the noise.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">gravesddd</span>
+                <span>September 10, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Good content is so hard to find. Your channel is a needle in the haystack. Thanks for a fundamental design breakdown.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">FinlayZaech</span>
+                <span>September 8, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">It really is “cutting through the noise.” Thanks very much!! 🔥👍🏼</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">AlexVain</span>
+                <span>September 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">You have the most sophisticated analysis out there, always sharp and fresh. Thank you!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@ambreenashraf9567</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Honestly, this video doesn’t just entertain—it educates. I’ll be thinking about it long after it ends. Thank you for making something that matters so much.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@riyansiddiqi3476</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Bruh, genuinely never realised this. This breakdown video is insanely good.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@kamranashraf1547</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Sherlock stuff! Loved the video.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@NatureandPeaceLover</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Another great upload.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@kamranashraf1547</span>
+                <span>October 1, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Love your videos, underrated channel.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@Arnavxxr</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">I never knew this was so deep. I love videos like this.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@iFoxAir</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Putting this here so I can be an OG of this channel when you hit 1M.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@ohmypixeltv</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">These videos are gold.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@yperokeanios</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">He leveraged the ad as another case study in design thinking. Awesome presentation, Ilia!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@sebfontan</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Brilliant as always.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@duro_moto</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">You introduce and break down such interesting concepts clearly and succinctly. Subscribed!</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@imanalius7691</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Brilliant explainer.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@Sleezy.Design</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">I knew the iPhone 4 was a sick design, but I didn't realize it was such a huge technical revolution.</p>
+            </div>
+            <div class="testimonial-card">
+              <div class="flex items-center justify-between text-xs text-neutral-400">
+                <span class="font-semibold text-neutral-100">@DavidHurtadoToran</span>
+                <span>September 29, 2025</span>
+              </div>
+              <p class="mt-3 text-sm text-neutral-200 leading-relaxed">Sold to me. Great ad.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -347,6 +809,116 @@
         card.style.setProperty('--glare-edge-opacity', '0');
       });
     });
+
+    const marqueeWrapper = document.querySelector('.marquee-wrapper');
+    const marqueeTrack = marqueeWrapper ? marqueeWrapper.querySelector('.marquee-track') : null;
+
+    if (marqueeWrapper && marqueeTrack && !prefersReducedMotion) {
+      marqueeTrack.classList.add('is-kinetic');
+
+      let offset = 0;
+      let lastTimestamp = null;
+      let resetDistance = 0;
+      let baseSpeed = 0;
+      let currentSpeed = 0;
+      let targetSpeed = 0;
+      let animationFrameId;
+      let isPointerInside = false;
+
+      const easingStrength = 6;
+
+      const computeMetrics = () => {
+        const trackStyle = getComputedStyle(marqueeTrack);
+        const gapValue = parseFloat(trackStyle.gap || trackStyle.columnGap || '0') || 0;
+        const firstGroup = marqueeTrack.querySelector('.marquee-group');
+
+        if (!firstGroup) {
+          resetDistance = 0;
+          baseSpeed = 0;
+          return;
+        }
+
+        resetDistance = firstGroup.getBoundingClientRect().width + gapValue;
+
+        if (resetDistance <= 0) {
+          resetDistance = 0;
+          baseSpeed = 0;
+          return;
+        }
+
+        baseSpeed = resetDistance / 90;
+
+        if (!Number.isFinite(baseSpeed) || baseSpeed <= 0) {
+          baseSpeed = 20;
+        }
+      };
+
+      const animate = (timestamp) => {
+        if (!lastTimestamp) {
+          lastTimestamp = timestamp;
+        }
+
+        const delta = Math.min((timestamp - lastTimestamp) / 1000, 0.5);
+        lastTimestamp = timestamp;
+
+        currentSpeed += (targetSpeed - currentSpeed) * Math.min(delta * easingStrength, 1);
+        offset -= currentSpeed * delta;
+
+        if (resetDistance > 0) {
+          while (offset <= -resetDistance) {
+            offset += resetDistance;
+          }
+        }
+
+        marqueeTrack.style.transform = `translate3d(${offset}px, 0, 0)`;
+        animationFrameId = requestAnimationFrame(animate);
+      };
+
+      const pauseMarquee = () => {
+        isPointerInside = true;
+        targetSpeed = 0;
+      };
+
+      const resumeMarquee = () => {
+        isPointerInside = false;
+        targetSpeed = baseSpeed;
+      };
+
+      const handleResize = () => {
+        computeMetrics();
+        offset = 0;
+        marqueeTrack.style.transform = 'translate3d(0px, 0, 0)';
+        lastTimestamp = null;
+        currentSpeed = baseSpeed;
+        targetSpeed = isPointerInside ? 0 : baseSpeed;
+        if (!animationFrameId && baseSpeed > 0) {
+          currentSpeed = baseSpeed;
+          targetSpeed = isPointerInside ? 0 : baseSpeed;
+          animationFrameId = requestAnimationFrame(animate);
+        }
+      };
+
+      computeMetrics();
+
+      if (baseSpeed > 0) {
+        currentSpeed = baseSpeed;
+        targetSpeed = isPointerInside ? 0 : baseSpeed;
+        animationFrameId = requestAnimationFrame(animate);
+      }
+
+      marqueeWrapper.addEventListener('pointerenter', pauseMarquee);
+      marqueeWrapper.addEventListener('pointerleave', resumeMarquee);
+      marqueeWrapper.addEventListener('focusin', pauseMarquee);
+      marqueeWrapper.addEventListener('focusout', resumeMarquee);
+
+      window.addEventListener('resize', handleResize);
+      window.addEventListener('load', handleResize);
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          lastTimestamp = null;
+        }
+      });
+    }
   </script>
 </body>
 </html>
