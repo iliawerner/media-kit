@@ -140,9 +140,12 @@
           }
         }
         
+        
         .animate-brands-marquee {
-          animation: brands-marquee 30s linear infinite;
+          animation: brands-marquee var(--marquee-speed, 30s) linear infinite;
+          will-change: transform;
         }
+
 
         /* Testimonials */
 
@@ -172,9 +175,12 @@
           }
         }
         
+        
         .animate-marquee {
-          animation: marquee 30s linear infinite;
+          animation: marquee var(--marquee-speed, 30s) linear infinite;
+          will-change: transform;
         }
+
 
               </style></div></div>
   
@@ -331,48 +337,49 @@
   });
 
   // ========== 5. MARQUEE INERTIA ON HOVER ==========
-  function setupMarqueeInertia(containerSelector, marqueeSelector) {
-    var containers = document.querySelectorAll(containerSelector);
-    containers.forEach(function(container) {
-      var marquees = container.querySelectorAll(marqueeSelector);
-      var baseDuration = 30; // seconds
-      var slowDuration = 600; // very slow = effectively paused
-      var currentDuration = baseDuration;
-      var targetDuration = baseDuration;
-      var animFrame = null;
-
-      function lerp(a, b, t) { return a + (b - a) * t; }
-
-      function animate() {
-        currentDuration = lerp(currentDuration, targetDuration, 0.03);
-        marquees.forEach(function(m) {
-          m.style.animationDuration = currentDuration + 's';
-        });
-        if (Math.abs(currentDuration - targetDuration) > 0.5) {
-          animFrame = requestAnimationFrame(animate);
-        } else {
-          currentDuration = targetDuration;
-          marquees.forEach(function(m) {
-            m.style.animationDuration = targetDuration + 's';
-          });
-          animFrame = null;
+  (function() {
+    var baseSpeed = 30; // seconds
+    var targetSpeed = baseSpeed;
+    var currentSpeed = baseSpeed;
+    var isHovered = false;
+    
+    // We use a shared speed variable for all marquees
+    function updateSpeed() {
+      var step = isHovered ? 2 : 5; // deceleration vs acceleration
+      
+      if (isHovered) {
+        // Slow down: increase duration
+        if (currentSpeed < 1000) {
+          currentSpeed += step;
+        }
+      } else {
+        // Speed up: decrease duration
+        if (currentSpeed > baseSpeed) {
+          currentSpeed -= step;
+          if (currentSpeed < baseSpeed) currentSpeed = baseSpeed;
         }
       }
-
-      container.addEventListener('mouseenter', function() {
-        targetDuration = slowDuration;
-        if (!animFrame) animFrame = requestAnimationFrame(animate);
+      
+      document.documentElement.style.setProperty('--marquee-speed', currentSpeed + 's');
+      
+      if (isHovered || currentSpeed > baseSpeed) {
+        requestAnimationFrame(updateSpeed);
+      }
+    }
+    
+    var containers = document.querySelectorAll('.trusted-brands-container, .testimonials-container');
+    containers.forEach(function(c) {
+      c.addEventListener('mouseenter', function() {
+        if (!isHovered) {
+          isHovered = true;
+          requestAnimationFrame(updateSpeed);
+        }
       });
-
-      container.addEventListener('mouseleave', function() {
-        targetDuration = baseDuration;
-        if (!animFrame) animFrame = requestAnimationFrame(animate);
+      c.addEventListener('mouseleave', function() {
+        isHovered = false;
       });
     });
-  }
-
-  setupMarqueeInertia('.trusted-brands-container', '.animate-brands-marquee');
-  setupMarqueeInertia('.testimonials-container', '.animate-marquee');
+  })();
 
   // ========== 6. VIEW PACKAGES SMOOTH SCROLL ==========
   document.querySelectorAll('button').forEach(function(btn) {
