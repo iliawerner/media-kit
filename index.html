@@ -142,7 +142,7 @@
         
         
         .animate-brands-marquee {
-          animation: brands-marquee var(--marquee-speed, 30s) linear infinite;
+          animation: brands-marquee 30s linear infinite;
           will-change: transform;
         }
 
@@ -177,12 +177,25 @@
         
         
         .animate-marquee {
-          animation: marquee var(--marquee-speed, 30s) linear infinite;
+          animation: marquee 30s linear infinite;
           will-change: transform;
         }
 
 
-              </style></div></div>
+              
+        .trusted-brands-container:hover .animate-brands-marquee,
+        .testimonials-container:hover .animate-marquee {
+          animation-play-state: paused;
+        }
+        
+        /* Ensure hardware acceleration to prevent jitter */
+        .animate-brands-marquee, .animate-marquee {
+          backface-visibility: hidden;
+          perspective: 1000px;
+          transform: translate3d(0, 0, 0);
+        }
+
+      </style></div></div>
   
 
 
@@ -335,51 +348,6 @@
   packageCards.forEach(function(card) {
     packageObserver.observe(card);
   });
-
-  // ========== 5. MARQUEE INERTIA ON HOVER ==========
-  (function() {
-    var baseSpeed = 30; // seconds
-    var targetSpeed = baseSpeed;
-    var currentSpeed = baseSpeed;
-    var isHovered = false;
-    
-    // We use a shared speed variable for all marquees
-    function updateSpeed() {
-      var step = isHovered ? 2 : 5; // deceleration vs acceleration
-      
-      if (isHovered) {
-        // Slow down: increase duration
-        if (currentSpeed < 1000) {
-          currentSpeed += step;
-        }
-      } else {
-        // Speed up: decrease duration
-        if (currentSpeed > baseSpeed) {
-          currentSpeed -= step;
-          if (currentSpeed < baseSpeed) currentSpeed = baseSpeed;
-        }
-      }
-      
-      document.documentElement.style.setProperty('--marquee-speed', currentSpeed + 's');
-      
-      if (isHovered || currentSpeed > baseSpeed) {
-        requestAnimationFrame(updateSpeed);
-      }
-    }
-    
-    var containers = document.querySelectorAll('.trusted-brands-container, .testimonials-container');
-    containers.forEach(function(c) {
-      c.addEventListener('mouseenter', function() {
-        if (!isHovered) {
-          isHovered = true;
-          requestAnimationFrame(updateSpeed);
-        }
-      });
-      c.addEventListener('mouseleave', function() {
-        isHovered = false;
-      });
-    });
-  })();
 
   // ========== 6. VIEW PACKAGES SMOOTH SCROLL ==========
   document.querySelectorAll('button').forEach(function(btn) {
