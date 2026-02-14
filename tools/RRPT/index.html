@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viral Predictor</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 60px 20px 80px;
+            color: #1d1d1f;
+            background: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 6px; }
+        .tagline { font-size: 15px; color: #86868b; margin-bottom: 48px; }
+
+        /* ---- About section ---- */
+        .about {
+            margin-bottom: 48px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .about-toggle {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0071e3;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: none;
+            background: none;
+            padding: 0;
+            width: auto;
+            border-radius: 0;
+        }
+        .about-toggle:hover { text-decoration: underline; }
+        .about-toggle .arrow { transition: transform 0.2s; display: inline-block; font-size: 10px; }
+        .about-toggle.open .arrow { transform: rotate(90deg); }
+        .about-body {
+            display: none;
+            margin-top: 16px;
+            font-size: 14px;
+            line-height: 1.65;
+            color: #424245;
+        }
+        .about-body.open { display: block; }
+        .about-body p { margin-bottom: 12px; }
+        .formula-block {
+            font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+            font-size: 12px;
+            background: #f5f5f7;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            line-height: 1.6;
+            color: #1d1d1f;
+            overflow-x: auto;
+        }
+        .about-body strong { color: #1d1d1f; }
+
+        /* ---- Section labels ---- */
+        h2 {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #86868b;
+            margin-bottom: 20px;
+        }
+
+        /* ---- Input groups ---- */
+        .section { margin-bottom: 48px; }
+        .input-group { margin-bottom: 32px; position: relative; }
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+        .input-label strong { font-size: 15px; font-weight: 600; }
+        .input-value {
+            font-size: 15px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            min-width: 18px;
+            text-align: right;
+        }
+        .input-hint {
+            font-size: 13px;
+            color: #86868b;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        /* ---- Example tooltip ---- */
+        .example-tip {
+            font-size: 12px;
+            color: #6e6e73;
+            margin-top: 6px;
+            min-height: 18px;
+            line-height: 1.4;
+            transition: opacity 0.15s;
+        }
+        .example-tip em { font-style: italic; color: #86868b; }
+
+        /* ---- Range slider ---- */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+        }
+        .positive-slider input[type="range"] {
+            background: linear-gradient(to right, #e5e5e5, #34c759);
+        }
+        .negative-slider input[type="range"] {
+            background: linear-gradient(to right, #34c759, #ff3b30);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1d1d1f;
+            cursor: pointer;
+            border: none;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1d1d1f;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* ---- Direction tags ---- */
+        .tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: 1px;
+        }
+        .tag.up { color: #1a7f37; background: #dafbe1; }
+        .tag.down { color: #cf222e; background: #ffebe9; }
+
+        /* ---- Button ---- */
+        button.calc-btn {
+            width: 100%;
+            padding: 16px;
+            background: #1d1d1f;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+        button.calc-btn:hover { opacity: 0.85; }
+        button.calc-btn:active { opacity: 0.7; }
+
+        /* ---- Result ---- */
+        .result { display: none; margin-top: 48px; }
+        .divider { height: 1px; background: #e5e5e5; margin-bottom: 40px; }
+
+        /* Score bar */
+        .score-section { margin-bottom: 32px; }
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+        .score-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #86868b; }
+        .score-verdict { font-size: 15px; font-weight: 700; }
+        .score-bar-track {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.4s ease, background 0.4s ease;
+        }
+        .score-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #86868b;
+        }
+
+        /* Views estimate */
+        .views-estimate {
+            font-size: 14px;
+            color: #424245;
+            line-height: 1.5;
+            margin-bottom: 32px;
+        }
+        .views-estimate strong { color: #1d1d1f; font-size: 16px; }
+
+        /* ---- Recommendations ---- */
+        .rec-item {
+            padding: 16px 0;
+            border-top: 1px solid #f0f0f0;
+        }
+        .rec-item:last-child { border-bottom: 1px solid #f0f0f0; }
+        .rec-item strong { font-size: 14px; display: block; margin-bottom: 4px; }
+        .rec-item p { font-size: 13px; color: #6e6e73; line-height: 1.5; margin: 0; }
+
+        /* ---- Footnote ---- */
+        .footnote {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #a1a1a6;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Viral Predictor</h1>
+    <p class="tagline">Estimate view potential based on topic structure</p>
+
+    <!-- About the model -->
+    <div class="about">
+        <button class="about-toggle" onclick="toggleAbout()">
+            <span class="arrow">&#9654;</span>&ensp;How this model works
+        </button>
+        <div class="about-body" id="aboutBody">
+            <p>This predictor is built on an <strong>OLS regression model</strong> trained on 33 videos from the Design Lovers channel. It predicts the natural logarithm of views based on four topic-level factors.</p>
+            <div class="formula-block">
+                ln(Views) = 8.81 + 0.198 &times; Recognition + 0.137 &times; Relevance<br>
+                &emsp;&emsp;&emsp;&emsp;&emsp;&ensp;&minus; 0.143 &times; Psych.Pressure &minus; 0.071 &times; Toxicity
+            </div>
+            <p><strong>Predictive power:</strong> Adj. R&sup2; = 0.36 (the model explains about 36% of view variance). The remaining 64% depends on thumbnail, title, retention, algorithm, and luck.</p>
+            <p><strong>Why these four factors?</strong> They were selected through stepwise regression with Leave-One-Out cross-validation from 9 candidate variables. Other factors (Nostalgia, Trend, Practical Impact, Past, Future) showed no statistically significant relationship with views in the current dataset.</p>
+            <p><strong>What it's good for:</strong> Comparing ideas against each other and identifying weak spots in a concept. <strong>What it's not:</strong> An exact view count predictor.</p>
+        </div>
+    </div>
+
+    <!-- Positive factors -->
+    <div class="section">
+        <h2>Drives views up</h2>
+
+        <div class="input-group positive-slider">
+            <div class="input-label">
+                <strong>Recognition <span class="tag up">+</span></strong>
+                <span class="input-value" id="famRecVal">5</span>
+            </div>
+            <div class="input-hint">How instantly recognizable is the subject?</div>
+            <input type="range" id="famRec" min="0" max="10" value="5" oninput="sync(this)">
+            <div class="example-tip" id="famRecTip"></div>
+        </div>
+
+        <div class="input-group positive-slider">
+            <div class="input-label">
+                <strong>Relevance <span class="tag up">+</span></strong>
+                <span class="input-value" id="affNowVal">5</span>
+            </div>
+            <div class="input-hint">How much does this matter to people right now?</div>
+            <input type="range" id="affNow" min="0" max="10" value="5" oninput="sync(this)">
+            <div class="example-tip" id="affNowTip"></div>
+        </div>
+    </div>
+
+    <!-- Negative factors -->
+    <div class="section">
+        <h2>Drives views down</h2>
+
+        <div class="input-group negative-slider">
+            <div class="input-label">
+                <strong>Psych. pressure <span class="tag down">&minus;</span></strong>
+                <span class="input-value" id="affPsychVal">3</span>
+            </div>
+            <div class="input-hint">Manipulation, anxiety, guilt-tripping, social pressure.</div>
+            <input type="range" id="affPsych" min="0" max="10" value="3" oninput="sync(this)">
+            <div class="example-tip" id="affPsychTip"></div>
+        </div>
+
+        <div class="input-group negative-slider">
+            <div class="input-label">
+                <strong>Toxicity <span class="tag down">&minus;</span></strong>
+                <span class="input-value" id="famNegVal">2</span>
+            </div>
+            <div class="input-hint">Hate, controversy, scandal, outrage bait.</div>
+            <input type="range" id="famNeg" min="0" max="10" value="2" oninput="sync(this)">
+            <div class="example-tip" id="famNegTip"></div>
+        </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Predict</button>
+
+    <!-- Result -->
+    <div class="result" id="result">
+        <div class="divider"></div>
+
+        <div class="score-section">
+            <div class="score-header">
+                <span class="score-label">Viral potential</span>
+                <span class="score-verdict" id="verdict">—</span>
+            </div>
+            <div class="score-bar-track">
+                <div class="score-bar-fill" id="scoreBar" style="width:0%"></div>
+            </div>
+            <div class="score-detail">
+                <span>Low</span>
+                <span>Average</span>
+                <span>High</span>
+            </div>
+        </div>
+
+        <div class="views-estimate" id="viewsEstimate"></div>
+
+        <div id="recs"></div>
+
+        <div class="footnote">
+            Based on 33 videos from Design Lovers (Adj. R&sup2;&nbsp;=&nbsp;0.36). Use to compare ideas, not as an exact forecast.
+        </div>
+    </div>
+
+    <script>
+        // ---- Model parameters ----
+        const B0 = 8.81236;
+        const B  = { famRec: 0.1977, affNow: 0.1373, affPsych: -0.1430, famNeg: -0.0709 };
+        const SIGMA = 1.009; // residual std in log-space
+
+        // ---- Calibration from real data ----
+        // Min predicted ln = B0 + 0.1977*0 + 0.1373*0 - 0.143*10 - 0.0709*10 = 6.673 → 791
+        // Max predicted ln = B0 + 0.1977*10 + 0.1373*10 - 0.143*0 - 0.0709*0 = 12.162 → 191k
+        const LN_MIN = 6.67;  // worst possible score
+        const LN_MAX = 12.16; // best possible score
+
+        // ---- Examples for each slider value ----
+        const examples = {
+            famRec: {
+                0: 'Abstract concept nobody visualizes — "The 1956 invention that defined modern web design"',
+                1: 'Very niche tool — "Lovart: What This AI Agent Reveals About the End of Design"',
+                2: 'Known in design circles — "Why 2026 will be the last year of the internet"',
+                3: 'Known to tech enthusiasts — "Apple\'s 0.5mm: The Detail That Redefined The Smartphone"',
+                4: 'Recognizable to Apple fans — "How This Loading Screen Changed Everything"',
+                5: 'Well-known product — "The Most Irrational iPhone Ever Made"',
+                6: 'Widely known concept — "We built everything just to delete it"',
+                7: 'Iconic design element — "The twenty pixels that changed design forever"',
+                8: 'Universally known — "The Hidden Cost of Clean Design", "Why Links Are Blue"',
+                9: 'Iconic brand rivalry — "The One Feature Apple & Microsoft Refuse to Steal"',
+                10: 'Cultural icon — "The Flat Edge Dilemma", "Why Windows Can\'t Copy This Apple Button"'
+            },
+            affNow: {
+                0: 'No current relevance — purely historical artifact',
+                1: 'Barely relevant — old tech with no modern parallel',
+                2: 'Mild interest — "Why 2026 will be the last year of the internet"',
+                3: 'Somewhat relevant — "How This Loading Screen Changed Everything"',
+                4: 'Moderately relevant — a design pattern still in use today',
+                5: 'Relevant to many — "The Most Irrational iPhone Ever Made"',
+                6: 'Highly relevant — current Apple design decisions',
+                7: 'Very timely — "Apple Design: The Reflection That Ended an Era (iOS 26)"',
+                8: 'Hot topic — a feature everyone is discussing right now',
+                9: 'Trending — major product launch or controversy this week',
+                10: 'Breaking — just announced, everyone is talking about it'
+            },
+            affPsych: {
+                0: 'Pure curiosity — "What Made the Leopard Dock So Special?"',
+                1: 'Gentle pull — nostalgia-driven design appreciation',
+                2: 'Light framing — "The Hidden Cost of Clean Design"',
+                3: 'Moderate angle — "How This Loading Screen Changed Everything"',
+                4: 'Noticeable pressure — "The Death of Premium Apple Design"',
+                5: 'Strong angle — "Apple Design: The Icon That Violates Rule"',
+                6: 'Manipulation framing — "Why Windows Can\'t Copy This Apple Button"',
+                7: 'Heavy pressure — "Evolutionary gesture that changed the internet"',
+                8: 'Fear/anxiety — "Apple Design: The Feature That Admits Defeat"',
+                9: 'Strong guilt/fear — "Your phone is designed to control you"',
+                10: 'Maximum anxiety — "why the iPhone is designed to break your brain"'
+            },
+            famNeg: {
+                0: 'No negativity — pure design appreciation or curiosity',
+                1: 'Tiny critique — a gentle "could be better" angle',
+                2: 'Mild critique — "The Hidden Cost of Clean Design"',
+                3: 'Some controversy — "How This Loading Screen Changed Everything"',
+                4: 'Notable criticism — "Apple\'s 0.5mm" (pointing out a flaw)',
+                5: 'Divisive — topic splits the audience into camps',
+                6: 'Controversial take — strong opinion that provokes disagreement',
+                7: 'Negative framing — "Evolutionary gesture that changed the internet"',
+                8: 'Very controversial — attacking a beloved product or brand',
+                9: 'Outrage-adjacent — designed to make people angry',
+                10: 'Maximum toxicity — "The Green Bubble", "The Health Data Trap"'
+            }
+        };
+
+        function toggleAbout() {
+            const btn = document.querySelector('.about-toggle');
+            const body = document.getElementById('aboutBody');
+            btn.classList.toggle('open');
+            body.classList.toggle('open');
+        }
+
+        function sync(el) {
+            const v = parseInt(el.value);
+            document.getElementById(el.id + 'Val').textContent = v;
+            // Show example
+            const tip = document.getElementById(el.id + 'Tip');
+            if (examples[el.id] && examples[el.id][v] !== undefined) {
+                tip.innerHTML = '<em>' + examples[el.id][v] + '</em>';
+            } else {
+                tip.innerHTML = '';
+            }
+        }
+
+        // Initialize tips on load
+        document.addEventListener('DOMContentLoaded', function() {
+            ['famRec','affNow','affPsych','famNeg'].forEach(id => {
+                sync(document.getElementById(id));
+            });
+        });
+
+        function fmt(n) {
+            if (n < 1000)  return String(Math.round(n));
+            if (n < 10000) return (n / 1e3).toFixed(1) + 'k';
+            if (n < 1e6)   return Math.round(n / 1e3) + 'k';
+            return (n / 1e6).toFixed(1) + 'M';
+        }
+
+        function val(id) { return parseFloat(document.getElementById(id).value); }
+
+        function calculate() {
+            const ln = B0
+                + B.famRec  * val('famRec')
+                + B.affNow  * val('affNow')
+                + B.affPsych * val('affPsych')
+                + B.famNeg  * val('famNeg');
+
+            // ---- Score (0-100 scale) ----
+            const pct = Math.max(0, Math.min(100, ((ln - LN_MIN) / (LN_MAX - LN_MIN)) * 100));
+
+            let verdict, barColor;
+            if (pct < 20) {
+                verdict = 'Low'; barColor = '#ff3b30';
+            } else if (pct < 40) {
+                verdict = 'Below average'; barColor = '#ff9500';
+            } else if (pct < 60) {
+                verdict = 'Average'; barColor = '#ffcc00';
+            } else if (pct < 80) {
+                verdict = 'Above average'; barColor = '#34c759';
+            } else {
+                verdict = 'High'; barColor = '#00c7be';
+            }
+
+            document.getElementById('verdict').textContent = verdict + ' (' + Math.round(pct) + '/100)';
+            const bar = document.getElementById('scoreBar');
+            bar.style.width = pct + '%';
+            bar.style.background = barColor;
+
+            // ---- View estimate (1-sigma = 68% interval) ----
+            const center = Math.exp(ln);
+            const lo = Math.exp(ln - SIGMA);
+            const hi = Math.exp(ln + SIGMA);
+            document.getElementById('viewsEstimate').innerHTML =
+                'Expected views: <strong>' + fmt(lo) + ' – ' + fmt(hi) + '</strong> (central estimate: ' + fmt(center) + ')';
+
+            // ---- Recommendations ----
+            const r = [];
+            if (val('famRec') < 7) r.push({
+                t: 'Boost Recognition',
+                d: 'Strongest positive driver. Make the subject instantly identifiable — use iconic objects, well-known brands, or universally recognized artifacts in your thumbnail and title.'
+            });
+            if (val('affNow') < 7) r.push({
+                t: 'Increase Relevance',
+                d: 'Why does this matter right now? Tie the topic to something current — a recent release, a trending debate, or a shift people are experiencing today.'
+            });
+            if (val('affPsych') > 4) r.push({
+                t: 'Reduce Psychological Pressure',
+                d: 'High-pressure framing (guilt, fear, manipulation) pushes viewers away. Reframe toward curiosity or appreciation instead of anxiety.'
+            });
+            if (val('famNeg') > 4) r.push({
+                t: 'Lower Toxicity',
+                d: 'Excessive controversy hurts more than it helps. A small tension is fine, but outrage-driven framing reduces reach.'
+            });
+            if (!r.length) r.push({
+                t: 'Strong concept',
+                d: 'Topic structure looks solid. Focus on execution — thumbnail contrast, title clarity, and the first 30 seconds.'
+            });
+
+            document.getElementById('recs').innerHTML = r.map(x =>
+                '<div class="rec-item"><strong>' + x.t + '</strong><p>' + x.d + '</p></div>'
+            ).join('');
+
+            const res = document.getElementById('result');
+            res.style.display = 'block';
+            res.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.addEventListener('keypress', e => { if (e.key === 'Enter') calculate(); });
+    </script>
+</body>
+</html>

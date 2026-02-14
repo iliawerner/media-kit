@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/tools/RRPT",
+      "destination": "/tools/RRPT/index.html"
+    }
+  ]
+}
