@@ -4,6 +4,10 @@
     {
       "source": "/tools/RRPT",
       "destination": "/tools/RRPT/index.html"
+    },
+    {
+      "source": "/reports/100",
+      "destination": "/reports/100/index.html"
     }
   ]
 }
