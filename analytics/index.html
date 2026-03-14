@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="../images/67565bb8ed168b48996daa5a3d998ba2.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Lovers — Detailed Analytics | Media Kit</title>
+    <meta name="description" content="Detailed analytics for Design Lovers YouTube channel. 2.8M views, 53K subscribers, 44.8% average retention. Deep-dive data for potential advertisers.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css">
+    <link rel="stylesheet" href="../assets/index-CwFQNvRy.css">
+    <link rel="icon" href="../favicon.png" type="image/png">
+
+    <style>
+      :root {
+        --font-main: 'Zalando Sans', sans-serif;
+        --font-expanded: 'Zalando Sans Expanded', sans-serif;
+        --color-bg: #000000;
+        --color-card: #0d0d0d;
+        --color-card-border: rgba(255,255,255,0.07);
+        --color-text: #ffffff;
+        --color-muted: #9ca3af;
+        --color-accent-purple: #7c3aed;
+        --color-accent-pink: #db2777;
+        --color-accent-orange: #f97316;
+        --color-accent-teal: #2dd4bf;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        background: var(--color-bg);
+        color: var(--color-text);
+        font-family: var(--font-main);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      /* ─── Ambient Glow ─── */
+      .ambient {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .ambient-top {
+        position: absolute;
+        top: -10%; left: -10%;
+        width: 50%; height: 50%;
+        background: rgba(124,58,237,0.15);
+        filter: blur(100px);
+        border-radius: 50%;
+      }
+      .ambient-bottom {
+        position: absolute;
+        bottom: -10%; right: -10%;
+        width: 50%; height: 50%;
+        background: rgba(144,36,36,0.15);
+        filter: blur(100px);
+        border-radius: 50%;
+      }
+
+      /* ─── Header ─── */
+      .header-wrap {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .header-inner {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 0.75rem 1.5rem;
+      }
+      .header-pill {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 20px 60px rgba(0,0,0,0.15);
+      }
+      .header-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: inherit;
+      }
+      .header-logo img {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .header-logo-text h1 {
+        font-size: 1.125rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      .header-logo-text p {
+        font-size: 0.75rem;
+        color: var(--color-muted);
+      }
+      .header-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .nav-link {
+        color: var(--color-muted);
+        text-decoration: none;
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        transition: color 0.2s, background 0.2s;
+      }
+      .nav-link:hover { color: #fff; background: rgba(255,255,255,0.06); }
+      .nav-link.active { color: #fff; }
+      .btn-primary {
+        background: #fff;
+        color: #000;
+        border: none;
+        padding: 0.5rem 1.25rem;
+        border-radius: 9999px;
+        font-family: var(--font-main);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.2s;
+        white-space: nowrap;
+      }
+      .btn-primary:hover { background: #e5e7eb; }
+
+      /* ─── Page Content ─── */
+      .page {
+        position: relative;
+        z-index: 10;
+      }
+
+      /* ─── Hero ─── */
+      .hero {
+        padding: 5rem 1.5rem 3rem;
+        text-align: center;
+        max-width: 72rem;
+        margin: 0 auto;
+      }
+      .hero-label {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        margin-bottom: 1.5rem;
+        padding: 0.35rem 1rem;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 9999px;
+      }
+      .hero h2 {
+        font-family: var(--font-expanded);
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.25rem;
+      }
+      .hero p {
+        font-size: 1.125rem;
+        color: var(--color-muted);
+        max-width: 42rem;
+        margin: 0 auto;
+        line-height: 1.7;
+      }
+
+      /* ─── Section ─── */
+      section {
+        padding: 5rem 1.5rem;
+        max-width: 72rem;
+        margin: 0 auto;
+      }
+      .section-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        margin-bottom: 0.75rem;
+      }
+      .section-title {
+        font-family: var(--font-expanded);
+        font-size: clamp(1.5rem, 3vw, 2.25rem);
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+        line-height: 1.15;
+      }
+      .section-desc {
+        color: var(--color-muted);
+        font-size: 1rem;
+        line-height: 1.7;
+        max-width: 48rem;
+        margin-bottom: 3rem;
+      }
+      .section-divider {
+        border: none;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        margin: 0;
+      }
+
+      /* ─── Cards ─── */
+      .card {
+        background: var(--color-card);
+        border: 1px solid var(--color-card-border);
+        border-radius: 1.25rem;
+        padding: 2rem;
+      }
+      .card-sm {
+        padding: 1.5rem;
+      }
+
+      /* ─── Stat Grid ─── */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .stat-card {
+        background: var(--color-card);
+        border: 1px solid var(--color-card-border);
+        border-radius: 1.25rem;
+        padding: 1.75rem 2rem;
+        transition: transform 0.25s ease, border-color 0.25s ease;
+      }
+      .stat-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(255,255,255,0.15);
+      }
+      .stat-number {
+        font-family: var(--font-expanded);
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+      }
+      .stat-label {
+        font-size: 0.9rem;
+        color: #fff;
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+      }
+      .stat-sub {
+        font-size: 0.75rem;
+        color: var(--color-muted);
+      }
+
+      /* ─── Traffic Sources ─── */
+      .traffic-bar-wrap {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.08);
+        height: 3rem;
+        display: flex;
+        margin-bottom: 1.5rem;
+      }
+      .traffic-segment {
+        height: 100%;
+        transition: opacity 0.2s;
+        position: relative;
+      }
+      .traffic-segment:hover { opacity: 0.8; }
+
+      .traffic-legend {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.75rem 1.5rem;
+      }
+      .legend-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .legend-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        margin-top: 0.35rem;
+        flex-shrink: 0;
+      }
+      .legend-name {
+        font-size: 0.875rem;
+        color: #e5e7eb;
+        font-weight: 500;
+      }
+      .legend-meta {
+        font-size: 0.75rem;
+        color: var(--color-muted);
+        margin-top: 0.1rem;
+      }
+
+      /* ─── Top Videos Table ─── */
+      .video-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .video-table th {
+        text-align: left;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        padding: 0 1rem 1rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+      }
+      .video-table th:last-child { text-align: right; }
+      .video-table td {
+        padding: 1.1rem 1rem 1.1rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        font-size: 0.875rem;
+        vertical-align: middle;
+      }
+      .video-table td:last-child { text-align: right; }
+      .video-table tr:last-child td { border-bottom: none; }
+      .video-rank {
+        color: var(--color-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        width: 2rem;
+      }
+      .video-title {
+        color: #fff;
+        font-weight: 500;
+        max-width: 22rem;
+      }
+      .video-date {
+        color: var(--color-muted);
+        font-size: 0.75rem;
+        white-space: nowrap;
+      }
+      .retention-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 9999px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .retention-high { background: rgba(45,212,191,0.12); color: #2dd4bf; }
+      .retention-mid  { background: rgba(249,115,22,0.12); color: #f97316; }
+      .retention-low  { background: rgba(255,255,255,0.06); color: #9ca3af; }
+      .views-num {
+        font-family: var(--font-expanded);
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #fff;
+      }
+
+      /* ─── Retention Bar ─── */
+      .ret-bar-track {
+        height: 4px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 9999px;
+        overflow: hidden;
+        margin-top: 0.4rem;
+      }
+      .ret-bar-fill {
+        height: 100%;
+        border-radius: 9999px;
+        background: linear-gradient(90deg, #7c3aed, #db2777);
+      }
+
+      /* ─── Demographics ─── */
+      .demo-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      @media (max-width: 640px) { .demo-grid { grid-template-columns: 1fr; } }
+
+      .age-bar-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+      .age-label {
+        font-size: 0.75rem;
+        color: var(--color-muted);
+        width: 3.5rem;
+        flex-shrink: 0;
+      }
+      .age-bar-track {
+        flex: 1;
+        height: 6px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 9999px;
+        overflow: hidden;
+      }
+      .age-bar-fill {
+        height: 100%;
+        border-radius: 9999px;
+        background: linear-gradient(90deg, #7c3aed, #db2777);
+      }
+      .age-pct {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #fff;
+        width: 2.5rem;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      /* ─── Geo Bar ─── */
+      .geo-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.875rem;
+      }
+      .geo-flag {
+        font-size: 1.25rem;
+        width: 1.75rem;
+        flex-shrink: 0;
+      }
+      .geo-name {
+        font-size: 0.875rem;
+        color: #e5e7eb;
+        flex: 1;
+      }
+      .geo-bar-track {
+        width: 7rem;
+        height: 4px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 9999px;
+        overflow: hidden;
+      }
+      .geo-bar-fill {
+        height: 100%;
+        border-radius: 9999px;
+      }
+      .geo-pct {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #fff;
+        width: 2.75rem;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      /* ─── Device Donut ─── */
+      .device-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .device-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 0.875rem;
+      }
+      .device-icon {
+        font-size: 1.5rem;
+        opacity: 0.7;
+      }
+      .device-pct {
+        font-family: var(--font-expanded);
+        font-size: 1.25rem;
+        font-weight: 800;
+      }
+      .device-name {
+        font-size: 0.75rem;
+        color: var(--color-muted);
+      }
+
+      /* ─── CTR Benchmark ─── */
+      .benchmark-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .benchmark-label {
+        font-size: 0.875rem;
+        color: #e5e7eb;
+        width: 10rem;
+        flex-shrink: 0;
+      }
+      .benchmark-bar-track {
+        flex: 1;
+        height: 8px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 9999px;
+        overflow: hidden;
+      }
+      .benchmark-bar-fill {
+        height: 100%;
+        border-radius: 9999px;
+      }
+      .benchmark-val {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #fff;
+        width: 3rem;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      /* ─── Comparable Channels ─── */
+      .channel-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+      }
+      .channel-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        transition: border-color 0.2s, transform 0.2s;
+      }
+      .channel-card:hover {
+        border-color: rgba(255,255,255,0.15);
+        transform: translateY(-2px);
+      }
+      .channel-name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 0.25rem;
+      }
+      .channel-subs {
+        font-size: 0.75rem;
+        color: var(--color-muted);
+        margin-bottom: 0.5rem;
+      }
+      .channel-tag {
+        display: inline-block;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.2rem 0.5rem;
+        border-radius: 9999px;
+        background: rgba(124,58,237,0.15);
+        color: #a78bfa;
+      }
+
+      /* ─── Viewer Funnel ─── */
+      .funnel-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .funnel-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .funnel-bar-outer {
+        flex: 1;
+        height: 2.5rem;
+        background: rgba(255,255,255,0.04);
+        border-radius: 0.5rem;
+        overflow: hidden;
+        position: relative;
+      }
+      .funnel-bar-inner {
+        height: 100%;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #fff;
+      }
+      .funnel-label {
+        font-size: 0.8rem;
+        color: var(--color-muted);
+        width: 8rem;
+        flex-shrink: 0;
+      }
+      .funnel-pct {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #fff;
+        width: 3.5rem;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      /* ─── Insight Box ─── */
+      .insight {
+        display: flex;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        background: rgba(124,58,237,0.08);
+        border: 1px solid rgba(124,58,237,0.2);
+        border-radius: 1rem;
+        margin-top: 1.5rem;
+      }
+      .insight-icon {
+        font-size: 1.25rem;
+        color: #a78bfa;
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+      }
+      .insight-text {
+        font-size: 0.875rem;
+        color: #d1d5db;
+        line-height: 1.6;
+      }
+      .insight-text strong { color: #fff; }
+
+      /* ─── Two-col layout ─── */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+      /* ─── Footer ─── */
+      footer {
+        border-top: 1px solid rgba(255,255,255,0.06);
+        padding: 2rem 1.5rem;
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--color-muted);
+        position: relative;
+        z-index: 10;
+      }
+
+      /* ─── Responsive ─── */
+      @media (max-width: 640px) {
+        .header-nav { display: none; }
+        .stat-grid { grid-template-columns: 1fr 1fr; }
+        .video-table .video-date, .video-table .ret-bar-track { display: none; }
+        .traffic-legend { grid-template-columns: 1fr 1fr; }
+        .channel-grid { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Ambient glow -->
+    <div class="ambient">
+      <div class="ambient-top"></div>
+      <div class="ambient-bottom"></div>
+    </div>
+
+    <!-- ─── HEADER ─── -->
+    <header class="header-wrap">
+      <div class="header-inner">
+        <div class="header-pill">
+          <a href="/" class="header-logo">
+            <img src="../images/e155d041f9b8503f121f4881b396f029.jpeg" alt="Design Lovers Logo">
+            <div class="header-logo-text">
+              <h1>Design Lovers</h1>
+              <p>Media Kit</p>
+            </div>
+          </a>
+          <nav class="header-nav">
+            <a href="/" class="nav-link">Overview</a>
+            <a href="/analytics" class="nav-link active">Analytics</a>
+          </nav>
+          <a href="/#packages" class="btn-primary">View Packages</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ─── PAGE ─── -->
+    <div class="page">
+
+      <!-- HERO -->
+      <div class="hero">
+        <span class="hero-label">Last 12 months · March 2025 – March 2026</span>
+        <h2>Detailed Analytics</h2>
+        <p>Every number behind the channel — traffic sources, audience demographics, content performance, and engagement benchmarks — so you can make an informed decision.</p>
+      </div>
+
+      <!-- ─── 1. KEY METRICS ─── -->
+      <section>
+        <div class="section-label">Channel Performance</div>
+        <div class="section-title">The numbers at a glance</div>
+        <p class="section-desc">Twelve months of organic growth with no paid acquisition. Every view, every hour of watch time, every subscriber — earned.</p>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-number" style="background: linear-gradient(135deg,#a78bfa,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">2.8M</div>
+            <div class="stat-label">Total Views</div>
+            <div class="stat-sub">March 2025 – March 2026</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="background: linear-gradient(135deg,#34d399,#2dd4bf); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">176K</div>
+            <div class="stat-label">Watch Hours</div>
+            <div class="stat-sub">Total time audience spent watching</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="background: linear-gradient(135deg,#fb923c,#f97316); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">53.7K</div>
+            <div class="stat-label">Subscribers</div>
+            <div class="stat-sub">+48.8K added in 12 months</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="background: linear-gradient(135deg,#f472b6,#e879f9); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">3:53</div>
+            <div class="stat-label">Avg. View Duration</div>
+            <div class="stat-sub">Industry average is ~2:30</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="background: linear-gradient(135deg,#a78bfa,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">32.3M</div>
+            <div class="stat-label">Impressions</div>
+            <div class="stat-sub">Times thumbnails were shown</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="background: linear-gradient(135deg,#2dd4bf,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">5.1%</div>
+            <div class="stat-label">Click-Through Rate</div>
+            <div class="stat-sub">Industry average is 3–4%</div>
+          </div>
+        </div>
+
+        <div class="insight">
+          <span class="insight-icon"><i class="ri-lightbulb-line"></i></span>
+          <p class="insight-text">
+            <strong>What this means for advertisers:</strong> 176,000 hours of watch time is the equivalent of 20 years of continuous viewing. Your brand message doesn't just appear — it's watched, in context, by people who chose to be there.
+          </p>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- ─── 2. TRAFFIC SOURCES ─── -->
+      <section>
+        <div class="section-label">Traffic Sources</div>
+        <div class="section-title">How viewers find the channel</div>
+        <p class="section-desc">65.5% of all views come from YouTube's own Browse Features — meaning the algorithm actively recommends this content. That's a signal of sustained quality, not a spike.</p>
+
+        <!-- Stacked bar -->
+        <div class="traffic-bar-wrap">
+          <div class="traffic-segment" style="width:65.5%; background:#7c3aed;" title="Browse Features 65.5%"></div>
+          <div class="traffic-segment" style="width:12.9%; background:#db2777;" title="Suggested Videos 12.9%"></div>
+          <div class="traffic-segment" style="width:4.1%;  background:#f97316;" title="Direct 4.1%"></div>
+          <div class="traffic-segment" style="width:3.6%;  background:#2dd4bf;" title="YouTube Ads 3.6%"></div>
+          <div class="traffic-segment" style="width:2.9%;  background:#60a5fa;" title="Channel Pages 2.9%"></div>
+          <div class="traffic-segment" style="width:2.4%;  background:#a78bfa;" title="End Screens 2.4%"></div>
+          <div class="traffic-segment" style="width:2.2%;  background:#34d399;" title="YouTube Search 2.2%"></div>
+          <div class="traffic-segment" style="width:6.4%;  background:rgba(255,255,255,0.08);" title="Other 6.4%"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="traffic-legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#7c3aed; box-shadow:0 0 8px rgba(124,58,237,0.7);"></div>
+            <div>
+              <div class="legend-name">Browse Features</div>
+              <div class="legend-meta">1,847,217 views · 65.5% · avg 3:55</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#db2777; box-shadow:0 0 8px rgba(219,39,119,0.7);"></div>
+            <div>
+              <div class="legend-name">Suggested Videos</div>
+              <div class="legend-meta">364,645 views · 12.9% · avg 4:23</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#f97316; box-shadow:0 0 8px rgba(249,115,22,0.7);"></div>
+            <div>
+              <div class="legend-name">Direct / Unknown</div>
+              <div class="legend-meta">115,005 views · 4.1% · avg 3:32</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#2dd4bf; box-shadow:0 0 8px rgba(45,212,191,0.7);"></div>
+            <div>
+              <div class="legend-name">YouTube Advertising</div>
+              <div class="legend-meta">100,768 views · 3.6% · avg 1:23</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#60a5fa;"></div>
+            <div>
+              <div class="legend-name">Channel Pages</div>
+              <div class="legend-meta">82,365 views · 2.9% · avg 4:01</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#a78bfa;"></div>
+            <div>
+              <div class="legend-name">End Screens</div>
+              <div class="legend-meta">66,746 views · 2.4% · avg 5:08</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#34d399;"></div>
+            <div>
+              <div class="legend-name">YouTube Search</div>
+              <div class="legend-meta">63,021 views · 2.2% · avg 2:28</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:rgba(255,255,255,0.3);"></div>
+            <div>
+              <div class="legend-name">Other</div>
+              <div class="legend-meta">Shorts feed, external links, etc.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight">
+          <span class="insight-icon"><i class="ri-bar-chart-2-line"></i></span>
+          <p class="insight-text">
+            <strong>Suggested Videos (avg 4:23)</strong> is the highest-quality traffic source by engagement — viewers who arrive from related content watch longer than any other group. This means your sponsored segment reaches the most attentive audience at the moment of discovery.
+          </p>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- ─── 3. TOP VIDEOS ─── -->
+      <section>
+        <div class="section-label">Content Performance</div>
+        <div class="section-title">Top 10 videos by views</div>
+        <p class="section-desc">All top-performing videos share a common thread: they challenge assumptions about design. The audience comes for the critique, stays for the depth.</p>
+
+        <div class="card">
+          <table class="video-table">
+            <thead>
+              <tr>
+                <th style="width:2rem;">#</th>
+                <th>Title</th>
+                <th style="width:7rem;">Published</th>
+                <th style="width:9rem;">Retention</th>
+                <th style="width:6rem;">Views</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="video-rank">1</td>
+                <td class="video-title">The Hidden Cost of "Clean" Design</td>
+                <td class="video-date">Dec 5, 2025</td>
+                <td>
+                  <span class="retention-pill retention-high">44.8%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:44.8%"></div></div>
+                </td>
+                <td><span class="views-num">455K</span></td>
+              </tr>
+              <tr>
+                <td class="video-rank">2</td>
+                <td class="video-title">Apple Design: The twenty pixels that changed design forever</td>
+                <td class="video-date">May 19, 2025</td>
+                <td>
+                  <span class="retention-pill retention-high">41.0%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:41%"></div></div>
+                </td>
+                <td><span class="views-num">298K</span></td>
+              </tr>
+              <tr>
+                <td class="video-rank">3</td>
+                <td class="video-title">Apple Design: why we keep coming back to this?</td>
+                <td class="video-date">Jul 21, 2025</td>
+                <td>
+                  <span class="retention-pill retention-high">43.3%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:43.3%"></div></div>
+                </td>
+                <td><span class="views-num">206K</span></td>
+              </tr>
+              <tr>
+                <td class="video-rank">4</td>
+                <td class="video-title">The One Feature Apple & Microsoft Refuse to Steal</td>
+                <td class="video-date">Aug 20, 2025</td>
+                <td>
+                  <span class="retention-pill retention-high">46.2%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:46.2%"></div></div>
+                </td>
+                <td><span class="views-num">173K</span></td>
+              </tr>
+              <tr>
+                <td class="video-rank">5</td>
+                <td class="video-title">Apple Design: The Reflection That Ended an Era</td>
+                <td class="video-date">Jun 10, 2025</td>
+                <td>
+                  <span class="retention-pill retention-high">49.1%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:49.1%"></div></div>
+                </td>
+                <td><span class="views-num">145K</span></td>
+              </tr>
+              <tr>
+                <td class="video-rank">6</td>
+                <td class="video-title">What Made the Leopard Dock So Special?</td>
+                <td class="video-date">Jun 1, 2025</td>
+                <td>
+                  <span class="retention-pill retention-high">44.0%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:44%"></div></div>
+                </td>
+                <td><span class="views-num">133K</span></td>
+              </tr>
+              <tr>
+                <td class="video-rank">7</td>
+                <td class="video-title">The Death of 'Premium' Apple Design</td>
+                <td class="video-date">Oct 29, 2025</td>
+                <td>
+                  <span class="retention-pill retention-mid">38.3%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:38.3%"></div></div>
+                </td>
+                <td><span class="views-num">127K</span></td>
+              </tr>
+              <tr>
+                <td class="video-rank">8</td>
+                <td class="video-title">Apple Design: The Icon That Violates Rule</td>
+                <td class="video-date">Nov 17, 2025</td>
+                <td>
+                  <span class="retention-pill retention-mid">27.0%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:27%"></div></div>
+                </td>
+                <td><span class="views-num">98K</span></td>
+              </tr>
+              <tr>
+                <td class="video-rank">9</td>
+                <td class="video-title">Apple Design: the icon that began a decade of gradients</td>
+                <td class="video-date">Jun 17, 2025</td>
+                <td>
+                  <span class="retention-pill retention-mid">33.0%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:33%"></div></div>
+                </td>
+                <td><span class="views-num">95K</span></td>
+              </tr>
+              <tr>
+                <td class="video-rank">10</td>
+                <td class="video-title">Apple Design: Welcome back, Skeumorphism</td>
+                <td class="video-date">Mar 25, 2025</td>
+                <td>
+                  <span class="retention-pill retention-high">46.4%</span>
+                  <div class="ret-bar-track"><div class="ret-bar-fill" style="width:46.4%"></div></div>
+                </td>
+                <td><span class="views-num">91K</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="insight">
+          <span class="insight-icon"><i class="ri-eye-line"></i></span>
+          <p class="insight-text">
+            <strong>Average retention across top 10 videos is 41.3%</strong> — significantly above the YouTube benchmark of 30–35% for this content length. Viewers who watch these videos are not passive; they are engaged with the argument being made. A sponsor integration placed at the 2-minute mark reaches the most attentive segment of the audience.
+          </p>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- ─── 4. AUDIENCE DEMOGRAPHICS ─── -->
+      <section>
+        <div class="section-label">Audience</div>
+        <div class="section-title">Who watches Design Lovers</div>
+        <p class="section-desc">A highly specific audience: design-aware, tech-literate, predominantly male professionals between 25 and 44. The demographic that buys premium products and influences purchasing decisions in their organizations.</p>
+
+        <div class="two-col" style="margin-bottom:1.5rem;">
+          <!-- Age -->
+          <div class="card">
+            <div class="section-label" style="margin-bottom:1.25rem;">Age Distribution</div>
+            <div class="age-bar-row">
+              <span class="age-label">13–17</span>
+              <div class="age-bar-track"><div class="age-bar-fill" style="width:1.1%"></div></div>
+              <span class="age-pct">1.1%</span>
+            </div>
+            <div class="age-bar-row">
+              <span class="age-label">18–24</span>
+              <div class="age-bar-track"><div class="age-bar-fill" style="width:19.4%"></div></div>
+              <span class="age-pct">19.4%</span>
+            </div>
+            <div class="age-bar-row" style="opacity:1;">
+              <span class="age-label" style="color:#fff; font-weight:600;">25–34</span>
+              <div class="age-bar-track"><div class="age-bar-fill" style="width:44.6%; background: linear-gradient(90deg,#a78bfa,#f472b6);"></div></div>
+              <span class="age-pct" style="color:#a78bfa;">44.6%</span>
+            </div>
+            <div class="age-bar-row">
+              <span class="age-label" style="color:#fff; font-weight:600;">35–44</span>
+              <div class="age-bar-track"><div class="age-bar-fill" style="width:21.6%; background: linear-gradient(90deg,#7c3aed,#a78bfa);"></div></div>
+              <span class="age-pct" style="color:#a78bfa;">21.6%</span>
+            </div>
+            <div class="age-bar-row">
+              <span class="age-label">45–54</span>
+              <div class="age-bar-track"><div class="age-bar-fill" style="width:8.9%"></div></div>
+              <span class="age-pct">8.9%</span>
+            </div>
+            <div class="age-bar-row">
+              <span class="age-label">55–64</span>
+              <div class="age-bar-track"><div class="age-bar-fill" style="width:3.1%"></div></div>
+              <span class="age-pct">3.1%</span>
+            </div>
+            <div class="age-bar-row" style="margin-bottom:0;">
+              <span class="age-label">65+</span>
+              <div class="age-bar-track"><div class="age-bar-fill" style="width:1.4%"></div></div>
+              <span class="age-pct">1.4%</span>
+            </div>
+            <div class="insight" style="margin-top:1.25rem; padding:1rem 1.25rem;">
+              <span class="insight-icon" style="font-size:1rem;"><i class="ri-user-line"></i></span>
+              <p class="insight-text" style="font-size:0.8rem;"><strong>66.2%</strong> of the audience is aged 25–44 — the highest-spending demographic on tech and premium products.</p>
+            </div>
+          </div>
+
+          <!-- Gender + Device -->
+          <div style="display:flex; flex-direction:column; gap:1.5rem;">
+            <div class="card">
+              <div class="section-label" style="margin-bottom:1.25rem;">Gender</div>
+              <div style="display:flex; align-items:center; gap:1.5rem;">
+                <div style="flex:1;">
+                  <div style="font-family:var(--font-expanded); font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,#60a5fa,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1;">96.9%</div>
+                  <div style="font-size:0.875rem; color:#e5e7eb; margin-top:0.25rem;">Male</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-family:var(--font-expanded); font-size:1.5rem; font-weight:800; color:var(--color-muted); line-height:1;">2.8%</div>
+                  <div style="font-size:0.875rem; color:var(--color-muted); margin-top:0.25rem;">Female</div>
+                </div>
+              </div>
+              <div style="margin-top:1rem; height:6px; background:rgba(255,255,255,0.07); border-radius:9999px; overflow:hidden;">
+                <div style="width:96.9%; height:100%; background:linear-gradient(90deg,#60a5fa,#a78bfa); border-radius:9999px;"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="section-label" style="margin-bottom:1.25rem;">Device Breakdown</div>
+              <div class="device-grid">
+                <div class="device-item">
+                  <span class="device-icon"><i class="ri-computer-line"></i></span>
+                  <div>
+                    <div class="device-pct">43%</div>
+                    <div class="device-name">Computer</div>
+                  </div>
+                </div>
+                <div class="device-item">
+                  <span class="device-icon"><i class="ri-smartphone-line"></i></span>
+                  <div>
+                    <div class="device-pct">33%</div>
+                    <div class="device-name">Mobile</div>
+                  </div>
+                </div>
+                <div class="device-item">
+                  <span class="device-icon"><i class="ri-tv-2-line"></i></span>
+                  <div>
+                    <div class="device-pct">12%</div>
+                    <div class="device-name">TV</div>
+                  </div>
+                </div>
+                <div class="device-item">
+                  <span class="device-icon"><i class="ri-tablet-line"></i></span>
+                  <div>
+                    <div class="device-pct">11%</div>
+                    <div class="device-name">Tablet</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Geography -->
+        <div class="card">
+          <div class="section-label" style="margin-bottom:1.5rem;">Geographic Distribution</div>
+          <div class="two-col">
+            <div>
+              <div class="geo-row">
+                <span class="geo-flag">🇺🇸</span>
+                <span class="geo-name">United States</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:92%; background:#7c3aed;"></div></div>
+                <span class="geo-pct">18.1%</span>
+              </div>
+              <div class="geo-row">
+                <span class="geo-flag">🇮🇳</span>
+                <span class="geo-name">India</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:39%; background:#db2777;"></div></div>
+                <span class="geo-pct">7.7%</span>
+              </div>
+              <div class="geo-row">
+                <span class="geo-flag">🇩🇪</span>
+                <span class="geo-name">Germany</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:35%; background:#f97316;"></div></div>
+                <span class="geo-pct">6.9%</span>
+              </div>
+              <div class="geo-row">
+                <span class="geo-flag">🇬🇧</span>
+                <span class="geo-name">United Kingdom</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:24%; background:#2dd4bf;"></div></div>
+                <span class="geo-pct">4.7%</span>
+              </div>
+              <div class="geo-row">
+                <span class="geo-flag">🇧🇷</span>
+                <span class="geo-name">Brazil</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:19%; background:#60a5fa;"></div></div>
+                <span class="geo-pct">3.8%</span>
+              </div>
+            </div>
+            <div>
+              <div class="geo-row">
+                <span class="geo-flag">🇨🇦</span>
+                <span class="geo-name">Canada</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:12%; background:#a78bfa;"></div></div>
+                <span class="geo-pct">2.4%</span>
+              </div>
+              <div class="geo-row">
+                <span class="geo-flag">🇫🇷</span>
+                <span class="geo-name">France</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:11%; background:#34d399;"></div></div>
+                <span class="geo-pct">2.1%</span>
+              </div>
+              <div class="geo-row">
+                <span class="geo-flag">🇦🇺</span>
+                <span class="geo-name">Australia</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:10%; background:#f472b6;"></div></div>
+                <span class="geo-pct">1.9%</span>
+              </div>
+              <div class="geo-row">
+                <span class="geo-flag">🇳🇱</span>
+                <span class="geo-name">Netherlands</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:9%; background:#fb923c;"></div></div>
+                <span class="geo-pct">1.8%</span>
+              </div>
+              <div class="geo-row">
+                <span class="geo-flag">🇪🇸</span>
+                <span class="geo-name">Spain</span>
+                <div class="geo-bar-track"><div class="geo-bar-fill" style="width:8%; background:#e879f9;"></div></div>
+                <span class="geo-pct">1.6%</span>
+              </div>
+            </div>
+          </div>
+          <div class="insight" style="margin-top:1.5rem;">
+            <span class="insight-icon"><i class="ri-global-line"></i></span>
+            <p class="insight-text">
+              <strong>29.7% of views come from the US, UK, and Germany</strong> — the three highest-value English-language markets for tech and design products. Combined with Canada, France, Australia, and the Netherlands, Tier-1 markets account for over 38% of total views.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- ─── 5. ENGAGEMENT QUALITY ─── -->
+      <section>
+        <div class="section-label">Engagement Quality</div>
+        <div class="section-title">Attention, not just clicks</div>
+        <p class="section-desc">High view counts are easy to manufacture. Sustained attention is not. These metrics show that the audience doesn't just click — they watch.</p>
+
+        <div class="two-col" style="margin-bottom:1.5rem;">
+          <!-- CTR Benchmark -->
+          <div class="card">
+            <div class="section-label" style="margin-bottom:1.5rem;">Click-Through Rate vs Benchmarks</div>
+            <div class="benchmark-row">
+              <span class="benchmark-label" style="color:#a78bfa; font-weight:600;">Design Lovers</span>
+              <div class="benchmark-bar-track">
+                <div class="benchmark-bar-fill" style="width:64%; background:linear-gradient(90deg,#7c3aed,#db2777);"></div>
+              </div>
+              <span class="benchmark-val" style="color:#a78bfa;">5.1%</span>
+            </div>
+            <div class="benchmark-row">
+              <span class="benchmark-label">Top creators</span>
+              <div class="benchmark-bar-track">
+                <div class="benchmark-bar-fill" style="width:100%; background:rgba(255,255,255,0.15);"></div>
+              </div>
+              <span class="benchmark-val" style="color:var(--color-muted);">6–8%</span>
+            </div>
+            <div class="benchmark-row" style="margin-bottom:0;">
+              <span class="benchmark-label">YouTube average</span>
+              <div class="benchmark-bar-track">
+                <div class="benchmark-bar-fill" style="width:44%; background:rgba(255,255,255,0.08);"></div>
+              </div>
+              <span class="benchmark-val" style="color:var(--color-muted);">3–4%</span>
+            </div>
+            <div class="insight" style="margin-top:1.25rem; padding:1rem 1.25rem;">
+              <span class="insight-icon" style="font-size:1rem;"><i class="ri-cursor-line"></i></span>
+              <p class="insight-text" style="font-size:0.8rem;">A 5.1% CTR means thumbnails and titles are compelling. When your brand appears in that context, it inherits that credibility.</p>
+            </div>
+          </div>
+
+          <!-- Viewer Funnel -->
+          <div class="card">
+            <div class="section-label" style="margin-bottom:1.5rem;">Viewer Loyalty Funnel</div>
+            <div class="funnel-wrap">
+              <div class="funnel-row">
+                <span class="funnel-label">New viewers</span>
+                <div class="funnel-bar-outer">
+                  <div class="funnel-bar-inner" style="width:100%; background:linear-gradient(90deg,rgba(124,58,237,0.3),rgba(219,39,119,0.3));">
+                    First-time visitors
+                  </div>
+                </div>
+                <span class="funnel-pct">48.2%</span>
+              </div>
+              <div class="funnel-row">
+                <span class="funnel-label">Casual viewers</span>
+                <div class="funnel-bar-outer">
+                  <div class="funnel-bar-inner" style="width:84%; background:linear-gradient(90deg,rgba(124,58,237,0.25),rgba(219,39,119,0.25));">
+                    Return occasionally
+                  </div>
+                </div>
+                <span class="funnel-pct">40.6%</span>
+              </div>
+              <div class="funnel-row">
+                <span class="funnel-label">Regular viewers</span>
+                <div class="funnel-bar-outer">
+                  <div class="funnel-bar-inner" style="width:23%; background:linear-gradient(90deg,rgba(124,58,237,0.5),rgba(219,39,119,0.5));">
+                    Core
+                  </div>
+                </div>
+                <span class="funnel-pct">11.2%</span>
+              </div>
+            </div>
+            <div class="insight" style="margin-top:1.25rem; padding:1rem 1.25rem;">
+              <span class="insight-icon" style="font-size:1rem;"><i class="ri-repeat-line"></i></span>
+              <p class="insight-text" style="font-size:0.8rem;"><strong>48.2% new viewers</strong> means the channel is actively acquiring fresh audience — your ad reaches people who haven't seen your brand in this context before.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subscriber vs Non-subscriber watch time -->
+        <div class="card">
+          <div class="section-label" style="margin-bottom:1.25rem;">Watch Time: Subscribers vs Non-Subscribers</div>
+          <div style="display:flex; gap:2rem; align-items:center; flex-wrap:wrap;">
+            <div style="flex:1; min-width:200px;">
+              <div style="height:1.5rem; background:rgba(255,255,255,0.06); border-radius:9999px; overflow:hidden; display:flex;">
+                <div style="width:31.2%; background:linear-gradient(90deg,#7c3aed,#db2777); border-radius:9999px;"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:0.75rem; font-size:0.8rem; color:var(--color-muted);">
+                <span><span style="color:#a78bfa; font-weight:700;">31.2%</span> Subscribers</span>
+                <span><span style="color:#fff; font-weight:700;">68.8%</span> Non-Subscribers</span>
+              </div>
+            </div>
+            <div style="max-width:26rem;">
+              <p style="font-size:0.875rem; color:#d1d5db; line-height:1.6;">68.8% of watch time comes from non-subscribers — people who found the video through recommendations or browse. This is the highest-value audience for brand awareness campaigns: they're engaged but not yet loyal to the channel.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- ─── 6. COMPARABLE CHANNELS ─── -->
+      <section>
+        <div class="section-label">Audience Context</div>
+        <div class="section-title">What else this audience watches</div>
+        <p class="section-desc">The Design Lovers audience doesn't exist in isolation. They watch these channels — which tells you exactly what kind of content they value and what products they're likely to buy.</p>
+
+        <div class="channel-grid">
+          <div class="channel-card">
+            <div class="channel-name">TechLinked</div>
+            <div class="channel-subs">2.0M subscribers</div>
+            <span class="channel-tag">Tech News</span>
+          </div>
+          <div class="channel-card">
+            <div class="channel-name">Snazzy Labs</div>
+            <div class="channel-subs">1.2M subscribers</div>
+            <span class="channel-tag" style="background:rgba(219,39,119,0.15); color:#f472b6;">Apple & Design</span>
+          </div>
+          <div class="channel-card">
+            <div class="channel-name">9to5Mac</div>
+            <div class="channel-subs">941K subscribers</div>
+            <span class="channel-tag" style="background:rgba(219,39,119,0.15); color:#f472b6;">Apple Focus</span>
+          </div>
+          <div class="channel-card">
+            <div class="channel-name">Waveform Clips</div>
+            <div class="channel-subs">528K subscribers</div>
+            <span class="channel-tag">Tech Culture</span>
+          </div>
+          <div class="channel-card">
+            <div class="channel-name">Theo — t3.gg</div>
+            <div class="channel-subs">514K subscribers</div>
+            <span class="channel-tag" style="background:rgba(45,212,191,0.12); color:#2dd4bf;">Dev & Tech</span>
+          </div>
+        </div>
+
+        <div class="insight">
+          <span class="insight-icon"><i class="ri-group-line"></i></span>
+          <p class="insight-text">
+            This audience actively seeks out <strong>informed opinions on technology and design</strong> — not entertainment. They trust channels that challenge conventional thinking. A brand that appears in this context is perceived as thoughtful, not intrusive.
+          </p>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- ─── 7. IDEAL ADVERTISERS ─── -->
+      <section>
+        <div class="section-label">Fit Assessment</div>
+        <div class="section-title">Who belongs here</div>
+        <p class="section-desc">Not every brand is a fit. The ones that are will find an audience that's already thinking about design, quality, and technology — and is ready to act.</p>
+
+        <div class="stat-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+          <div class="card card-sm">
+            <div style="font-size:1.5rem; margin-bottom:0.75rem; opacity:0.7;"><i class="ri-apple-line"></i></div>
+            <div style="font-size:0.9rem; font-weight:600; margin-bottom:0.35rem;">Tech Products</div>
+            <div style="font-size:0.8rem; color:var(--color-muted); line-height:1.5;">Hardware, software, accessories. Audience buys premium and researches before purchasing.</div>
+          </div>
+          <div class="card card-sm">
+            <div style="font-size:1.5rem; margin-bottom:0.75rem; opacity:0.7;"><i class="ri-pen-nib-line"></i></div>
+            <div style="font-size:0.9rem; font-weight:600; margin-bottom:0.35rem;">Design Software</div>
+            <div style="font-size:0.8rem; color:var(--color-muted); line-height:1.5;">Figma, Adobe, Sketch alternatives. Audience uses these tools daily and influences team adoption.</div>
+          </div>
+          <div class="card card-sm">
+            <div style="font-size:1.5rem; margin-bottom:0.75rem; opacity:0.7;"><i class="ri-graduation-cap-line"></i></div>
+            <div style="font-size:0.9rem; font-weight:600; margin-bottom:0.35rem;">Online Education</div>
+            <div style="font-size:0.8rem; color:var(--color-muted); line-height:1.5;">Courses, platforms, books. Audience actively invests in professional development.</div>
+          </div>
+          <div class="card card-sm">
+            <div style="font-size:1.5rem; margin-bottom:0.75rem; opacity:0.7;"><i class="ri-building-2-line"></i></div>
+            <div style="font-size:0.9rem; font-weight:600; margin-bottom:0.35rem;">SaaS & Productivity</div>
+            <div style="font-size:0.8rem; color:var(--color-muted); line-height:1.5;">Tools for professionals. Audience has budget authority and makes purchasing decisions.</div>
+          </div>
+          <div class="card card-sm">
+            <div style="font-size:1.5rem; margin-bottom:0.75rem; opacity:0.7;"><i class="ri-vip-diamond-line"></i></div>
+            <div style="font-size:0.9rem; font-weight:600; margin-bottom:0.35rem;">Premium Consumer</div>
+            <div style="font-size:0.8rem; color:var(--color-muted); line-height:1.5;">High-end goods where design is a purchase driver. Audience values craft over price.</div>
+          </div>
+          <div class="card card-sm">
+            <div style="font-size:1.5rem; margin-bottom:0.75rem; opacity:0.7;"><i class="ri-service-line"></i></div>
+            <div style="font-size:0.9rem; font-weight:600; margin-bottom:0.35rem;">Agencies & Services</div>
+            <div style="font-size:0.8rem; color:var(--color-muted); line-height:1.5;">Design, development, consulting. Audience includes freelancers and team leads who hire.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── CTA ─── -->
+      <section style="text-align:center; padding-top:3rem; padding-bottom:6rem;">
+        <div class="section-label" style="margin-bottom:1.5rem;">Ready to collaborate?</div>
+        <h2 style="font-family:var(--font-expanded); font-size:clamp(1.75rem,4vw,3rem); font-weight:800; margin-bottom:1rem; line-height:1.1;">Your brand, in stories people remember.</h2>
+        <p style="color:var(--color-muted); font-size:1rem; max-width:36rem; margin:0 auto 2.5rem; line-height:1.7;">Let's discuss how to integrate your product into content that a highly engaged design audience actually watches — and talks about.</p>
+        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+          <a href="mailto:ilia@design-lovers.com" class="btn-primary" style="font-size:1rem; padding:0.75rem 2rem;">Send an Email</a>
+          <a href="https://t.me/simplygreen" target="_blank" class="btn-primary" style="font-size:1rem; padding:0.75rem 2rem; background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.12);">Telegram</a>
+        </div>
+      </section>
+
+    </div><!-- /page -->
+
+    <footer>
+      <p>© 2025 Design Lovers. All rights reserved.</p>
+      <p style="margin-top:0.4rem;">All contract work is processed through a registered UK company: DELO STUDIO LTD.</p>
+    </footer>
+
+  </body>
+</html>

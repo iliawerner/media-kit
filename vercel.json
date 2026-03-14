@@ -8,6 +8,10 @@
     {
       "source": "/reports/100",
       "destination": "/reports/100/index.html"
+    },
+    {
+      "source": "/analytics",
+      "destination": "/analytics/index.html"
     }
   ]
 }
