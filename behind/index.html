@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="../images/67565bb8ed168b48996daa5a3d998ba2.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's Behind — Design Lovers | Media Kit</title>
+    <meta name="description" content="The mission, method, and people behind Design Lovers — a YouTube channel about design philosophy and the intent behind every interface decision.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css">
+    <link rel="stylesheet" href="../assets/index-CwFQNvRy.css">
+    <link rel="icon" href="../favicon.png" type="image/png">
+
+    <style>
+      :root {
+        --font-main: 'Zalando Sans', sans-serif;
+        --font-expanded: 'Zalando Sans Expanded', sans-serif;
+        --color-bg: #000000;
+        --color-card: #0d0d0d;
+        --color-card-border: rgba(255,255,255,0.07);
+        --color-text: #ffffff;
+        --color-muted: #9ca3af;
+        --color-accent-purple: #7c3aed;
+        --color-accent-pink: #db2777;
+        --color-accent-orange: #f97316;
+        --color-accent-teal: #2dd4bf;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--color-bg);
+        color: var(--color-text);
+        font-family: var(--font-main);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      /* ─── Ambient Glow ─── */
+      .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+      .ambient-top {
+        position: absolute; top: -10%; left: -10%;
+        width: 50%; height: 50%;
+        background: rgba(124,58,237,0.12);
+        filter: blur(120px); border-radius: 50%;
+      }
+      .ambient-bottom {
+        position: absolute; bottom: -10%; right: -10%;
+        width: 50%; height: 50%;
+        background: rgba(144,36,36,0.12);
+        filter: blur(120px); border-radius: 50%;
+      }
+
+      /* ─── Header ─── */
+      .header-wrap { position: sticky; top: 0; z-index: 50; }
+      .header-inner { max-width: 72rem; margin: 0 auto; padding: 0.75rem 1.5rem; }
+      .header-pill {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.75rem 1.5rem; border-radius: 9999px;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 20px 60px rgba(0,0,0,0.15);
+      }
+      .header-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
+      .header-logo img { width: 2.5rem; height: 2.5rem; border-radius: 50%; object-fit: cover; }
+      .header-logo-text h1 { font-size: 1.125rem; font-weight: 700; line-height: 1.2; }
+      .header-logo-text p { font-size: 0.75rem; color: var(--color-muted); }
+      .header-nav { display: flex; align-items: center; gap: 0.25rem; margin-right: 0.5rem; }
+      .nav-link {
+        color: var(--color-muted); text-decoration: none; font-size: 0.875rem;
+        padding: 0.5rem 1rem; border-radius: 9999px; transition: color 0.2s, background 0.2s;
+      }
+      .nav-link:hover { color: #fff; background: rgba(255,255,255,0.06); }
+      .nav-link.active { color: #fff; }
+      .btn-primary {
+        background: #fff; color: #000; border: none;
+        padding: 0.5rem 1.25rem; border-radius: 9999px;
+        font-family: var(--font-main); font-size: 0.875rem; font-weight: 500;
+        cursor: pointer; text-decoration: none; transition: background 0.2s; white-space: nowrap;
+      }
+      .btn-primary:hover { background: #e5e7eb; }
+
+      /* ─── Page ─── */
+      .page { position: relative; z-index: 10; }
+
+      /* ─── Hero ─── */
+      .hero {
+        padding: 6rem 1.5rem 4rem;
+        text-align: center;
+        max-width: 72rem;
+        margin: 0 auto;
+      }
+      .hero-label {
+        display: inline-block; font-size: 0.75rem; font-weight: 600;
+        letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-muted);
+        margin-bottom: 1.5rem; padding: 0.35rem 1rem;
+        border: 1px solid rgba(255,255,255,0.1); border-radius: 9999px;
+      }
+      .hero h2 {
+        font-family: var(--font-expanded);
+        font-size: clamp(2.25rem, 5vw, 4rem);
+        font-weight: 800; line-height: 1.05; margin-bottom: 0;
+      }
+
+      /* ─── Sections ─── */
+      section {
+        padding: 5rem 1.5rem;
+        max-width: 72rem;
+        margin: 0 auto;
+      }
+      .section-label {
+        font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--color-muted); margin-bottom: 0.75rem;
+      }
+      .section-title {
+        font-family: var(--font-expanded);
+        font-size: clamp(1.5rem, 3vw, 2.25rem);
+        font-weight: 800; margin-bottom: 1.5rem; line-height: 1.15;
+      }
+      .section-divider {
+        border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 0;
+      }
+
+      /* ─── Prose ─── */
+      .prose {
+        font-size: 1.0625rem;
+        line-height: 1.8;
+        color: var(--color-muted);
+        max-width: 52rem;
+      }
+      .prose p + p { margin-top: 1.25rem; }
+      .prose strong { color: var(--color-text); font-weight: 600; }
+
+      /* ─── Pull Quote ─── */
+      .pull-quote {
+        border-left: 2px solid rgba(255,255,255,0.15);
+        padding: 1.25rem 2rem;
+        margin: 3rem 0;
+        max-width: 52rem;
+      }
+      .pull-quote p {
+        font-family: var(--font-expanded);
+        font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+        font-weight: 700;
+        line-height: 1.4;
+        color: var(--color-text);
+      }
+
+      /* ─── Cards ─── */
+      .card {
+        background: var(--color-card);
+        border: 1px solid var(--color-card-border);
+        border-radius: 1.25rem;
+        padding: 2rem;
+      }
+
+      /* ─── Two-col layout ─── */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 2.5rem;
+      }
+      @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+      /* ─── Method Steps ─── */
+      .method-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-top: 2.5rem;
+        max-width: 52rem;
+      }
+      .method-step {
+        display: grid;
+        grid-template-columns: 2.5rem 1fr;
+        gap: 1.25rem;
+        align-items: start;
+      }
+      .step-number {
+        width: 2.5rem; height: 2.5rem;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.12);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem; font-weight: 700; color: var(--color-muted);
+        flex-shrink: 0;
+      }
+      .step-body h4 {
+        font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--color-text);
+      }
+      .step-body p { font-size: 0.875rem; color: var(--color-muted); line-height: 1.65; }
+
+      /* ─── Credentials ─── */
+      .cred-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 2.5rem;
+      }
+      .cred-card {
+        background: var(--color-card);
+        border: 1px solid var(--color-card-border);
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        transition: transform 0.25s ease, border-color 0.25s ease;
+      }
+      .cred-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); }
+      .cred-number {
+        font-family: var(--font-expanded);
+        font-size: 2rem; font-weight: 800; line-height: 1;
+        margin-bottom: 0.4rem;
+      }
+      .cred-label { font-size: 0.8rem; color: var(--color-muted); line-height: 1.5; }
+
+      /* ─── Video Examples ─── */
+      .video-examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+        margin-top: 2.5rem;
+      }
+      .video-card {
+        background: var(--color-card);
+        border: 1px solid var(--color-card-border);
+        border-radius: 1.25rem;
+        padding: 1.75rem;
+        transition: transform 0.25s ease, border-color 0.25s ease;
+      }
+      .video-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); }
+      .video-artifact {
+        font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em;
+        text-transform: uppercase; color: var(--color-muted); margin-bottom: 0.75rem;
+      }
+      .video-title {
+        font-size: 0.9375rem; font-weight: 600; line-height: 1.4;
+        margin-bottom: 0.75rem; color: var(--color-text);
+      }
+      .video-insight {
+        font-size: 0.825rem; color: var(--color-muted); line-height: 1.6;
+      }
+      .video-views {
+        margin-top: 1.25rem;
+        font-size: 0.75rem; font-weight: 600;
+        color: var(--color-muted);
+        display: flex; align-items: center; gap: 0.4rem;
+      }
+      .view-dot {
+        width: 0.4rem; height: 0.4rem; border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+      }
+
+      /* ─── Footer ─── */
+      footer {
+        border-top: 1px solid rgba(255,255,255,0.06);
+        padding: 2rem 1.5rem; text-align: center;
+        font-size: 0.8rem; color: var(--color-muted);
+        position: relative; z-index: 10;
+      }
+
+      /* ─── Responsive ─── */
+      @media (max-width: 640px) {
+        .header-nav { display: none; }
+        .hero { padding: 4rem 1rem 2.5rem; }
+        section { padding: 3rem 1rem; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Ambient -->
+    <div class="ambient">
+      <div class="ambient-top"></div>
+      <div class="ambient-bottom"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header-wrap">
+      <div class="header-inner">
+        <div class="header-pill">
+          <a href="/" class="header-logo">
+            <img src="../images/e155d041f9b8503f121f4881b396f029.jpeg" alt="Design Lovers Logo">
+            <div class="header-logo-text">
+              <h1>Design Lovers</h1>
+              <p>Media Kit</p>
+            </div>
+          </a>
+          <div style="display:flex; align-items:center; gap:0.25rem;">
+            <nav class="header-nav">
+              <a href="/" class="nav-link">Overview</a>
+              <a href="/analytics" class="nav-link">Analytics</a>
+              <a href="/behind" class="nav-link active">What's Behind</a>
+            </nav>
+            <a href="/#packages" class="btn-primary">View Packages</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page -->
+    <div class="page">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-label">What's Behind</div>
+        <h2>The mission, the method,<br>and the people.</h2>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- 1. The Problem -->
+      <section>
+        <div class="section-label">Why This Exists</div>
+        <div class="section-title">A question of literacy.</div>
+
+        <div class="prose">
+          <p>Every person alive today spends hours each day inside interfaces designed to influence their behavior. Most of them have no framework for understanding how or why.</p>
+          <p>That asymmetry matters. When people understand the intent behind a design decision — why a button is that color, why a feed is infinite, why an icon has those exact proportions — they become harder to manipulate and better at demanding something different.</p>
+          <p>That's what this channel is for.</p>
+        </div>
+
+        <div class="pull-quote">
+          <p>"Just as basic knowledge of chemistry allows society to read ingredient labels, question additives, and pressure the food industry — basic design literacy allows people to recognize deceptive patterns, make informed choices, and hold the builders of digital environments accountable."</p>
+        </div>
+
+        <div class="prose">
+          <p>Design has become infrastructure. The interfaces and devices that now mediate most of human experience were built by people with specific intentions — commercial, psychological, sometimes manipulative. Understanding those intentions isn't a specialist skill anymore. It's basic literacy for the 21st century.</p>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- 2. The Method -->
+      <section>
+        <div class="section-label">The Method</div>
+        <div class="section-title">From pixel to principle.</div>
+
+        <div class="prose">
+          <p>Each video starts with a single, tangible artifact — a button, a sound, a corner radius, a gap of 0.5mm. We then trace its origin back to the fundamental constraints that gave it shape.</p>
+          <p>The question is never "What did they want?" It's "What <strong>forced</strong> them to do this?" That shift — from intent to constraint — is what separates analysis from opinion.</p>
+        </div>
+
+        <div class="method-steps">
+          <div class="method-step">
+            <div class="step-number">01</div>
+            <div class="step-body">
+              <h4>Find the Artifact</h4>
+              <p>A single, visible, tangible element. A corner radius. A sound. A 20-pixel curve. Something you can show close-up in the first ten seconds of a video.</p>
+            </div>
+          </div>
+          <div class="method-step">
+            <div class="step-number">02</div>
+            <div class="step-body">
+              <h4>Identify the Constraint</h4>
+              <p>Was it physics? A manufacturing limitation? A biological quirk of human perception? A systemic deadlock that left only one possible solution? The constraint is the real story.</p>
+            </div>
+          </div>
+          <div class="method-step">
+            <div class="step-number">03</div>
+            <div class="step-body">
+              <h4>Reveal the Principle</h4>
+              <p>The artifact is temporary. The principle it embodies is not. Every video ends with something that changes how you see not just one interface, but all of them.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- 3. Examples -->
+      <section>
+        <div class="section-label">The Method in Practice</div>
+        <div class="section-title">Three artifacts. Three principles.</div>
+
+        <div class="video-examples">
+          <div class="video-card">
+            <div class="video-artifact">Artifact · Corner Radius</div>
+            <div class="video-title">The twenty pixels that changed design forever</div>
+            <div class="video-insight">The squircle wasn't an aesthetic choice. It was Jony Ive's attempt to eliminate the cognitive gap between the physical device in your hand and the digital object on its screen. The constraint was the need for total, seamless unity.</div>
+            <div class="video-views"><span class="view-dot"></span> 298K views</div>
+          </div>
+          <div class="video-card">
+            <div class="video-artifact">Artifact · Navigation Philosophy</div>
+            <div class="video-title">The One Feature Apple & Microsoft Refuse to Steal</div>
+            <div class="video-insight">The Dock and the Start Menu aren't competing UI patterns. They are two incompatible philosophies of who a person should be in relation to a machine. Neither can copy the other without betraying its original intent.</div>
+            <div class="video-views"><span class="view-dot"></span> 173K views</div>
+          </div>
+          <div class="video-card">
+            <div class="video-artifact">Artifact · Visual Texture</div>
+            <div class="video-title">Apple Design: how blur effect reshaped design forever</div>
+            <div class="video-insight">Frosted glass wasn't a style trend. It was a solution to a specific cognitive problem: how do you show that a panel is layered above content without using a hard boundary that breaks immersion? The blur is the answer to a constraint, not a decoration.</div>
+            <div class="video-views"><span class="view-dot"></span> 133K views</div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- 4. The Host -->
+      <section>
+        <div class="section-label">The Host</div>
+        <div class="section-title">A practitioner's perspective.</div>
+
+        <div class="prose">
+          <p>The analysis on this channel isn't academic. It comes from two decades of building, launching, and scaling real-world products — and from understanding, firsthand, how design decisions are made under commercial and technical pressure.</p>
+          <p>Ilia Werner is a product designer and entrepreneur based in London. He co-founded ZenClass, an edtech platform that reached a $3M valuation at exit. He directed DELO, a design studio that worked with major technology firms across Eastern Europe for six years. He has been recognized by the UK government as an Exceptional Talent in digital technology.</p>
+          <p>This background matters for one reason: it's the difference between analyzing a design decision from the outside and understanding why it was made from the inside. The channel's perspective is that of someone who has sat in the room where those decisions happen.</p>
+        </div>
+
+        <div class="cred-grid">
+          <div class="cred-card">
+            <div class="cred-number" style="background: linear-gradient(135deg, #7c3aed, #db2777); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">20</div>
+            <div class="cred-label">Years in digital product design</div>
+          </div>
+          <div class="cred-card">
+            <div class="cred-number" style="background: linear-gradient(135deg, #2dd4bf, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">$3M</div>
+            <div class="cred-label">EdTech company exit (ZenClass)</div>
+          </div>
+          <div class="cred-card">
+            <div class="cred-number" style="background: linear-gradient(135deg, #f97316, #db2777); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">6</div>
+            <div class="cred-label">Years running DELO design studio</div>
+          </div>
+          <div class="cred-card">
+            <div class="cred-number" style="background: linear-gradient(135deg, #db2777, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">UK</div>
+            <div class="cred-label">Exceptional Talent — Tech Nation</div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- 5. AI Transparency -->
+      <section>
+        <div class="section-label">Transparency</div>
+        <div class="section-title">How the content is made.</div>
+
+        <div class="prose" style="margin-bottom: 2rem;">
+          <p>Design Lovers uses modern AI tools as part of its production process. This is disclosed in every video description. The distinction between what is human and what is synthetic is important to us — and to the audience.</p>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 1rem;">Human</div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="font-size: 0.875rem; line-height: 1.6; color: var(--color-text);">Concept and narrative structure</div>
+              <div style="font-size: 0.875rem; line-height: 1.6; color: var(--color-text);">Design philosophy and analysis</div>
+              <div style="font-size: 0.875rem; line-height: 1.6; color: var(--color-text);">Verification of all research</div>
+              <div style="font-size: 0.875rem; line-height: 1.6; color: var(--color-text);">Editorial judgment and voice</div>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 1rem;">Synthetic</div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="font-size: 0.875rem; line-height: 1.6; color: var(--color-muted);">Avatar and voice (synthesized from real footage)</div>
+              <div style="font-size: 0.875rem; line-height: 1.6; color: var(--color-muted);">Supplemental illustrations and B-roll</div>
+              <div style="font-size: 0.875rem; line-height: 1.6; color: var(--color-muted);">Research acceleration and script polishing</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <!-- CTA -->
+      <section style="text-align:center; padding-top:3rem; padding-bottom:6rem;">
+        <div class="section-label" style="margin-bottom:1.5rem;">Ready to collaborate?</div>
+        <h2 style="font-family:var(--font-expanded); font-size:clamp(1.75rem,4vw,3rem); font-weight:800; margin-bottom:1rem; line-height:1.1;">Your brand, in stories people remember.</h2>
+        <p style="color:var(--color-muted); font-size:1rem; max-width:36rem; margin:0 auto 2.5rem; line-height:1.7;">Let's discuss how to integrate your product into content that a highly engaged design audience actually watches — and talks about.</p>
+        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+          <a href="mailto:hello@iliawerner.com" class="btn-primary" style="font-size:1rem; padding:0.75rem 2rem;">Send an Email</a>
+          <a href="https://wa.me/447944473843" target="_blank" class="btn-primary" style="font-size:1rem; padding:0.75rem 2rem; background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.12);">WhatsApp</a>
+          <a href="https://t.me/simplygreen" target="_blank" class="btn-primary" style="font-size:1rem; padding:0.75rem 2rem; background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.12);">Telegram</a>
+        </div>
+      </section>
+
+    </div><!-- /page -->
+
+    <footer>
+      <p>© 2025 Design Lovers. All rights reserved.</p>
+      <p style="margin-top:0.4rem;">All contract work is processed through a registered UK company: DELO STUDIO LTD.</p>
+    </footer>
+  </body>
+</html>

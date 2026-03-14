@@ -12,6 +12,10 @@
     {
       "source": "/analytics",
       "destination": "/analytics/index.html"
+    },
+    {
+      "source": "/behind",
+      "destination": "/behind/index.html"
     }
   ]
 }
