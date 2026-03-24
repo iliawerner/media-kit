@@ -2,6 +2,10 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/v2",
+      "destination": "/v2/index.html"
+    },
+    {
       "source": "/tools/RRPT",
       "destination": "/tools/RRPT/index.html"
     },
