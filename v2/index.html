@@ -10,8 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;800&family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css">
-  <link rel="stylesheet" href="/assets/index-CwFQNvRy.css">
-  <link rel="icon" href="/favicon.png" type="image/png">
 
   <style>
     :root {
@@ -20,20 +18,31 @@
       --font-main: 'Zalando Sans', sans-serif;
       --font-expanded: 'Zalando Sans Expanded', sans-serif;
       --font-brand: 'Abhaya Libre', serif;
-      --color-card: rgba(20, 20, 20, 0.7);
-      --color-card-border: rgba(255, 255, 0, 0.15);
-      --color-muted: #9ca3af;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
+    /* ─── GRAIN TEXTURE ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.55;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      mix-blend-mode: multiply;
+    }
+
     body {
-      background: #000;
-      color: #fff;
+      background: var(--yellow);
+      color: var(--black);
       font-family: var(--font-main);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      position: relative;
     }
 
     /* ─── HERO SECTION ─── */
@@ -65,29 +74,27 @@
     .header-pill {
       display: flex; align-items: center; justify-content: space-between;
       padding: 0.75rem 1.5rem; border-radius: 9999px;
-      background: rgba(0,0,0,0.55); backdrop-filter: blur(20px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 20px 60px rgba(0,0,0,0.15);
+      background: var(--black);
     }
     .header-logo {
       display: flex; align-items: center; gap: 0.75rem;
-      text-decoration: none; color: #fff;
+      text-decoration: none; color: var(--yellow);
     }
-    .header-logo-text h1 { font-size: 1.125rem; font-weight: 700; line-height: 1.2; color: #fff; }
-    .header-logo-text p { font-size: 0.75rem; color: var(--color-muted); }
+    .header-logo-text h1 { font-size: 1.125rem; font-weight: 700; line-height: 1.2; color: var(--yellow); }
+    .header-logo-text p { font-size: 0.75rem; color: rgba(255,255,0,0.5); }
     .header-nav { display: flex; align-items: center; gap: 0.25rem; margin-right: 0.5rem; }
     .nav-link {
-      color: #fff; text-decoration: none; font-size: 0.875rem;
+      color: rgba(255,255,0,0.6); text-decoration: none; font-size: 0.875rem;
       padding: 0.5rem 1rem; border-radius: 9999px; transition: color 0.2s, background 0.2s;
     }
-    .nav-link.muted { color: var(--color-muted); }
-    .nav-link.muted:hover { color: #fff; background: rgba(255,255,255,0.06); }
+    .nav-link:hover { color: var(--yellow); background: rgba(255,255,0,0.1); }
     .btn-primary {
-      background: #fff; color: #000; border: none;
+      background: var(--yellow); color: var(--black); border: none;
       padding: 0.5rem 1.25rem; border-radius: 9999px;
-      font-family: var(--font-main); font-size: 0.875rem; font-weight: 500;
-      cursor: pointer; text-decoration: none; transition: background 0.2s; white-space: nowrap;
+      font-family: var(--font-main); font-size: 0.875rem; font-weight: 700;
+      cursor: pointer; text-decoration: none; transition: opacity 0.2s; white-space: nowrap;
     }
-    .btn-primary:hover { background: #e5e5e5; }
+    .btn-primary:hover { opacity: 0.85; }
 
     /* ─── HERO TAGLINE OVERLAY ─── */
     .hero-tagline {
@@ -96,7 +103,6 @@
       left: 0;
       right: 0;
       padding: 2rem 2rem 2.5rem;
-      background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -108,122 +114,143 @@
       font-family: var(--font-expanded);
       font-size: clamp(18px, 3.5vw, 40px);
       font-weight: 700;
-      color: #fff;
+      color: var(--black);
       line-height: 1.15;
       max-width: 820px;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
     }
     .hero-tagline span {
       display: block;
       font-family: var(--font-main);
       font-size: clamp(13px, 1.5vw, 18px);
       font-weight: 400;
-      color: rgba(255,255,255,0.75);
+      color: rgba(0,0,0,0.6);
       margin-top: 0.75rem;
     }
 
     /* ─── CONTENT AREA ─── */
     .content-area {
-      background: #000;
+      background: transparent;
       position: relative;
       z-index: 1;
     }
 
+    /* ─── SECTION DIVIDER ─── */
+    .section-divider {
+      height: 2px;
+      background: var(--black);
+      opacity: 0.12;
+      margin: 0;
+    }
+
     /* ─── SECTION TITLES ─── */
     .section-title {
-      font-size: 1.25rem;
-      font-weight: 700;
+      font-size: clamp(1.25rem, 3vw, 2rem);
+      font-weight: 900;
       text-align: center;
       margin-bottom: 3rem;
-      color: #fff;
-      letter-spacing: 0.02em;
-    }
-    @media (min-width: 768px) {
-      .section-title { font-size: 1.5rem; }
+      color: var(--black);
+      letter-spacing: -0.02em;
+      font-family: var(--font-expanded);
     }
 
     /* ─── STAT CARDS ─── */
     .stat-card {
-      border: 1px solid var(--color-card-border);
-      border-radius: 16px;
-      padding: 32px 24px;
+      border-radius: 0;
+      padding: 40px 32px;
       text-align: center;
-      background: var(--color-card);
-      box-shadow: 0 0 30px rgba(255, 255, 0, 0.04);
-      transform-style: preserve-3d;
-      will-change: transform;
-      transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+      background: var(--black);
       position: relative;
       overflow: hidden;
     }
-    .stat-card:hover {
-      box-shadow: 0 0 40px rgba(255, 255, 0, 0.1);
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.08;
+      pointer-events: none;
+      mix-blend-mode: screen;
     }
-    @media (min-width: 768px) { .stat-card { padding: 48px 40px; } }
+    @media (min-width: 768px) { .stat-card { padding: 56px 48px; } }
 
     .stat-number {
       font-family: var(--font-expanded);
-      font-size: clamp(2.5rem, 5vw, 3.75rem);
-      font-weight: 700;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900;
       color: var(--yellow);
       margin-bottom: 0.75rem;
       line-height: 1;
     }
-    .stat-label { font-size: 1rem; color: #fff; margin-bottom: 0.5rem; }
-    .stat-sublabel { font-size: 0.875rem; color: var(--color-muted); }
+    .stat-label { font-size: 1rem; color: rgba(255,255,255,0.9); margin-bottom: 0.5rem; }
+    .stat-sublabel { font-size: 0.875rem; color: rgba(255,255,255,0.45); }
 
     /* ─── AUDIENCE CARDS ─── */
     .audience-card {
-      border: 1px solid var(--color-card-border);
-      border-radius: 16px;
-      padding: 32px 24px;
-      background: var(--color-card);
-      box-shadow: 0 0 30px rgba(255, 255, 0, 0.04);
-      transform-style: preserve-3d;
-      will-change: transform;
-      transition: transform 0.3s ease-out;
+      border-radius: 0;
+      padding: 40px 32px;
+      background: var(--black);
+      position: relative;
+      overflow: hidden;
     }
-    @media (min-width: 768px) { .audience-card { padding: 48px 40px; } }
+    .audience-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.08;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    @media (min-width: 768px) { .audience-card { padding: 56px 48px; } }
 
     .audience-card h4 {
       font-size: 1.25rem;
-      font-weight: 600;
-      color: #fff;
+      font-weight: 700;
+      color: var(--yellow);
       margin-bottom: 1.5rem;
+      font-family: var(--font-expanded);
+      letter-spacing: -0.01em;
     }
     @media (min-width: 768px) { .audience-card h4 { font-size: 1.5rem; } }
 
-    .check-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .check-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
     .check-list li {
-      display: flex; align-items: center;
-      font-size: 1rem; color: #d1d5db;
+      display: flex; align-items: flex-start;
+      font-size: 1rem; color: rgba(255,255,255,0.8);
     }
     @media (min-width: 768px) { .check-list li { font-size: 1.125rem; } }
-    .check-list li i { color: var(--yellow); margin-right: 0.75rem; flex-shrink: 0; }
+    .check-list li i {
+      color: var(--yellow);
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
 
     /* ─── GEOGRAPHY ─── */
     .geo-number {
       font-family: var(--font-expanded);
-      font-size: clamp(2.5rem, 6vw, 3.75rem);
+      font-size: clamp(3rem, 8vw, 5rem);
       font-weight: 900;
-      color: #fff;
+      color: var(--black);
       line-height: 1;
     }
     .geo-subtitle {
       display: flex; align-items: center; gap: 0.75rem;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
     }
     .geo-subtitle-line {
-      height: 2px; width: 3rem; border-radius: 9999px; background: rgba(255,255,255,0.3);
+      height: 3px; width: 3rem; background: var(--black); opacity: 0.3;
     }
     .geo-subtitle-text {
-      font-size: 1.25rem; color: var(--color-muted);
+      font-size: 1.25rem; color: rgba(0,0,0,0.55);
       font-family: var(--font-main);
     }
 
     .geo-bar-container {
-      width: 100%; height: 5rem; background: #080808;
-      border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);
+      width: 100%; height: 5rem;
+      background: rgba(0,0,0,0.12);
       display: flex; overflow: hidden; margin-top: 1.5rem;
     }
     @media (min-width: 768px) { .geo-bar-container { height: 10rem; } }
@@ -232,36 +259,34 @@
       height: 100%; transition: all 0.5s ease;
       cursor: pointer; position: relative;
     }
-    .geo-bar:hover { filter: brightness(1.4); }
+    .geo-bar:hover { filter: brightness(1.2); }
 
     .geo-rest {
       height: 100%; flex: 1;
-      background: #080808; border-left: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.08);
       display: flex; align-items: center; justify-content: center;
       position: relative; overflow: hidden;
     }
     .geo-rest-label {
       font-family: var(--font-main);
-      font-size: 0.75rem; color: #4b5563;
+      font-size: 0.75rem; color: rgba(0,0,0,0.35);
       text-transform: uppercase; letter-spacing: 0.15em;
-      opacity: 0.6;
     }
-    @media (min-width: 768px) { .geo-rest-label { font-size: 1.5rem; } }
+    @media (min-width: 768px) { .geo-rest-label { font-size: 1.25rem; } }
 
     .geo-legend {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 0.75rem 2rem; margin-top: 1.5rem;
-      padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 1rem;
     }
     @media (min-width: 768px) {
       .geo-legend { display: flex; flex-wrap: wrap; gap: 2rem; }
     }
     .geo-legend-item { display: flex; align-items: center; gap: 0.75rem; }
-    .geo-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .geo-legend-name { font-size: 0.875rem; color: #d1d5db; }
-    @media (min-width: 768px) { .geo-legend-name { font-size: 1.125rem; } }
-    .geo-legend-pct { font-size: 0.75rem; color: var(--color-muted); }
-    @media (min-width: 768px) { .geo-legend-pct { font-size: 0.875rem; } }
+    .geo-dot { width: 10px; height: 10px; flex-shrink: 0; }
+    .geo-legend-name { font-size: 0.875rem; color: rgba(0,0,0,0.75); font-weight: 600; }
+    @media (min-width: 768px) { .geo-legend-name { font-size: 1rem; } }
+    .geo-legend-pct { font-size: 0.75rem; color: rgba(0,0,0,0.45); }
 
     /* ─── TRUSTED BRANDS MARQUEE ─── */
     @keyframes brands-marquee {
@@ -271,8 +296,6 @@
     .animate-brands-marquee {
       animation: brands-marquee 30s linear infinite;
       will-change: transform;
-      backface-visibility: hidden;
-      transform: translate3d(0,0,0);
     }
     .trusted-brands-container:hover .animate-brands-marquee {
       animation-play-state: paused;
@@ -280,136 +303,201 @@
 
     /* ─── PACKAGE CARDS ─── */
     .package-card {
-      border: 1px solid var(--color-card-border);
-      border-radius: 20px;
-      padding: 32px 24px;
+      border-radius: 0;
+      padding: 40px 32px;
       min-height: 350px;
-      background: var(--color-card);
-      box-shadow: 0 0 30px rgba(255, 255, 0, 0.04);
+      background: var(--black);
       position: relative;
-      transform-style: preserve-3d;
-      will-change: transform;
-      transition: transform 0.3s ease-out, opacity 0.8s ease-out, box-shadow 0.3s;
+      overflow: hidden;
       opacity: 0;
       transform: translateY(40px);
+      transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+    }
+    .package-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.08;
+      pointer-events: none;
+      mix-blend-mode: screen;
     }
     .package-card.visible {
       opacity: 1;
       transform: translateY(0);
     }
-    .package-card:hover {
-      box-shadow: 0 0 50px rgba(255, 255, 0, 0.1);
-    }
-    @media (min-width: 768px) { .package-card { padding: 48px 40px; min-height: 400px; } }
+    @media (min-width: 768px) { .package-card { padding: 56px 48px; } }
 
-    .package-title { font-size: 1.25rem; font-weight: 600; color: #fff; margin-bottom: 0.75rem; }
-    @media (min-width: 768px) { .package-title { font-size: 1.5rem; } }
+    .package-title {
+      font-size: 1.125rem; font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-family: var(--font-main);
+    }
     .package-price {
       font-family: var(--font-expanded);
       font-size: clamp(2.5rem, 5vw, 3.75rem);
-      font-weight: 700;
+      font-weight: 900;
       color: var(--yellow);
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      line-height: 1;
     }
-    .package-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
-    .package-list li { display: flex; align-items: flex-start; font-size: 1rem; color: #d1d5db; }
-    @media (min-width: 768px) { .package-list li { font-size: 1.125rem; } }
-    .package-list li i { color: var(--yellow); margin-right: 0.75rem; margin-top: 0.2rem; flex-shrink: 0; }
+    .package-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .package-list li {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      font-size: 1rem; color: rgba(255,255,255,0.75);
+    }
+    .package-list li i { color: var(--yellow); flex-shrink: 0; margin-top: 2px; }
+
+    /* ─── CTA BUTTONS ─── */
+    .cta-btn-primary {
+      display: inline-flex; align-items: center;
+      background: var(--black); color: var(--yellow);
+      padding: 1rem 2rem; border-radius: 9999px;
+      font-family: var(--font-main); font-size: 1rem; font-weight: 700;
+      text-decoration: none; transition: opacity 0.2s;
+    }
+    .cta-btn-primary:hover { opacity: 0.8; }
+    .cta-btn-secondary {
+      display: inline-flex; align-items: center;
+      background: transparent; color: var(--black);
+      padding: 1rem 2rem; border-radius: 9999px;
+      font-family: var(--font-main); font-size: 1rem; font-weight: 600;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .cta-btn-secondary:hover { background: rgba(0,0,0,0.08); }
 
     /* ─── TESTIMONIALS ─── */
-    @keyframes marquee {
+    @keyframes testimonials-marquee {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
-    .animate-marquee {
-      animation: marquee 30s linear infinite;
+    .animate-testimonials-marquee {
+      animation: testimonials-marquee 60s linear infinite;
       will-change: transform;
-      backface-visibility: hidden;
-      transform: translate3d(0,0,0);
     }
-    .testimonials-container:hover .animate-marquee {
+    .testimonials-container:hover .animate-testimonials-marquee {
       animation-play-state: paused;
     }
-
     .testimonial-card {
-      width: 280px;
-      border: 1px solid var(--color-card-border);
-      border-radius: 16px;
-      padding: 20px;
-      background: var(--color-card);
-      box-shadow: 0 0 20px rgba(255, 255, 0, 0.03);
+      background: var(--black);
+      padding: 1.5rem 2rem;
+      width: 320px;
       flex-shrink: 0;
+      margin: 0 0.75rem;
+      position: relative;
+      overflow: hidden;
     }
-    @media (min-width: 768px) { .testimonial-card { width: 320px; padding: 24px; } }
-
-    /* ─── CTA SECTION ─── */
-    .cta-btn-primary {
-      display: inline-flex; align-items: center; justify-content: center;
-      background: var(--yellow); color: #000;
-      padding: 0.75rem 2rem; border-radius: 9999px;
-      font-weight: 600; font-size: 0.875rem; text-decoration: none;
-      transition: background 0.2s, transform 0.2s; white-space: nowrap;
+    .testimonial-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.08;
+      pointer-events: none;
+      mix-blend-mode: screen;
     }
-    .cta-btn-primary:hover { background: #e5e500; transform: translateY(-1px); }
-    @media (min-width: 768px) { .cta-btn-primary { font-size: 1rem; } }
+    .testimonial-handle { font-size: 0.875rem; font-weight: 700; color: var(--yellow); margin-bottom: 0.25rem; }
+    .testimonial-date { font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-bottom: 1rem; }
+    .testimonial-text { font-size: 0.9375rem; color: rgba(255,255,255,0.8); line-height: 1.55; }
 
-    .cta-btn-secondary {
-      display: inline-flex; align-items: center; justify-content: center;
-      background: rgba(255,255,255,0.06); color: #fff;
-      padding: 0.75rem 2rem; border-radius: 9999px;
-      font-weight: 500; font-size: 0.875rem; text-decoration: none;
-      border: 1px solid rgba(255,255,255,0.12);
-      transition: background 0.2s; white-space: nowrap;
-    }
-    .cta-btn-secondary:hover { background: rgba(255,255,255,0.1); }
-    @media (min-width: 768px) { .cta-btn-secondary { font-size: 1rem; } }
-
-    /* ─── SECTION DIVIDER ─── */
-    .section-divider {
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(255,255,0,0.15), transparent);
-      margin: 0;
+    /* ─── PROOF NUMBERS (big yellow on yellow bg) ─── */
+    .proof-number {
+      font-family: var(--font-expanded);
+      font-size: clamp(3rem, 7vw, 5rem);
+      font-weight: 900;
+      color: var(--black);
+      line-height: 1;
     }
 
     /* ─── FOOTER ─── */
-    .footer {
-      padding: 2rem 1.5rem;
+    footer {
+      background: var(--black);
+      color: rgba(255,255,255,0.4);
       text-align: center;
-      color: var(--color-muted);
+      padding: 2rem 1.5rem;
       font-size: 0.875rem;
-      border-top: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      z-index: 1;
+    }
+    footer a { color: var(--yellow); text-decoration: none; }
+    footer a:hover { opacity: 0.7; }
+
+    /* ─── SECTION SPACING ─── */
+    .section { padding: 6rem 1.5rem; position: relative; z-index: 1; }
+    .section-inner { max-width: 72rem; margin: 0 auto; }
+
+    /* ─── KINETIC ECHO ─── */
+    /* Subtle distorted letter used as decorative element in sections */
+    .kinetic-echo {
+      font-family: var(--font-brand);
+      font-weight: 800;
+      color: rgba(0,0,0,0.06);
+      font-size: clamp(8rem, 20vw, 18rem);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.05em;
+      position: absolute;
     }
 
-    /* ─── AMBIENT GLOW ─── */
-    .ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-    .ambient-top {
-      position: absolute; top: -10%; left: -10%;
-      width: 50%; height: 50%;
-      background: rgba(255,255,0,0.04);
-      filter: blur(120px); border-radius: 50%;
+    /* ─── STATS HERO ROW ─── */
+    .stats-hero-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2px;
     }
-    .ambient-bottom {
-      position: absolute; bottom: -10%; right: -10%;
-      width: 50%; height: 50%;
-      background: rgba(255,200,0,0.03);
-      filter: blur(120px); border-radius: 50%;
+    @media (min-width: 640px) {
+      .stats-hero-row { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* ─── AUDIENCE GRID ─── */
+    .audience-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+    @media (min-width: 768px) {
+      .audience-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ─── PACKAGES GRID ─── */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+    @media (min-width: 640px) {
+      .packages-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ─── PROOF GRID ─── */
+    .proof-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+    @media (min-width: 640px) {
+      .proof-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* ─── RESPONSIVE NAV ─── */
+    @media (max-width: 640px) {
+      .header-nav { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- Ambient glow -->
-<div class="ambient">
-  <div class="ambient-top"></div>
-  <div class="ambient-bottom"></div>
-</div>
-
 <!-- ═══════════════════════════════════════════
-     HERO — Yellow background + WebGL effect
+     HERO
 ════════════════════════════════════════════ -->
 <section id="hero">
-
-  <!-- Header (absolute, floats over hero) -->
+  <!-- Header -->
   <div class="header-wrap">
     <div class="header-inner">
       <div class="header-pill">
@@ -419,14 +507,12 @@
             <p>Media Kit</p>
           </div>
         </a>
-        <div style="display:flex; align-items:center; gap:0.25rem;">
-          <nav class="header-nav">
-            <a href="/v2" class="nav-link">Overview</a>
-            <a href="/analytics" class="nav-link muted">Analytics</a>
-            <a href="/behind" class="nav-link muted">What's Behind</a>
-          </nav>
-          <button class="btn-primary" id="view-packages-btn">View Packages</button>
-        </div>
+        <nav class="header-nav">
+          <a href="#overview" class="nav-link">Overview</a>
+          <a href="#analytics" class="nav-link">Analytics</a>
+          <a href="/behind" class="nav-link">What's Behind</a>
+        </nav>
+        <button class="btn-primary" id="view-packages-btn">View Packages</button>
       </div>
     </div>
   </div>
@@ -434,49 +520,44 @@
   <!-- WebGL canvas -->
   <div id="canvas-container"></div>
 
-  <!-- Tagline overlay at bottom of hero -->
+  <!-- Tagline overlay -->
   <div class="hero-tagline">
-    <p>Documentary-style essays for&nbsp;a&nbsp;high-value design audience</p>
-    <span>We integrate your product into stories our audience actually watches — and&nbsp;remembers.</span>
+    <p>Documentary-style essays<br>for a high-value design audience</p>
+    <span>We integrate your product into stories our audience actually watches — and remembers.</span>
   </div>
-
 </section>
 
 <!-- ═══════════════════════════════════════════
-     CONTENT AREA (dark background)
+     CONTENT
 ════════════════════════════════════════════ -->
-<div class="content-area" style="position:relative; z-index:1;">
+<div class="content-area">
 
-  <!-- Stats -->
-  <section style="padding: 5rem 1.5rem;">
-    <div style="max-width:72rem; margin:0 auto;">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.5rem 2rem;">
-        <div class="stat-card">
-          <div class="stat-number" data-counter data-target="70" data-suffix="%" data-decimals="0">0%</div>
-          <div class="stat-label">viewers retained at 30 seconds</div>
-          <div class="stat-sublabel">top-tier engagement for YouTube</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" data-counter data-target="45" data-suffix="%" data-decimals="0">0%</div>
-          <div class="stat-label">average watch rate on 12-minute videos</div>
-          <div class="stat-sublabel">above industry average</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" data-counter data-target="43" data-suffix="%" data-decimals="0">0%</div>
-          <div class="stat-label">returning viewers</div>
-          <div class="stat-sublabel">high audience loyalty</div>
-        </div>
+  <!-- Stats row -->
+  <div id="overview">
+    <div class="stats-hero-row">
+      <div class="stat-card">
+        <div class="stat-number" data-counter data-target="70" data-suffix="%" data-decimals="0" data-prefix="">0%</div>
+        <div class="stat-label">viewers retained at 30 seconds</div>
+        <div class="stat-sublabel">top-tier engagement for YouTube</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" data-counter data-target="45" data-suffix="%" data-decimals="0" data-prefix="">0%</div>
+        <div class="stat-label">average watch rate on 12-minute videos</div>
+        <div class="stat-sublabel">above industry average</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" data-counter data-target="43" data-suffix="%" data-decimals="0" data-prefix="">0%</div>
+        <div class="stat-label">returning viewers</div>
+        <div class="stat-sublabel">high audience loyalty</div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <div class="section-divider"></div>
-
-  <!-- Audience -->
-  <section style="padding: 5rem 1.5rem;">
-    <div style="max-width:72rem; margin:0 auto;">
+  <!-- The Audience -->
+  <section class="section" style="overflow:hidden;">
+    <div class="section-inner">
       <h3 class="section-title">The Audience</h3>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem 2rem; margin-bottom:3rem;">
+      <div class="audience-grid">
         <div class="audience-card">
           <h4>Who They Are</h4>
           <ul class="check-list">
@@ -488,66 +569,70 @@
         <div class="audience-card">
           <h4>Channel Profile</h4>
           <ul class="check-list">
-            <li><i class="ri-play-circle-line"></i><span>Documentary-style, essay-driven videos</span></li>
-            <li><i class="ri-seedling-line"></i><span>100% organic traffic</span></li>
-            <li><i class="ri-thumb-up-line"></i><span>90%+ from YouTube recommendations</span></li>
+            <li><i class="ri-check-line"></i><span>Documentary-style, essay-driven videos</span></li>
+            <li><i class="ri-check-line"></i><span>100% organic traffic</span></li>
+            <li><i class="ri-check-line"></i><span>90%+ from YouTube recommendations</span></li>
           </ul>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- Geography -->
-      <div>
-        <h4 style="font-size:1.25rem; font-weight:600; color:#fff; margin-bottom:1.5rem;">Audience Geography</h4>
-        <div class="geo-number">55%</div>
-        <div class="geo-subtitle">
-          <div class="geo-subtitle-line"></div>
-          <span class="geo-subtitle-text">Tier-1 Aggregate</span>
+  <div class="section-divider"></div>
+
+  <!-- Geography -->
+  <section class="section" id="analytics" style="overflow:hidden; position:relative;">
+    <div class="kinetic-echo" style="right:-2rem; top:50%; transform:translateY(-50%);">55</div>
+    <div class="section-inner" style="position:relative; z-index:2;">
+      <div class="geo-number">55%</div>
+      <div class="geo-subtitle">
+        <div class="geo-subtitle-line"></div>
+        <span class="geo-subtitle-text">Tier-1 Aggregate</span>
+      </div>
+      <div class="geo-bar-container">
+        <div class="geo-bar" style="width:19.6%; background:#1a1a1a;"></div>
+        <div class="geo-bar" style="width:8.4%; background:#333;"></div>
+        <div class="geo-bar" style="width:5.6%; background:#222;"></div>
+        <div class="geo-bar" style="width:2.3%; background:#444;"></div>
+        <div class="geo-bar" style="width:19.1%; background:#2a2a2a;"></div>
+        <div class="geo-rest">
+          <span class="geo-rest-label">Rest of World</span>
         </div>
-        <div class="geo-bar-container">
-          <div class="geo-bar" style="width:19.6%; background:#7c3aed;"></div>
-          <div class="geo-bar" style="width:8.4%; background:#f97316;"></div>
-          <div class="geo-bar" style="width:5.6%; background:#db2777;"></div>
-          <div class="geo-bar" style="width:2.3%; background:#2dd4bf;"></div>
-          <div class="geo-bar" style="width:19.1%; background:#cbd5e1;"></div>
-          <div class="geo-rest">
-            <span class="geo-rest-label">Rest of World</span>
+      </div>
+      <div class="geo-legend">
+        <div class="geo-legend-item">
+          <div class="geo-dot" style="background:#1a1a1a;"></div>
+          <div>
+            <div class="geo-legend-name">United States</div>
+            <div class="geo-legend-pct">19.6%</div>
           </div>
         </div>
-        <div class="geo-legend">
-          <div class="geo-legend-item">
-            <div class="geo-dot" style="background:#7c3aed; box-shadow:0 0 8px rgba(124,58,237,0.8);"></div>
-            <div>
-              <div class="geo-legend-name">United States</div>
-              <div class="geo-legend-pct">19.6%</div>
-            </div>
+        <div class="geo-legend-item">
+          <div class="geo-dot" style="background:#333;"></div>
+          <div>
+            <div class="geo-legend-name">Germany</div>
+            <div class="geo-legend-pct">8.4%</div>
           </div>
-          <div class="geo-legend-item">
-            <div class="geo-dot" style="background:#f97316; box-shadow:0 0 8px rgba(249,115,22,0.8);"></div>
-            <div>
-              <div class="geo-legend-name">Germany</div>
-              <div class="geo-legend-pct">8.4%</div>
-            </div>
+        </div>
+        <div class="geo-legend-item">
+          <div class="geo-dot" style="background:#222;"></div>
+          <div>
+            <div class="geo-legend-name">United Kingdom</div>
+            <div class="geo-legend-pct">5.6%</div>
           </div>
-          <div class="geo-legend-item">
-            <div class="geo-dot" style="background:#db2777; box-shadow:0 0 8px rgba(219,39,119,0.8);"></div>
-            <div>
-              <div class="geo-legend-name">United Kingdom</div>
-              <div class="geo-legend-pct">5.6%</div>
-            </div>
+        </div>
+        <div class="geo-legend-item">
+          <div class="geo-dot" style="background:#444;"></div>
+          <div>
+            <div class="geo-legend-name">JP / KR / SG</div>
+            <div class="geo-legend-pct">2.3%</div>
           </div>
-          <div class="geo-legend-item">
-            <div class="geo-dot" style="background:#2dd4bf; box-shadow:0 0 8px rgba(45,212,191,0.8);"></div>
-            <div>
-              <div class="geo-legend-name">JP / KR / SG</div>
-              <div class="geo-legend-pct">2.3%</div>
-            </div>
-          </div>
-          <div class="geo-legend-item">
-            <div class="geo-dot" style="background:#cbd5e1; box-shadow:0 0 8px rgba(203,213,225,0.6);"></div>
-            <div>
-              <div class="geo-legend-name">Other Tier-1</div>
-              <div class="geo-legend-pct">19.1%</div>
-            </div>
+        </div>
+        <div class="geo-legend-item">
+          <div class="geo-dot" style="background:#2a2a2a;"></div>
+          <div>
+            <div class="geo-legend-name">Other Tier-1</div>
+            <div class="geo-legend-pct">19.1%</div>
           </div>
         </div>
       </div>
@@ -557,10 +642,11 @@
   <div class="section-divider"></div>
 
   <!-- Proof & Growth -->
-  <section style="padding: 5rem 1.5rem;">
-    <div style="max-width:72rem; margin:0 auto;">
+  <section class="section" style="overflow:hidden; position:relative;">
+    <div class="kinetic-echo" style="left:-1rem; bottom:-2rem;">362</div>
+    <div class="section-inner" style="position:relative; z-index:2;">
       <h3 class="section-title">Proof &amp; Growth</h3>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.5rem 2rem;">
+      <div class="proof-grid">
         <div class="stat-card">
           <div class="stat-number" data-counter data-target="362.2" data-suffix="K" data-decimals="1" data-prefix="">0.0K</div>
           <div class="stat-label">Monthly Viewers</div>
@@ -580,30 +666,29 @@
   <div class="section-divider"></div>
 
   <!-- Trusted By -->
-  <section style="padding: 5rem 0; overflow:hidden;">
+  <section class="section" style="overflow:hidden; padding-left:0; padding-right:0;">
     <div style="max-width:72rem; margin:0 auto; padding:0 1.5rem;">
       <h3 class="section-title">Trusted By</h3>
     </div>
     <div class="trusted-brands-container" style="position:relative;">
       <div class="flex animate-brands-marquee" style="display:flex;">
         <div style="display:flex; align-items:center; flex-shrink:0;">
-          <img alt="Lovart"   class="h-[120px] object-contain opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300 cursor-pointer flex-shrink-0 mx-6 md:mx-8" src="/images/8950e9228605aaed250228222de885e4.png" style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;">
-          <img alt="Recraft"  style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/7aa5f45827e9d771b62e542dc17ef31b.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Readdy"   style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/91bbd11ebb04184a62616221fb90fcf4.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Opera"    style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/5de2937824e8b3ed0a3c7193ce5650dd.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Ugreen"   style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/772cd0997fdd900fad6a5ee9f2c920fa.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Partner 5" style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/565de257a6bb4b0d2b4da5313832ccb6.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Partner 6" style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/456374c6e38d9349d3c04109ac7068b3.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
+          <img alt="Lovart"    style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/8950e9228605aaed250228222de885e4.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Recraft"   style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/7aa5f45827e9d771b62e542dc17ef31b.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Readdy"    style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/91bbd11ebb04184a62616221fb90fcf4.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Opera"     style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/5de2937824e8b3ed0a3c7193ce5650dd.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Ugreen"    style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/772cd0997fdd900fad6a5ee9f2c920fa.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Partner 5" style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/565de257a6bb4b0d2b4da5313832ccb6.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Partner 6" style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/456374c6e38d9349d3c04109ac7068b3.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
         </div>
-        <!-- Duplicate for seamless loop -->
         <div style="display:flex; align-items:center; flex-shrink:0;">
-          <img alt="Lovart"   style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/8950e9228605aaed250228222de885e4.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Recraft"  style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/7aa5f45827e9d771b62e542dc17ef31b.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Readdy"   style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/91bbd11ebb04184a62616221fb90fcf4.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Opera"    style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/5de2937824e8b3ed0a3c7193ce5650dd.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Ugreen"   style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/772cd0997fdd900fad6a5ee9f2c920fa.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Partner 5" style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/565de257a6bb4b0d2b4da5313832ccb6.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
-          <img alt="Partner 6" style="height:80px; object-fit:contain; opacity:0.3; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2rem;" src="/images/456374c6e38d9349d3c04109ac7068b3.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(0)'" onmouseout="this.style.opacity='0.3';this.style.filter='grayscale(1)'">
+          <img alt="Lovart"    style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/8950e9228605aaed250228222de885e4.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Recraft"   style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/7aa5f45827e9d771b62e542dc17ef31b.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Readdy"    style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/91bbd11ebb04184a62616221fb90fcf4.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Opera"     style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/5de2937824e8b3ed0a3c7193ce5650dd.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Ugreen"    style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/772cd0997fdd900fad6a5ee9f2c920fa.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Partner 5" style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/565de257a6bb4b0d2b4da5313832ccb6.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
+          <img alt="Partner 6" style="height:64px; object-fit:contain; opacity:0.5; filter:grayscale(1); transition:all 0.3s; cursor:pointer; flex-shrink:0; margin:0 2.5rem;" src="/images/456374c6e38d9349d3c04109ac7068b3.png" onmouseover="this.style.opacity='1';this.style.filter='grayscale(1)'" onmouseout="this.style.opacity='0.5';this.style.filter='grayscale(1)'">
         </div>
       </div>
     </div>
@@ -612,11 +697,11 @@
   <div class="section-divider"></div>
 
   <!-- Packages & Rates -->
-  <section id="packages-section" style="padding: 5rem 1.5rem;">
-    <div style="max-width:72rem; margin:0 auto;">
+  <section class="section" id="packages-section" style="overflow:hidden;">
+    <div class="section-inner">
       <h3 id="packages" class="section-title">Packages &amp; Rates</h3>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem 2rem;">
-        <div class="package-card" style="animation-delay:0.1s;">
+      <div class="packages-grid">
+        <div class="package-card" style="transition-delay:0.1s;">
           <div class="package-title">Mid-roll integration</div>
           <div class="package-price">$2,000</div>
           <ul class="package-list">
@@ -626,7 +711,7 @@
             <li><i class="ri-check-line"></i><span>Performance snapshot after 30 days</span></li>
           </ul>
         </div>
-        <div class="package-card" style="animation-delay:0.3s;">
+        <div class="package-card" style="transition-delay:0.25s;">
           <div class="package-title">Narrative series</div>
           <div class="package-price">$20,000</div>
           <ul class="package-list">
@@ -637,17 +722,18 @@
           </ul>
         </div>
       </div>
-      <p style="text-align:center; margin-top:2rem; font-size:0.875rem; color:var(--color-muted);">Rates valid until Q4 2025 — secure your rate now.</p>
+      <p style="text-align:center; margin-top:2.5rem; font-size:0.875rem; color:rgba(0,0,0,0.45); font-weight:500;">Rates valid until Q4 2025 — secure your rate now.</p>
     </div>
   </section>
 
   <div class="section-divider"></div>
 
   <!-- CTA -->
-  <section style="padding: 5rem 1.5rem;">
-    <div style="max-width:48rem; margin:0 auto; text-align:center;">
-      <h3 style="font-size:1.25rem; font-weight:700; margin-bottom:1rem;">Ready to collaborate?</h3>
-      <p style="font-size:1rem; color:#d1d5db; margin-bottom:3rem; padding:0 1rem;">Let's discuss how we can feature your product in front of a highly engaged design audience.</p>
+  <section class="section" style="overflow:hidden; position:relative;">
+    <div class="kinetic-echo" style="left:50%; transform:translateX(-50%); top:50%; margin-top:-4rem; opacity:0.04; white-space:nowrap;">DL</div>
+    <div class="section-inner" style="text-align:center; position:relative; z-index:2;">
+      <h3 style="font-size:clamp(1.5rem, 4vw, 2.5rem); font-weight:900; margin-bottom:1rem; font-family:var(--font-expanded); letter-spacing:-0.02em; color:var(--black);">Ready to collaborate?</h3>
+      <p style="font-size:1rem; color:rgba(0,0,0,0.55); margin-bottom:3rem; padding:0 1rem; max-width:560px; margin-left:auto; margin-right:auto; margin-bottom:3rem;">Let's discuss how we can feature your product in front of a highly engaged design audience.</p>
       <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:1rem;">
         <a href="mailto:hello@iliawerner.com" class="cta-btn-primary">
           <i class="ri-mail-line" style="margin-right:0.5rem;"></i>Send an Email
@@ -655,7 +741,7 @@
         <a href="https://wa.me/447944473843" target="_blank" rel="noopener noreferrer" class="cta-btn-secondary">
           <i class="ri-whatsapp-line" style="margin-right:0.5rem;"></i>WhatsApp
         </a>
-        <a href="https://t.me/simplygreen" target="_blank" rel="noopener noreferrer" class="cta-btn-secondary">
+        <a href="https://t.me/iliawerner" target="_blank" rel="noopener noreferrer" class="cta-btn-secondary">
           <i class="ri-telegram-line" style="margin-right:0.5rem;"></i>Telegram
         </a>
       </div>
@@ -665,237 +751,151 @@
   <div class="section-divider"></div>
 
   <!-- Testimonials -->
-  <section style="padding: 5rem 0; overflow:hidden;">
+  <section class="section" style="overflow:hidden; padding-left:0; padding-right:0;">
     <div style="max-width:72rem; margin:0 auto; padding:0 1.5rem;">
       <h3 class="section-title">What Viewers Say</h3>
     </div>
     <div class="testimonials-container" style="position:relative;">
-      <div style="display:flex;" class="animate-marquee">
-        <div style="display:flex; flex-shrink:0;">
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">sashamoroz8711</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">October 12, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">This channel is so goated, don't stop man, keep going.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">Astrotase</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">October 12, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">I love how you explain complex design concepts in such an accessible way.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">designfan_pro</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">September 28, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">Every video feels like a documentary. The depth of research is incredible.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">ux_practitioner</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">September 15, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">Finally a design channel that treats its audience as intelligent adults.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">creative_director_k</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">August 30, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">Shared this with my whole team. Required viewing for anyone in product design.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">product_thinker</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">August 12, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">The storytelling approach makes even technical topics completely engaging.</p>
-          </div>
+      <div class="animate-testimonials-marquee" style="display:flex;">
+        <!-- Row 1 -->
+        <div class="testimonial-card">
+          <div class="testimonial-handle">sashamoroz8711</div>
+          <div class="testimonial-date">October 12, 2025</div>
+          <div class="testimonial-text">This channel is so goated, don't stop man, keep going.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">Astrotase</div>
+          <div class="testimonial-date">October 12, 2025</div>
+          <div class="testimonial-text">I love how you explain complex design concepts in such an accessible way.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">designfan_pro</div>
+          <div class="testimonial-date">September 28, 2025</div>
+          <div class="testimonial-text">Every video feels like a documentary. The depth of research is incredible.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">ux_practitioner</div>
+          <div class="testimonial-date">September 15, 2025</div>
+          <div class="testimonial-text">Finally a design channel that treats its audience as intelligent adults.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">creative_director_k</div>
+          <div class="testimonial-date">August 30, 2025</div>
+          <div class="testimonial-text">Shared this with my whole team. Required viewing for anyone in product design.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">product_thinker</div>
+          <div class="testimonial-date">August 12, 2025</div>
+          <div class="testimonial-text">The storytelling approach makes even technical topics completely engaging.</div>
         </div>
         <!-- Duplicate for seamless loop -->
-        <div style="display:flex; flex-shrink:0;">
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">sashamoroz8711</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">October 12, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">This channel is so goated, don't stop man, keep going.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">Astrotase</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">October 12, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">I love how you explain complex design concepts in such an accessible way.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">designfan_pro</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">September 28, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">Every video feels like a documentary. The depth of research is incredible.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">ux_practitioner</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">September 15, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">Finally a design channel that treats its audience as intelligent adults.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">creative_director_k</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">August 30, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">Shared this with my whole team. Required viewing for anyone in product design.</p>
-          </div>
-          <div class="testimonial-card" style="margin:0 0.75rem;">
-            <div style="margin-bottom:0.75rem;">
-              <div style="color:#fff; font-weight:500; font-size:0.875rem;">product_thinker</div>
-              <div style="color:var(--color-muted); font-size:0.75rem;">August 12, 2025</div>
-            </div>
-            <p style="color:#d1d5db; font-size:0.875rem; line-height:1.6;">The storytelling approach makes even technical topics completely engaging.</p>
-          </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">sashamoroz8711</div>
+          <div class="testimonial-date">October 12, 2025</div>
+          <div class="testimonial-text">This channel is so goated, don't stop man, keep going.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">Astrotase</div>
+          <div class="testimonial-date">October 12, 2025</div>
+          <div class="testimonial-text">I love how you explain complex design concepts in such an accessible way.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">designfan_pro</div>
+          <div class="testimonial-date">September 28, 2025</div>
+          <div class="testimonial-text">Every video feels like a documentary. The depth of research is incredible.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">ux_practitioner</div>
+          <div class="testimonial-date">September 15, 2025</div>
+          <div class="testimonial-text">Finally a design channel that treats its audience as intelligent adults.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">creative_director_k</div>
+          <div class="testimonial-date">August 30, 2025</div>
+          <div class="testimonial-text">Shared this with my whole team. Required viewing for anyone in product design.</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-handle">product_thinker</div>
+          <div class="testimonial-date">August 12, 2025</div>
+          <div class="testimonial-text">The storytelling approach makes even technical topics completely engaging.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>© 2025 Design Lovers · <a href="mailto:hello@iliawerner.com" style="color:var(--color-muted); text-decoration:none;">hello@iliawerner.com</a></p>
-  </footer>
+</div><!-- /content-area -->
 
-</div><!-- end content-area -->
+<!-- Footer -->
+<footer>
+  <p>© 2025 Design Lovers · <a href="mailto:hello@iliawerner.com">hello@iliawerner.com</a></p>
+</footer>
 
 <!-- ═══════════════════════════════════════════
-     THREE.JS + WEBGL EFFECT (no controls)
-     Parameters: speed=0.5, easing=4, blur=0.06
+     THREE.JS WEBGL EFFECT
 ════════════════════════════════════════════ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function() {
   'use strict';
 
-  // ── Fixed parameters (controls removed) ──
-  var SPEED = 0.5;
-  var INFLU = 4;
+  var TEXT   = 'DESIGN LOVERS';
+  var SPEED  = 0.5;
+  var INFLU  = 4;
   var MAX_BLUR = 0.06;
-  var TEXT = 'DESIGN LOVERS';
-
-  // ── Math helpers ──
-  var random = function(min, max) { return Math.random() * (max - min) + min; };
-  var mapRange = function(n, s1, e1, s2, e2) { return ((n - s1) / (e1 - s1)) * (e2 - s2) + s2; };
-
-  function aSet(ticker, influ) {
-    var cap = ticker % 1;
-    var num = Math.pow(cap, influ);
-    var den = num + Math.pow(1 - cap, influ);
-    return num / den;
-  }
 
   // ── KineticLetter class ──
-  function KineticLetter(x, index, totalLetters, text, fontSize) {
-    this.x0 = x;
-    this.y0 = 0;
-    this.n = index;
-    this.text = text;
+  function KineticLetter(x, idx, total, text, fontSize) {
+    this.baseX = x;
+    this.idx = idx;
+    this.total = total;
     this.fontSize = fontSize;
-
-    this.yA = 0; this.yAmax = 0;
-    this.xA = 0; this.xAmax = 0;
-
-    this.xScale = 1;
-    this.xScaleMax = random(1.5, 4);
-    this.xScaleMaxB = random(0.6, 1.4);
-
-    this.xShear = 0;
-    this.xShearMax = random(-Math.PI / 3, Math.PI / 3);
-    this.xShearMaxB = 0;
-
-    if (random(0, 100) < 100 * (1 / totalLetters)) {
-      this.xShearMaxB = random(-Math.PI / 4, Math.PI / 4);
-    }
-
-    this.delay = index * 3;
-    this.anim01 = 30;
-    this.anim12 = this.anim01 + 30;
-    this.anim23 = this.anim12 + 30;
-
-    this.xBudgeScale = 0;
-    this.xBudgePre = 0;
-    this.xBudgePost = 0;
-    this.xTrack = 0;
-    this.visible = false;
+    this.char = text[idx];
+    this.y = 0;
+    this.vy = 0;
+    this.rotation = 0;
+    this.vr = 0;
+    this.scaleX = 1;
+    this.scaleY = 1;
+    this.phase = idx * 0.7;
   }
 
-  KineticLetter.prototype.update = function(globalFrame, influ) {
-    var localTicker = globalFrame - this.delay;
-    if (localTicker < 0) { this.visible = false; return; }
-    this.visible = true;
-
-    if (localTicker < this.anim01) {
-      var t0 = mapRange(localTicker, 0, this.anim01, 0.5, 1);
-      var t1 = aSet(t0, influ);
-      this.xA = mapRange(t1, 0.5, 1, this.xAmax, 0);
-      this.yA = mapRange(t1, 0.5, 1, this.yAmax, 0);
-      this.xScale = mapRange(t1, 0.5, 1, this.xScaleMax, 1);
-      this.xShear = mapRange(t1, 0.5, 1, this.xShearMax, 0);
-      this.xBudgeScale = 0; this.xBudgePre = 0; this.xBudgePost = 0;
-    } else if (localTicker < this.anim12) {
-      var t0 = mapRange(localTicker, this.anim01, this.anim12, 0, 1);
-      var t1 = aSet(t0, influ);
-      this.xScale = mapRange(t1, 0, 1, 1, this.xScaleMaxB);
-      this.xBudgeScale = (this.xScale * this.fontSize * 0.5) - (this.fontSize * 0.5);
-      this.xShear = mapRange(t1, 0, 1, 0, this.xShearMaxB);
-      if (this.xShear < 0) { this.xBudgePost = -Math.tan(this.xShear) * this.fontSize * 0.65; this.xBudgePre = 0; }
-      else { this.xBudgePre = Math.tan(this.xShear) * this.fontSize * 0.65; this.xBudgePost = 0; }
-    } else if (localTicker < this.anim23) {
-      var t0 = mapRange(localTicker, this.anim12, this.anim23, 0, 0.5);
-      var t1 = aSet(t0, influ);
-      this.yA = 0;
-      this.xScale = mapRange(t1, 0, 0.5, this.xScaleMaxB, 1);
-      this.xBudgeScale = (this.xScale * this.fontSize * 0.5) - (this.fontSize * 0.5);
-      this.xShear = mapRange(t1, 0, 0.5, this.xShearMaxB, 0);
-      if (this.xShear < 0) { this.xBudgePost = -Math.tan(this.xShear) * this.fontSize * 0.65; this.xBudgePre = 0; }
-      else { this.xBudgePre = Math.tan(this.xShear) * this.fontSize * 0.65; this.xBudgePost = 0; }
-    } else {
-      this.visible = true;
-      this.xA = 0; this.yA = 0;
-      var idleTime = (localTicker - this.anim23) * 0.05;
-      this.xScale = 1 + Math.sin(idleTime * 0.7 + this.n) * 0.04;
-      this.xShear = Math.cos(idleTime * 0.9 + this.n) * 0.03;
-      this.xBudgeScale = (this.xScale * this.fontSize * 0.5) - (this.fontSize * 0.5);
-      if (this.xShear < 0) { this.xBudgePost = -Math.tan(this.xShear) * this.fontSize * 0.65; this.xBudgePre = 0; }
-      else { this.xBudgePre = Math.tan(this.xShear) * this.fontSize * 0.65; this.xBudgePost = 0; }
-    }
+  KineticLetter.prototype.update = function(frame, influ) {
+    var wave = Math.sin(frame * 0.05 + this.phase) * 30;
+    var targetY = wave;
+    var targetR = Math.sin(frame * 0.03 + this.phase * 1.3) * 0.15;
+    var targetSX = 1 + Math.sin(frame * 0.04 + this.phase * 0.8) * 0.08;
+    var targetSY = 1 + Math.cos(frame * 0.035 + this.phase * 1.1) * 0.08;
+    var ease = 1 - Math.pow(0.5, influ / 60);
+    this.y += (targetY - this.y) * ease;
+    this.rotation += (targetR - this.rotation) * ease;
+    this.scaleX += (targetSX - this.scaleX) * ease;
+    this.scaleY += (targetSY - this.scaleY) * ease;
   };
 
-  KineticLetter.prototype.display = function(ctx, cy, accumulatedBudge) {
-    if (!this.visible) return 0;
+  KineticLetter.prototype.display = function(ctx, centerY, accBudge) {
     ctx.save();
-    ctx.translate(this.x0 + accumulatedBudge + this.xBudgePre, cy);
-    ctx.translate(this.xA, this.yA);
-    ctx.transform(1, 0, Math.tan(this.xShear), 1, 0, 0);
-    ctx.scale(this.xScale, 1);
+    ctx.translate(this.baseX + accBudge, centerY + this.y);
+    ctx.rotate(this.rotation);
+    ctx.scale(this.scaleX, this.scaleY);
     ctx.font = '800 ' + this.fontSize + 'px "Abhaya Libre", serif';
-    ctx.fillText(this.text.charAt(this.n), 0, 0);
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(this.char, 0, 0);
     ctx.restore();
-    return this.xBudgeScale + this.xBudgePost + this.xTrack;
+    var budge = (this.scaleX - 1) * (ctx.measureText(this.char).width * 0.5);
+    return budge;
   };
 
-  // ── THREE.JS setup ──
+  // ── Setup ──
   var container = document.getElementById('canvas-container');
-  var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-  renderer.setPixelRatio(window.devicePixelRatio);
+  var renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.offsetWidth, container.offsetHeight);
   container.appendChild(renderer.domElement);
 
-  var camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   var scene = new THREE.Scene();
+  var camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   var geometry = new THREE.PlaneGeometry(2, 2);
 
   // Text canvas
@@ -1132,7 +1132,7 @@
     uniformsShared.u_time.value = clock.getElapsedTime();
 
     textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
-    textCtx.fillStyle = '#ffffff';
+    textCtx.fillStyle = '#000000';
     textCtx.textAlign = 'center';
     textCtx.textBaseline = 'middle';
     textCtx.font = '800 300px "Abhaya Libre", serif';
@@ -1148,12 +1148,10 @@
     }
     textTexture.needsUpdate = true;
 
-    // Pass 1: horizontal blur → render target
     mesh.material = pass1Material;
     renderer.setRenderTarget(renderTarget);
     renderer.render(scene, camera);
 
-    // Pass 2: vertical blur + colormap → screen
     mesh.material = pass2Material;
     renderer.setRenderTarget(null);
     renderer.render(scene, camera);
@@ -1179,75 +1177,54 @@
     var target = parseFloat(el.dataset.target);
     var suffix = el.dataset.suffix || '';
     var prefix = el.dataset.prefix || '';
-    var decimals = parseInt(el.dataset.decimals || '0');
-    var duration = 2000;
-    var startTime = performance.now();
-    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-    function update(currentTime) {
-      var elapsed = currentTime - startTime;
-      var progress = Math.min(elapsed / duration, 1);
-      var easedProgress = easeOutCubic(progress);
-      var current = target * easedProgress;
-      el.textContent = decimals > 0 ? prefix + current.toFixed(decimals) + suffix : prefix + Math.round(current) + suffix;
-      if (progress < 1) { requestAnimationFrame(update); }
-      else { el.textContent = decimals > 0 ? prefix + target.toFixed(decimals) + suffix : prefix + Math.round(target) + suffix; }
+    var decimals = parseInt(el.dataset.decimals) || 0;
+    var duration = 1800;
+    var start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var value = eased * target;
+      el.textContent = prefix + value.toFixed(decimals) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
     }
-    requestAnimationFrame(update);
+    requestAnimationFrame(step);
   }
 
+  // Intersection observer for counters
   var counterObserver = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
-      if (entry.isIntersecting) { animateCounter(entry.target); counterObserver.unobserve(entry.target); }
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        counterObserver.unobserve(entry.target);
+      }
     });
   }, { threshold: 0.3 });
-  document.querySelectorAll('[data-counter]').forEach(function(el) { counterObserver.observe(el); });
 
-  // Card tilt effect
-  function addTiltEffect(card) {
-    card.addEventListener('mousemove', function(e) {
-      var rect = card.getBoundingClientRect();
-      var x = e.clientX - rect.left, y = e.clientY - rect.top;
-      var cx = rect.width / 2, cy = rect.height / 2;
-      var rx = ((y - cy) / cy) * -8, ry = ((x - cx) / cx) * 8;
-      card.style.transform = 'perspective(1000px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) scale3d(1.02, 1.02, 1.02)';
-      var shine = card.querySelector('.card-shine');
-      if (!shine) {
-        shine = document.createElement('div');
-        shine.className = 'card-shine';
-        shine.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;border-radius:inherit;pointer-events:none;z-index:10;transition:opacity 0.3s;';
-        card.style.position = 'relative'; card.style.overflow = 'hidden';
-        card.appendChild(shine);
-      }
-      shine.style.background = 'radial-gradient(circle at ' + (x/rect.width*100) + '% ' + (y/rect.height*100) + '%, rgba(255,255,0,0.1) 0%, rgba(255,255,0,0.03) 30%, transparent 60%)';
-      shine.style.opacity = '1';
-    });
-    card.addEventListener('mouseleave', function() {
-      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-      var shine = card.querySelector('.card-shine');
-      if (shine) shine.style.opacity = '0';
-    });
-  }
-  document.querySelectorAll('.stat-card, .audience-card, .package-card').forEach(addTiltEffect);
+  document.querySelectorAll('[data-counter]').forEach(function(el) {
+    counterObserver.observe(el);
+  });
 
-  // Package card entrance
-  var packageCards = document.querySelectorAll('.package-card');
-  var packageObserver = new IntersectionObserver(function(entries) {
+  // Package cards reveal
+  var cardObserver = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
-        var idx = Array.from(packageCards).indexOf(entry.target);
-        setTimeout(function() { entry.target.classList.add('visible'); }, idx * 200);
-        packageObserver.unobserve(entry.target);
+        entry.target.classList.add('visible');
+        cardObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.2 });
-  packageCards.forEach(function(card) { packageObserver.observe(card); });
+  }, { threshold: 0.15 });
 
-  // View Packages smooth scroll
-  var btn = document.getElementById('view-packages-btn');
-  if (btn) {
-    btn.addEventListener('click', function() {
-      var el = document.getElementById('packages');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+  document.querySelectorAll('.package-card').forEach(function(el) {
+    cardObserver.observe(el);
+  });
+
+  // View Packages button
+  var vpBtn = document.getElementById('view-packages-btn');
+  if (vpBtn) {
+    vpBtn.addEventListener('click', function() {
+      var target = document.getElementById('packages-section');
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
     });
   }
 
