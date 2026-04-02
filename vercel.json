@@ -10,11 +10,11 @@
       "destination": "/tools/RRPT/index.html"
     },
     {
-      "source": "/tools/teleprompter",
+      "source": "/tools/teleprompter/(.*)",
       "destination": "/tools/teleprompter/index.html"
     },
     {
-      "source": "/tools/teleprompter/:id",
+      "source": "/tools/teleprompter",
       "destination": "/tools/teleprompter/index.html"
     },
     {
