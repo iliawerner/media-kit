@@ -348,7 +348,7 @@
       }
 
       const { id } = await res.json();
-      const url = `${window.location.origin}/tools/teleprompter/${id}`;
+      const url = `${window.location.origin}/tools/teleprompter#${id}`;
 
       linkUrl.href = url;
       linkUrl.textContent = url;
@@ -386,13 +386,14 @@
     prompterView.classList.remove('active');
     prompterLoad.classList.remove('active');
     document.body.style.overflow = '';
-    history.replaceState({}, '', '/tools/teleprompter');
+    history.replaceState({}, '', '/tools/teleprompter#');
   });
 
-  // ── Load from URL: /tools/teleprompter/:id ────────────────
+  // ── Load from URL: /tools/teleprompter#<id> ────────────────
   async function initFromUrl() {
-    // Match /tools/teleprompter/<id>
-    const match = window.location.pathname.match(/\/tools\/teleprompter\/([a-f0-9]{20,40})$/);
+    // Match hash: /tools/teleprompter#<id>
+    const hash = window.location.hash.replace('#', '').trim();
+    const match = /^[a-f0-9]{20,40}$/.test(hash) ? [null, hash] : null;
     if (!match) return;
 
     const id = match[1];
