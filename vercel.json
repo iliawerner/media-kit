@@ -10,6 +10,10 @@
       "destination": "/tools/RRPT/index.html"
     },
     {
+      "source": "/tools/teleprompter",
+      "destination": "/tools/teleprompter/index.html"
+    },
+    {
       "source": "/reports/100",
       "destination": "/reports/100/index.html"
     },
