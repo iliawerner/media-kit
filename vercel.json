@@ -18,6 +18,14 @@
       "destination": "/tools/teleprompter/index.html"
     },
     {
+      "source": "/tools/teleprompter2/:id",
+      "destination": "/tools/teleprompter2/index.html"
+    },
+    {
+      "source": "/tools/teleprompter2",
+      "destination": "/tools/teleprompter2/index.html"
+    },
+    {
       "source": "/reports/100",
       "destination": "/reports/100/index.html"
     },

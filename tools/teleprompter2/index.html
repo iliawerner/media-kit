@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teleprompter 2 — Design Lovers</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111;
+      --border: rgba(210, 131, 126, 0.25);
+      --accent: #d2837e;
+      --text: #f0f0f0;
+      --muted: #666;
+      --yellow: #FFFF00;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── EDITOR VIEW ── */
+    #editor-view {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 48px;
+      text-decoration: none;
+    }
+    .logo-dot { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; }
+    .logo-text { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+
+    h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; color: var(--text); }
+    .tagline { font-size: 15px; color: var(--muted); margin-bottom: 40px; line-height: 1.5; }
+
+    /* ── TEXTAREA ── */
+    textarea {
+      width: 100%; min-height: 280px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px; font-size: 16px; line-height: 1.65; color: var(--text);
+      resize: vertical; outline: none; font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: var(--muted); }
+
+    /* ── GENERATE BUTTON ── */
+    .btn-generate {
+      width: 100%; margin-top: 16px; padding: 16px;
+      background: var(--accent); color: #0a0a0a;
+      border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+      cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-generate:hover { opacity: 0.88; }
+    .btn-generate:active { transform: scale(0.99); }
+    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Spinner */
+    .spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-top-color: #0a0a0a;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    .btn-generate.loading .spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── LINK OUTPUT ── */
+    .link-box {
+      display: none; margin-top: 20px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px 20px; gap: 12px; align-items: center;
+    }
+    .link-box.visible { display: flex; }
+
+    .link-url {
+      flex: 1; font-size: 13px; color: var(--accent); word-break: break-all;
+      font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+      text-decoration: none;
+    }
+    .link-url:hover { text-decoration: underline; }
+
+    .btn-copy {
+      flex-shrink: 0; padding: 8px 16px;
+      background: transparent; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s; white-space: nowrap;
+    }
+    .btn-copy:hover { border-color: var(--accent); background: rgba(210,131,126,0.08); }
+    .btn-copy.copied { border-color: #4caf50; color: #4caf50; }
+
+    /* Error message */
+    .error-msg {
+      display: none; margin-top: 12px;
+      padding: 12px 16px; background: rgba(220,50,50,0.1);
+      border: 1px solid rgba(220,50,50,0.3); border-radius: 8px;
+      font-size: 13px; color: #f87171;
+    }
+    .error-msg.visible { display: block; }
+
+    /* ── HOW IT WORKS ── */
+    .how { margin-top: 48px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .how h2 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 16px; }
+    .how ol { list-style: none; counter-reset: steps; }
+    .how ol li {
+      counter-increment: steps; display: flex; gap: 12px;
+      font-size: 14px; color: #888; line-height: 1.6; margin-bottom: 10px;
+    }
+    .how ol li::before {
+      content: counter(steps); flex-shrink: 0;
+      width: 22px; height: 22px;
+      background: rgba(210,131,126,0.12); border: 1px solid var(--border); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--accent); margin-top: 1px;
+    }
+
+    /* ── PROMPTER VIEW ── */
+    #prompter-view {
+      display: none; position: fixed; inset: 0;
+      background: #000; overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    #prompter-view.active { display: block; }
+
+    /* Loading state for prompter */
+    #prompter-loading {
+      display: none; position: fixed; inset: 0;
+      background: #000; align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px;
+    }
+    #prompter-loading.active { display: flex; }
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(255,255,0,0.15);
+      border-top-color: var(--yellow);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .loading-text { color: rgba(255,255,0,0.4); font-size: 14px; font-weight: 600; }
+
+    #prompter-text {
+      transform: scaleY(-1);
+      padding: 60px 40px 120px;
+      font-size: 180px; line-height: 1.35;
+      font-weight: 700; letter-spacing: -0.02em;
+      color: var(--yellow); white-space: pre-wrap;
+      word-break: break-word; min-height: 100vh;
+    }
+
+    /* ── PROMPTER CONTROLS ── */
+    #btn-exit {
+      display: none; position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      padding: 10px 18px; background: rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 10px;
+      color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;
+      cursor: pointer; backdrop-filter: blur(8px);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    #btn-exit:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
+    #prompter-view.active ~ #btn-exit,
+    #prompter-loading.active ~ #btn-exit { display: block; }
+
+    #prompter-controls {
+      display: none; position: fixed; top: 20px; right: 20px; z-index: 100;
+      flex-direction: column; gap: 8px; align-items: flex-end;
+    }
+    #prompter-view.active ~ #prompter-controls { display: flex; }
+
+    .p-ctrl-btn {
+      width: 40px; height: 40px; background: rgba(0,0,0,0.7);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 10px;
+      color: rgba(255,255,255,0.6); font-size: 20px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px); transition: color 0.15s, border-color 0.15s;
+    }
+    .p-ctrl-btn:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
+    .p-size-label { font-size: 12px; color: rgba(255,255,255,0.3); text-align: center; font-weight: 600; }
+
+    /* ── SPEED INDICATOR ── */
+    #speed-indicator {
+      display: none;
+      position: fixed; bottom: 24px; left: 24px; z-index: 100;
+      flex-direction: column; align-items: center; gap: 6px;
+    }
+    #prompter-view.active ~ #speed-indicator { display: flex; }
+
+    .speed-track {
+      width: 4px; height: 80px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      position: relative;
+      overflow: visible;
+    }
+    .speed-center {
+      position: absolute; left: -3px; top: 50%; transform: translateY(-50%);
+      width: 10px; height: 1px; background: rgba(255,255,255,0.15);
+    }
+    .speed-dot {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--yellow);
+      transition: top 0.05s linear, opacity 0.2s;
+      top: 50%;
+    }
+    .speed-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+      color: rgba(255,255,0,0.35);
+      font-family: 'SF Mono', Consolas, monospace;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     EDITOR VIEW
+═══════════════════════════════════════════════════ -->
+<div id="editor-view">
+
+  <a href="https://design-lovers.com" class="logo">
+    <div class="logo-dot"></div>
+    <span class="logo-text">Design Lovers</span>
+  </a>
+
+  <h1>Teleprompter 2</h1>
+  <p class="tagline">Auto-scroll mode — joystick or trackpad controls speed, not position.</p>
+
+  <textarea id="script-input" placeholder="Paste your script here…" spellcheck="false"></textarea>
+
+  <button class="btn-generate" id="btn-generate">
+    <div class="spinner"></div>
+    <span id="btn-label">Generate teleprompter link →</span>
+  </button>
+
+  <div class="error-msg" id="error-msg"></div>
+
+  <div class="link-box" id="link-box">
+    <a class="link-url" id="link-url" href="#" target="_blank"></a>
+    <button class="btn-copy" id="btn-copy">Copy</button>
+  </div>
+
+  <div class="how">
+    <h2>How to use</h2>
+    <ol>
+      <li>Paste your script and click Generate.</li>
+      <li>Open the link on your Mac in Safari, drag to iPad via Sidecar.</li>
+      <li>Press any button on your Bluetooth joystick to activate it.</li>
+      <li>Push stick forward to accelerate, pull back to slow down or reverse.</li>
+      <li>Release stick — scroll continues at current speed (cruise control).</li>
+    </ol>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PROMPTER LOADING STATE
+═══════════════════════════════════════════════════ -->
+<div id="prompter-loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Loading script…</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PROMPTER VIEW (full-screen, flipped)
+═══════════════════════════════════════════════════ -->
+<div id="prompter-view">
+  <div id="prompter-text"></div>
+</div>
+
+<!-- Floating controls in prompter mode -->
+<div id="prompter-controls">
+  <button class="p-ctrl-btn" id="p-size-up">+</button>
+  <span class="p-size-label" id="p-size-val">180</span>
+  <button class="p-ctrl-btn" id="p-size-down">−</button>
+</div>
+
+<button id="btn-exit">✕ Exit</button>
+
+<!-- Speed indicator (left side) -->
+<div id="speed-indicator">
+  <div class="speed-track">
+    <div class="speed-center"></div>
+    <div class="speed-dot" id="speed-dot"></div>
+  </div>
+  <span class="speed-label" id="speed-label">0</span>
+</div>
+
+<script>
+  const MIN_SIZE = 24, MAX_SIZE = 240, SIZE_STEP = 8;
+  let fontSize = 180;
+
+  const prompterView   = document.getElementById('prompter-view');
+  const prompterLoad   = document.getElementById('prompter-loading');
+  const prompterText   = document.getElementById('prompter-text');
+  const scriptInput    = document.getElementById('script-input');
+  const btnGenerate    = document.getElementById('btn-generate');
+  const btnLabel       = document.getElementById('btn-label');
+  const linkBox        = document.getElementById('link-box');
+  const linkUrl        = document.getElementById('link-url');
+  const btnCopy        = document.getElementById('btn-copy');
+  const errorMsg       = document.getElementById('error-msg');
+  const btnExit        = document.getElementById('btn-exit');
+  const pSizeUp        = document.getElementById('p-size-up');
+  const pSizeDown      = document.getElementById('p-size-down');
+  const pSizeVal       = document.getElementById('p-size-val');
+  const speedDot       = document.getElementById('speed-dot');
+  const speedLabel     = document.getElementById('speed-label');
+
+  // ── Font size ────────────────────────────────────────────
+  function updateSize() {
+    pSizeVal.textContent = fontSize;
+    prompterText.style.fontSize = fontSize + 'px';
+  }
+  pSizeUp.addEventListener('click', () => { if (fontSize < MAX_SIZE) { fontSize = Math.min(MAX_SIZE, fontSize + SIZE_STEP); updateSize(); } });
+  pSizeDown.addEventListener('click', () => { if (fontSize > MIN_SIZE) { fontSize = Math.max(MIN_SIZE, fontSize - SIZE_STEP); updateSize(); } });
+
+  // ── Generate ─────────────────────────────────────────────
+  btnGenerate.addEventListener('click', async () => {
+    const text = scriptInput.value.trim();
+    if (!text) {
+      scriptInput.focus();
+      scriptInput.style.borderColor = 'var(--accent)';
+      setTimeout(() => scriptInput.style.borderColor = '', 800);
+      return;
+    }
+    btnGenerate.disabled = true;
+    btnGenerate.classList.add('loading');
+    btnLabel.textContent = 'Saving…';
+    errorMsg.classList.remove('visible');
+    linkBox.classList.remove('visible');
+    try {
+      const res = await fetch('/api/teleprompter2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, size: fontSize }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Server error ${res.status}`);
+      }
+      const { id } = await res.json();
+      const url = `${window.location.origin}/tools/teleprompter2#${id}`;
+      linkUrl.href = url;
+      linkUrl.textContent = url;
+      linkBox.classList.add('visible');
+      btnCopy.textContent = 'Copy';
+      btnCopy.classList.remove('copied');
+    } catch (err) {
+      errorMsg.textContent = `Error: ${err.message}`;
+      errorMsg.classList.add('visible');
+    } finally {
+      btnGenerate.disabled = false;
+      btnGenerate.classList.remove('loading');
+      btnLabel.textContent = 'Generate teleprompter link →';
+    }
+  });
+
+  // ── Copy ─────────────────────────────────────────────────
+  btnCopy.addEventListener('click', () => {
+    const url = linkUrl.href;
+    navigator.clipboard.writeText(url).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = url; ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    }).finally(() => {
+      btnCopy.textContent = 'Copied!';
+      btnCopy.classList.add('copied');
+      setTimeout(() => { btnCopy.textContent = 'Copy'; btnCopy.classList.remove('copied'); }, 2000);
+    });
+  });
+
+  // ── Exit prompter ─────────────────────────────────────────
+  btnExit.addEventListener('click', () => {
+    scrollSpeed = 0;
+    prompterView.classList.remove('active');
+    prompterLoad.classList.remove('active');
+    document.body.style.overflow = '';
+    history.replaceState({}, '', '/tools/teleprompter2#');
+  });
+
+  // ── Load from URL ─────────────────────────────────────────
+  async function initFromUrl() {
+    const hash = window.location.hash.replace('#', '').trim();
+    const match = /^[a-f0-9]{20,40}$/.test(hash) ? [null, hash] : null;
+    if (!match) return;
+
+    const id = match[1];
+    document.body.style.overflow = 'hidden';
+    prompterLoad.classList.add('active');
+
+    try {
+      const res = await fetch(`/api/teleprompter2?id=${id}`);
+      if (!res.ok) throw new Error('Not found');
+      const { text, size } = await res.json();
+
+      if (size && size >= MIN_SIZE && size <= MAX_SIZE) {
+        fontSize = size;
+      }
+      prompterText.textContent = '\n\n' + text;
+      prompterText.style.fontSize = fontSize + 'px';
+      pSizeVal.textContent = fontSize;
+
+      prompterLoad.classList.remove('active');
+      prompterView.classList.add('active');
+      // Beginning of text is at the BOTTOM of the flipped view
+      requestAnimationFrame(() => {
+        prompterView.scrollTop = prompterView.scrollHeight;
+      });
+
+    } catch (err) {
+      prompterLoad.classList.remove('active');
+      document.body.style.overflow = '';
+      errorMsg.textContent = 'Script not found or expired. Please generate a new link.';
+      errorMsg.classList.add('visible');
+    }
+  }
+
+  initFromUrl();
+
+  // ══════════════════════════════════════════════════════════
+  //  MOMENTUM SCROLL ENGINE
+  //  Joystick / trackpad change scroll SPEED, not position.
+  //  Speed persists when input is released (cruise control).
+  //  Positive speed = scroll toward end (down in flipped view).
+  // ══════════════════════════════════════════════════════════
+  let scrollSpeed = 0;          // px per frame, current cruise speed
+  const MAX_SPEED   = 24;       // px/frame at full stick deflection
+  const ACCEL       = 0.6;      // how fast stick changes speed (px/frame²)
+  const DEAD_ZONE   = 0.12;     // ignore tiny stick drift
+
+  // ── Speed indicator update ────────────────────────────────
+  function updateSpeedIndicator() {
+    // Map speed [-MAX_SPEED … +MAX_SPEED] to dot position [90% … 10%] of track
+    const pct = 0.5 - (scrollSpeed / MAX_SPEED) * 0.4; // 0=top, 1=bottom
+    const clampedPct = Math.max(0.05, Math.min(0.95, pct));
+    speedDot.style.top = (clampedPct * 100) + '%';
+    speedDot.style.transform = 'translateX(-50%) translateY(-50%)';
+
+    const spd = Math.round(Math.abs(scrollSpeed));
+    speedLabel.textContent = scrollSpeed < -0.1 ? '↑' + spd : scrollSpeed > 0.1 ? '↓' + spd : '·';
+
+    // Colour: yellow when moving, dim when stopped
+    const alpha = Math.min(1, Math.abs(scrollSpeed) / MAX_SPEED * 2 + 0.2);
+    speedDot.style.opacity = alpha.toFixed(2);
+  }
+
+  // ── Main animation loop ───────────────────────────────────
+  function scrollLoop() {
+    if (prompterView.classList.contains('active')) {
+      // Read gamepad input
+      let stickInput = 0;
+      const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+      for (const pad of pads) {
+        if (!pad) continue;
+        const ly = pad.axes[1] || 0;
+        const ry = pad.axes[3] || 0;
+        const raw = Math.abs(ly) >= Math.abs(ry) ? ly : ry;
+        if (Math.abs(raw) > DEAD_ZONE) {
+          const norm = (Math.abs(raw) - DEAD_ZONE) / (1 - DEAD_ZONE);
+          stickInput = Math.sign(raw) * norm * norm;
+        }
+      }
+
+      // Stick accelerates/decelerates speed
+      if (Math.abs(stickInput) > 0) {
+        scrollSpeed += stickInput * ACCEL;
+        scrollSpeed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, scrollSpeed));
+      }
+      // No stick input: maintain current speed (cruise control — no friction)
+
+      // Apply scroll
+      if (Math.abs(scrollSpeed) > 0.05) {
+        prompterView.scrollTop += scrollSpeed;
+      }
+
+      updateSpeedIndicator();
+    }
+    requestAnimationFrame(scrollLoop);
+  }
+
+  requestAnimationFrame(scrollLoop);
+
+  // ── Trackpad / wheel: adjust speed, don't jump position ──
+  prompterView.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    // deltaY > 0 = scroll down = increase speed (toward end of script)
+    const delta = e.deltaY * 0.04;
+    scrollSpeed += delta;
+    scrollSpeed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, scrollSpeed));
+  }, { passive: false });
+
+  // ── Keyboard: Space = pause/resume, arrows = nudge speed ──
+  document.addEventListener('keydown', (e) => {
+    if (!prompterView.classList.contains('active')) return;
+    if (e.code === 'Space') {
+      e.preventDefault();
+      scrollSpeed = 0;
+    }
+    if (e.code === 'ArrowDown') { e.preventDefault(); scrollSpeed = Math.min(MAX_SPEED, scrollSpeed + 1); }
+    if (e.code === 'ArrowUp')   { e.preventDefault(); scrollSpeed = Math.max(-MAX_SPEED, scrollSpeed - 1); }
+  });
+
+  window.addEventListener('gamepadconnected', (e) => {
+    console.log('Gamepad connected:', e.gamepad.id);
+  });
+</script>
+
+</body>
+</html>
