@@ -412,6 +412,48 @@
   }
 
   initFromUrl();
+
+  // ── Gamepad (Bluetooth joystick) scroll ──────────────────
+  // Both left stick (axes 0,1) and right stick (axes 2,3) control scroll.
+  // The text is flipped, so stick UP (negative Y) scrolls toward the beginning.
+  let gamepadRafId = null;
+  const DEAD_ZONE = 0.15;   // ignore tiny accidental tilts
+  const SCROLL_SPEED = 12;  // px per frame at full tilt
+
+  function gamepadLoop() {
+    const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+    let dy = 0;
+    for (const pad of pads) {
+      if (!pad) continue;
+      // Left stick Y = axis 1, Right stick Y = axis 3
+      const ly = pad.axes[1] || 0;
+      const ry = pad.axes[3] || 0;
+      // Use whichever stick has the larger absolute deflection
+      const raw = Math.abs(ly) >= Math.abs(ry) ? ly : ry;
+      if (Math.abs(raw) > DEAD_ZONE) {
+        // Apply a small curve for finer control near center
+        const norm = (Math.abs(raw) - DEAD_ZONE) / (1 - DEAD_ZONE);
+        dy = Math.sign(raw) * norm * norm * SCROLL_SPEED;
+      }
+    }
+    if (dy !== 0 && prompterView.classList.contains('active')) {
+      prompterView.scrollTop += dy;
+    }
+    gamepadRafId = requestAnimationFrame(gamepadLoop);
+  }
+
+  window.addEventListener('gamepadconnected', (e) => {
+    console.log('Gamepad connected:', e.gamepad.id);
+    if (!gamepadRafId) gamepadRafId = requestAnimationFrame(gamepadLoop);
+  });
+
+  window.addEventListener('gamepaddisconnected', () => {
+    // Keep loop running in case another pad is still connected
+  });
+
+  // Start loop immediately — some browsers don't fire gamepadconnected
+  // until a button is pressed, but the pad may already be listed
+  if (gamepadRafId === null) gamepadRafId = requestAnimationFrame(gamepadLoop);
 </script>
 
 </body>
