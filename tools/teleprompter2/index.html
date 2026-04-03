@@ -442,8 +442,6 @@
   let scrollSpeed = 0;          // px per frame, current cruise speed
   const MAX_SPEED   = 8;        // px/frame at full stick deflection
   const ACCEL       = 0.18;     // how fast stick changes speed (px/frame²) — gentle for foot use
-  const FRICTION    = 0.92;     // speed multiplier when stick is released (0=instant stop, 1=no friction)
-  const STOP_THRESH = 0.08;     // snap to zero below this speed
   const DEAD_ZONE   = 0.12;     // ignore tiny stick drift
 
   // ── Speed indicator update ────────────────────────────────
@@ -483,11 +481,8 @@
       if (Math.abs(stickInput) > 0) {
         scrollSpeed += stickInput * ACCEL;
         scrollSpeed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, scrollSpeed));
-      } else {
-        // No stick input: apply friction — gradually decelerate to zero
-        scrollSpeed *= FRICTION;
-        if (Math.abs(scrollSpeed) < STOP_THRESH) scrollSpeed = 0;
       }
+      // No stick input: maintain current speed (cruise control)
 
       // Apply scroll
       if (Math.abs(scrollSpeed) > 0.05) {
