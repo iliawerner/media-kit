@@ -173,7 +173,7 @@
     #prompter-text {
       transform: scale(-1, -1);
       padding: 60px 40px 120px;
-      font-size: 72px; line-height: 1.35;
+      font-size: 180px; line-height: 1.35;
       font-weight: 700; letter-spacing: -0.02em;
       color: var(--yellow); white-space: pre-wrap;
       word-break: break-word; min-height: 100vh;
@@ -224,15 +224,6 @@
   <h1>Teleprompter</h1>
   <p class="tagline">Paste your script — get a short link with mirrored text, ready for your iPad prompter setup.</p>
 
-  <div class="controls">
-    <span class="control-label">Font size</span>
-    <div class="control-group">
-      <button class="size-btn" id="size-down">−</button>
-      <span class="size-display" id="size-val">72</span>
-      <button class="size-btn" id="size-up">+</button>
-    </div>
-  </div>
-
   <textarea id="script-input" placeholder="Paste your script here…" spellcheck="false"></textarea>
 
   <button class="btn-generate" id="btn-generate">
@@ -250,7 +241,7 @@
   <div class="how">
     <h2>How to use</h2>
     <ol>
-      <li>Paste your script and adjust font size, then click Generate.</li>
+      <li>Paste your script and click Generate.</li>
       <li>Copy the short link and open it in Safari on your Mac.</li>
       <li>Connect your iPad as an external display via Sidecar.</li>
       <li>Drag the browser window to the iPad screen.</li>
@@ -285,8 +276,8 @@
 <button id="btn-exit">✕ Exit</button>
 
 <script>
-  const MIN_SIZE = 24, MAX_SIZE = 180, SIZE_STEP = 4;
-  let fontSize = 72;
+  const MIN_SIZE = 24, MAX_SIZE = 240, SIZE_STEP = 8;
+  let fontSize = 180;
 
   const editorView     = document.getElementById('editor-view');
   const prompterView   = document.getElementById('prompter-view');
@@ -299,9 +290,6 @@
   const linkUrl        = document.getElementById('link-url');
   const btnCopy        = document.getElementById('btn-copy');
   const errorMsg       = document.getElementById('error-msg');
-  const sizeVal        = document.getElementById('size-val');
-  const sizeUp         = document.getElementById('size-up');
-  const sizeDown       = document.getElementById('size-down');
   const btnExit        = document.getElementById('btn-exit');
   const pSizeUp        = document.getElementById('p-size-up');
   const pSizeDown      = document.getElementById('p-size-down');
@@ -309,12 +297,9 @@
 
   // ── Font size ────────────────────────────────────────────
   function updateSize() {
-    sizeVal.textContent = fontSize;
     pSizeVal.textContent = fontSize;
     prompterText.style.fontSize = fontSize + 'px';
   }
-  sizeUp.addEventListener('click', () => { if (fontSize < MAX_SIZE) { fontSize = Math.min(MAX_SIZE, fontSize + SIZE_STEP); updateSize(); } });
-  sizeDown.addEventListener('click', () => { if (fontSize > MIN_SIZE) { fontSize = Math.max(MIN_SIZE, fontSize - SIZE_STEP); updateSize(); } });
   pSizeUp.addEventListener('click', () => { if (fontSize < MAX_SIZE) { fontSize = Math.min(MAX_SIZE, fontSize + SIZE_STEP); updateSize(); } });
   pSizeDown.addEventListener('click', () => { if (fontSize > MIN_SIZE) { fontSize = Math.max(MIN_SIZE, fontSize - SIZE_STEP); updateSize(); } });
 
@@ -408,12 +393,14 @@
       if (size && size >= MIN_SIZE && size <= MAX_SIZE) {
         fontSize = size;
       }
-      prompterText.textContent = text;
+      prompterText.textContent = '\n\n' + text;
       prompterText.style.fontSize = fontSize + 'px';
       pSizeVal.textContent = fontSize;
 
       prompterLoad.classList.remove('active');
       prompterView.classList.add('active');
+      // Scroll to top (beginning of text = bottom of flipped view)
+      prompterView.scrollTop = 0;
 
     } catch (err) {
       prompterLoad.classList.remove('active');
