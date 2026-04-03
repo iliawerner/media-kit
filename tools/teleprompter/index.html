@@ -399,8 +399,10 @@
 
       prompterLoad.classList.remove('active');
       prompterView.classList.add('active');
-      // Scroll to top (beginning of text = bottom of flipped view)
-      prompterView.scrollTop = 0;
+      // Beginning of text is at the BOTTOM of the flipped view — scroll all the way down
+      requestAnimationFrame(() => {
+        prompterView.scrollTop = prompterView.scrollHeight;
+      });
 
     } catch (err) {
       prompterLoad.classList.remove('active');
