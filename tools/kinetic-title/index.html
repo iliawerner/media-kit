@@ -163,50 +163,63 @@
     <script>
         // ============================================
         // КЛАСС БУКВЫ — только idle-анимация
+        // Рендеринг идентичен оригиналу:
+        //   textAlign = 'center', textBaseline = 'middle'
+        //   x0 = startX + letterWidth/2  (центр буквы)
+        //   translate(x0 + budge, cy) → scale → fillText(char, 0, 0)
         // ============================================
         class KineticLetter {
-            constructor(x, charIndex, totalLetters, line, fontSize) {
-                this.x0 = x;
-                this.charIndex = charIndex;
-                this.n = charIndex; // используется как фазовый сдвиг
+            constructor(x0, charIndex, phaseIndex, totalLetters, line, fontSize) {
+                this.x0 = x0;           // центр буквы по X на текстурном холсте
+                this.charIndex = charIndex; // индекс символа в строке
+                this.phaseIndex = phaseIndex; // сквозной индекс для фазы анимации
                 this.line = line;
                 this.fontSize = fontSize;
-                this.totalLetters = totalLetters;
+
+                // Idle-состояние (инициализируем нулями, обновляем в update)
+                this.xScale = 1;
+                this.xShear = 0;
+                this.xBudgeScale = 0;
+                this.xBudgePre = 0;
+                this.xBudgePost = 0;
+                this.yOffset = 0;
             }
 
-            // Возвращает текущие трансформации на основе времени
-            getTransform(time, speed, amount) {
+            update(time, speed, amount) {
                 const t = time * speed;
-                const phase = this.n * 0.61803; // золотое сечение для разброса фаз
+                const phase = this.phaseIndex * 0.61803; // золотое сечение
 
-                // Лёгкое дыхание: небольшой сдвиг по X и Y + минимальный shear
-                const xShear = Math.cos(t * 0.9 + phase) * 0.03 * amount;
-                const xScale = 1 + Math.sin(t * 0.7 + phase) * 0.04 * amount;
-                const yOffset = Math.sin(t * 0.5 + phase * 1.3) * (this.fontSize * 0.02) * amount;
+                this.xShear  = Math.cos(t * 0.9 + phase) * 0.03 * amount;
+                this.xScale  = 1 + Math.sin(t * 0.7 + phase) * 0.04 * amount;
+                this.yOffset = Math.sin(t * 0.5 + phase * 1.3) * (this.fontSize * 0.02) * amount;
 
-                const xBudgeScale = (xScale * this.fontSize * 0.5) - (this.fontSize * 0.5);
-                let xBudgePre = 0, xBudgePost = 0;
-                if (xShear < 0) {
-                    xBudgePost = -Math.tan(xShear) * this.fontSize * 0.65;
+                // Компенсация смещения из-за масштаба и shear
+                // (точно как в оригинале)
+                this.xBudgeScale = (this.xScale * this.fontSize * 0.5) - (this.fontSize * 0.5);
+                if (this.xShear < 0) {
+                    this.xBudgePost = -Math.tan(this.xShear) * this.fontSize * 0.65;
+                    this.xBudgePre  = 0;
                 } else {
-                    xBudgePre = Math.tan(xShear) * this.fontSize * 0.65;
+                    this.xBudgePre  = Math.tan(this.xShear) * this.fontSize * 0.65;
+                    this.xBudgePost = 0;
                 }
-
-                return { xShear, xScale, yOffset, xBudgeScale, xBudgePre, xBudgePost };
             }
 
-            display(ctx, cy, accumulatedBudge, time, speed, amount) {
-                const tr = this.getTransform(time, speed, amount);
-
+            display(ctx, cy, accumulatedBudge) {
                 ctx.save();
-                ctx.translate(this.x0 + accumulatedBudge + tr.xBudgePre, cy + tr.yOffset);
-                ctx.transform(1, 0, Math.tan(tr.xShear), 1, 0, 0);
-                ctx.scale(tr.xScale, 1);
+                // Оригинальный порядок трансформаций
+                ctx.translate(this.x0 + accumulatedBudge + this.xBudgePre, cy + this.yOffset);
+                ctx.transform(1, 0, Math.tan(this.xShear), 1, 0, 0);
+                ctx.scale(this.xScale, 1);
+
                 ctx.font = `800 ${this.fontSize}px "Abhaya Libre", serif`;
+                // fillText(char, 0, 0) работает корректно потому что
+                // textAlign='center' и textBaseline='middle' установлены
+                // глобально в animate() — как в оригинале
                 ctx.fillText(this.line.charAt(this.charIndex), 0, 0);
                 ctx.restore();
 
-                return tr.xBudgeScale + tr.xBudgePost;
+                return this.xBudgeScale + this.xBudgePost;
             }
         }
 
@@ -220,12 +233,12 @@
         container.appendChild(renderer.domElement);
 
         const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-        const scene = new THREE.Scene();
+        const scene  = new THREE.Scene();
         const geometry = new THREE.PlaneGeometry(2, 2);
 
-        // Холст для текста
+        // Холст для текста — те же размеры что в оригинале
         const textCanvas = document.createElement('canvas');
-        textCanvas.width = 2048;
+        textCanvas.width  = 2048;
         textCanvas.height = 1024;
         const textCtx = textCanvas.getContext('2d');
         const textTexture = new THREE.CanvasTexture(textCanvas);
@@ -240,9 +253,9 @@
             format: THREE.RGBAFormat
         });
 
-        // Палитра Heat Map
+        // Палитра Heat Map (оригинальная)
         const paletteCanvas = document.createElement('canvas');
-        paletteCanvas.width = 256;
+        paletteCanvas.width  = 256;
         paletteCanvas.height = 1;
         const paletteCtx = paletteCanvas.getContext('2d');
         const grad = paletteCtx.createLinearGradient(0, 0, 256, 0);
@@ -257,11 +270,11 @@
         paletteCtx.fillRect(0, 0, 256, 1);
         const paletteTexture = new THREE.CanvasTexture(paletteCanvas);
 
-        // Юниформы — без u_mouse
+        // Юниформы — без u_mouse (убрана реакция на курсор)
         const uniformsShared = {
-            u_time: { value: 0.0 },
+            u_time:       { value: 0.0 },
             u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-            u_max_blur: { value: 0.06 }
+            u_max_blur:   { value: 0.06 }
         };
 
         // --- ШЕЙДЕР ПРОХОД 1: ГОРИЗОНТАЛЬНОЕ РАЗМЫТИЕ ---
@@ -340,8 +353,8 @@
             uniforms: {
                 ...uniformsShared,
                 u_blurred_texture: { value: renderTarget.texture },
-                u_sharp_texture: { value: textTexture },
-                u_palette: { value: paletteTexture }
+                u_sharp_texture:   { value: textTexture },
+                u_palette:         { value: paletteTexture }
             },
             vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position, 1.0); }`,
             fragmentShader: `
@@ -434,17 +447,18 @@
         scene.add(mesh);
 
         // ============================================
-        // ЛОГИКА: БУКВЫ И СТРОКИ
+        // ИНИЦИАЛИЗАЦИЯ БУКВ
         // ============================================
-        let kineticLines = [];
-        let currentText = "Design Lovers";
-        let manualFontSize = 0;
+        let kineticLines  = [];
+        let currentText   = "Design Lovers";
+        let manualFontSize = 0; // 0 = auto
 
         function calcAutoFontSize(lines) {
             let fontSize = 300;
-            const maxW = textCanvas.width * 0.92;
-            const maxH = textCanvas.height * 0.92;
+            const maxW = textCanvas.width  * 0.90;
+            const maxH = textCanvas.height * 0.90;
 
+            // Ограничение по ширине самой длинной строки
             for (const line of lines) {
                 if (!line) continue;
                 textCtx.font = `800 ${fontSize}px "Abhaya Libre", serif`;
@@ -452,7 +466,8 @@
                 if (w > maxW) fontSize = Math.floor(fontSize * (maxW / w));
             }
 
-            const lineHeight = fontSize * 1.2;
+            // Ограничение по высоте всех строк
+            const lineHeight = fontSize * 1.25;
             const totalH = lineHeight * lines.length;
             if (totalH > maxH) fontSize = Math.floor(fontSize * (maxH / totalH));
 
@@ -461,21 +476,25 @@
 
         function initLetters() {
             kineticLines = [];
-            const lines = currentText.split('\n');
+            const lines    = currentText.split('\n');
             const fontSize = manualFontSize > 0 ? manualFontSize : calcAutoFontSize(lines);
+            const lineHeight = fontSize * 1.25;
 
-            textCtx.font = `800 ${fontSize}px "Abhaya Libre", serif`;
-            const lineHeight = fontSize * 1.2;
+            // Вертикальное центрирование блока строк
             const totalTextH = lineHeight * lines.length;
-            const startY = (textCanvas.height - totalTextH) / 2 + fontSize * 0.85;
+            // centerY каждой строки — как в оригинале: textBaseline='middle'
+            // поэтому Y = середина строки
+            const blockTop = (textCanvas.height - totalTextH) / 2;
 
-            let globalIndex = 0;
+            let globalPhase = 0;
 
             for (let li = 0; li < lines.length; li++) {
                 const line = lines[li];
-                const cy = startY + li * lineHeight;
+                const cy   = blockTop + li * lineHeight + lineHeight / 2; // середина строки
 
-                let totalWidth = 0;
+                // Измеряем ширины букв при нужном размере
+                textCtx.font = `800 ${fontSize}px "Abhaya Libre", serif`;
+                let totalWidth  = 0;
                 const letterWidths = [];
                 for (let i = 0; i < line.length; i++) {
                     const w = textCtx.measureText(line[i]).width || (fontSize * 0.6);
@@ -483,22 +502,17 @@
                     totalWidth += w;
                 }
 
-                const startX = (textCanvas.width - totalWidth) / 2;
-                let currentX = startX;
+                // x0 каждой буквы = центр буквы (как в оригинале: startX + w/2)
+                const startX   = (textCanvas.width - totalWidth) / 2;
+                let currentX   = startX;
                 const lineLetters = [];
 
                 for (let i = 0; i < line.length; i++) {
-                    const letter = new KineticLetter(
-                        currentX + letterWidths[i] / 2,
-                        i,
-                        currentText.replace(/\n/g, '').length || 1,
-                        line,
-                        fontSize
-                    );
-                    letter.n = globalIndex; // фазовый сдвиг
+                    const x0 = currentX + letterWidths[i] / 2;
+                    const letter = new KineticLetter(x0, i, globalPhase, line.length, line, fontSize);
                     lineLetters.push({ letter, cy });
                     currentX += letterWidths[i];
-                    globalIndex++;
+                    globalPhase++;
                 }
 
                 kineticLines.push(lineLetters);
@@ -538,7 +552,7 @@
         });
 
         // ============================================
-        // ОСНОВНОЙ ЦИКЛ
+        // ОСНОВНОЙ ЦИКЛ РЕНДЕРА
         // ============================================
         const clock = new THREE.Clock();
 
@@ -547,29 +561,33 @@
             const time = clock.getElapsedTime();
             uniformsShared.u_time.value = time;
 
-            const speed = parseFloat(document.getElementById('anim-speed').value);
+            const speed  = parseFloat(document.getElementById('anim-speed').value);
             const amount = parseFloat(document.getElementById('anim-amount').value);
 
+            // Очистка холста — идентично оригиналу
             textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
-            textCtx.fillStyle = '#ffffff';
-            textCtx.textAlign = 'left';
-            textCtx.textBaseline = 'alphabetic';
-            textCtx.filter = 'none';
+            textCtx.fillStyle    = '#ffffff';
+            textCtx.textAlign    = 'center';   // ← оригинальное значение
+            textCtx.textBaseline = 'middle';   // ← оригинальное значение
+            textCtx.filter       = 'none';
 
             for (const lineLetters of kineticLines) {
                 let accumulatedBudge = 0;
                 for (const { letter, cy } of lineLetters) {
-                    const budge = letter.display(textCtx, cy, accumulatedBudge, time, speed, amount);
+                    letter.update(time, speed, amount);
+                    const budge = letter.display(textCtx, cy, accumulatedBudge);
                     accumulatedBudge += budge;
                 }
             }
 
             textTexture.needsUpdate = true;
 
+            // Проход 1: горизонтальный блюр → буфер
             mesh.material = pass1Material;
             renderer.setRenderTarget(renderTarget);
             renderer.render(scene, camera);
 
+            // Проход 2: вертикальный блюр + цвета + зерно → экран
             mesh.material = pass2Material;
             renderer.setRenderTarget(null);
             renderer.render(scene, camera);
