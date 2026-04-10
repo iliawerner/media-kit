@@ -33,7 +33,7 @@
             width: 280px;
             overflow: hidden;
             transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            height: 410px; /* Высота в развернутом виде */
+            height: 520px; /* Высота в развернутом виде */
         }
         #controls-wrapper.collapsed {
             height: 50px;
@@ -90,19 +90,22 @@
             display: flex;
             justify-content: space-between;
         }
-        input[type="text"] {
+        textarea#text-input {
             padding: 10px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(0, 0, 0, 0.5);
             color: white;
             border-radius: 6px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             font-family: inherit;
             outline: none;
             transition: border-color 0.3s;
+            resize: vertical;
+            min-height: 60px;
+            line-height: 1.4;
         }
-        input[type="text"]:focus {
+        textarea#text-input:focus {
             border-color: #ff8800;
         }
         input[type="range"] {
@@ -143,10 +146,15 @@
         <div id="controls-body">
             <div class="control-group">
                 <label for="text-input">Текст (Text)</label>
-                <input type="text" id="text-input" value="DESIGN LOVERS" autocomplete="off" maxlength="20">
+                <textarea id="text-input" autocomplete="off" rows="2" spellcheck="false">Design Lovers</textarea>
             </div>
             
             <div class="divider"></div>
+
+            <div class="control-group">
+                <label for="font-size-range"><span>Размер шрифта</span> <span id="val-fontsize">auto</span></label>
+                <input type="range" id="font-size-range" min="0" max="400" step="10" value="0">
+            </div>
 
             <div class="control-group">
                 <label for="anim-speed"><span>Скорость SNAP</span> <span id="val-speed">0.5x</span></label>
@@ -189,14 +197,12 @@
         // КЛАСС KINETIC LETTER 
         // ============================================
         class KineticLetter {
-            constructor(x, index, totalLetters, text, fontSize) {
+            constructor(x, index, totalLetters, lineText, fontSize) {
                 this.x0 = x;
                 this.y0 = 0;
                 this.n = index;
-                this.text = text;
+                this.lineText = lineText;
                 this.fontSize = fontSize;
-                
-                const scaleFactor = fontSize / 80;
                 
                 this.yA = 0;
                 this.yAmax = 0; 
@@ -312,7 +318,7 @@
                 ctx.scale(this.xScale, 1);
                 
                 ctx.font = `800 ${this.fontSize}px "Abhaya Libre", serif`;
-                ctx.fillText(this.text.charAt(this.n), 0, 0);
+                ctx.fillText(this.lineText.charAt(this.n), 0, 0);
                 ctx.restore();
                 
                 return this.xBudgeScale + this.xBudgePost + this.xTrack;
@@ -525,28 +531,28 @@
                             float weight = exp(-(y * y) / (2.0 * sigma * sigma));
                             float offsetAmount = (y / 15.0) * blurAmount;
                             vec2 offset = vec2(0.0, offsetAmount);
-                            blurredColor += texture2D(u_blurred_texture, clamp(vUv + offset, 0.0, 1.0)) * weight;
-                            totalWeight += weight;
+                            
+                            vec2 sampleUv = vUv + offset;
+                            if(sampleUv.y >= 0.0 && sampleUv.y <= 1.0) {
+                                blurredColor += texture2D(u_blurred_texture, sampleUv) * weight;
+                                totalWeight += weight;
+                            }
                         }
-                        blurredColor /= totalWeight;
+                        if (totalWeight > 0.0) blurredColor /= totalWeight;
                     }
 
-                    // --- РЕЗКИЙ ЧЕРНЫЙ ТЕКСТ (в зоне без блюра) ---
-                    vec2 centerUv = getAspectCorrectedUV(vUv);
+                    // Цветовое маппирование через палитру
+                    float intensity = blurredColor.r;
+                    vec3 mappedColor = texture2D(u_palette, vec2(intensity, 0.5)).rgb;
+                    
+                    // Острый текст поверх (для читаемости в центре)
+                    vec2 sharpUv = getAspectCorrectedUV(vUv);
                     float sharpAlpha = 0.0;
-                    if(centerUv.x >= 0.0 && centerUv.x <= 1.0 && centerUv.y >= 0.0 && centerUv.y <= 1.0) {
-                        sharpAlpha = texture2D(u_sharp_texture, centerUv).a;
+                    if(sharpUv.x >= 0.0 && sharpUv.x <= 1.0 && sharpUv.y >= 0.0 && sharpUv.y <= 1.0) {
+                        sharpAlpha = texture2D(u_sharp_texture, sharpUv).r;
                     }
-                    // Черный текст на желтом фоне, без радужных краев!
-                    vec3 sharpColor = mix(vec3(1.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), sharpAlpha);
-
-                    // --- ТЕПЛОВАЯ КАРТА ---
-                    float intensity = blurredColor.a;
-                    vec3 heatColor = texture2D(u_palette, vec2(intensity, 0.5)).rgb;
-
-                    // Плавно проявляем тепловизор только там, где есть блюр
-                    float mixFactor = smoothstep(0.0, 0.1, blurMapValue);
-                    vec3 finalColor = mix(sharpColor, heatColor, mixFactor);
+                    
+                    vec3 finalColor = mix(mappedColor, vec3(0.0), sharpAlpha * (1.0 - blurMapValue * 2.0));
 
                     // --- КИНЕМАТОГРАФИЧНОЕ ЗЕРНО ---
                     float noiseTime = fract(u_time * 10.0);
@@ -570,40 +576,86 @@
         scene.add(mesh);
 
         // ============================================
-        // ЛОГИКА АНИМАЦИИ
+        // ЛОГИКА АНИМАЦИИ (МНОГОСТРОЧНАЯ)
         // ============================================
-        let kineticLetters = [];
+        let kineticLines = []; // массив строк, каждая строка — массив KineticLetter
         let frameCounter = 0;
-        let currentText = "DESIGN LOVERS";
-        
-        function initLetters() {
-            kineticLetters = [];
+        let currentText = "Design Lovers";
+        let manualFontSize = 0; // 0 = auto
+
+        function calcAutoFontSize(lines) {
+            // Подбираем размер так, чтобы все строки влезли по ширине и высоте
             let fontSize = 300;
-            textCtx.font = `800 ${fontSize}px "Abhaya Libre", serif`;
-            
-            let fullMetrics = textCtx.measureText(currentText);
-            if (fullMetrics.width > textCanvas.width * 0.9) {
-                fontSize = Math.floor(fontSize * ((textCanvas.width * 0.9) / fullMetrics.width));
+            const maxW = textCanvas.width * 0.92;
+            const maxH = textCanvas.height * 0.92;
+
+            // Ограничение по ширине (самая длинная строка)
+            for (const line of lines) {
+                if (!line) continue;
                 textCtx.font = `800 ${fontSize}px "Abhaya Libre", serif`;
+                const w = textCtx.measureText(line).width;
+                if (w > maxW) {
+                    fontSize = Math.floor(fontSize * (maxW / w));
+                }
             }
 
-            let totalWidth = 0;
-            let letterWidths = [];
-            for(let i = 0; i < currentText.length; i++) {
-                let metrics = textCtx.measureText(currentText[i]);
-                let w = metrics.width || (fontSize * 0.6);
-                letterWidths.push(w);
-                totalWidth += w;
+            // Ограничение по высоте (все строки + межстрочный интервал)
+            const lineHeight = fontSize * 1.2;
+            const totalH = lineHeight * lines.length;
+            if (totalH > maxH) {
+                fontSize = Math.floor(fontSize * (maxH / totalH));
             }
-            
-            let startX = (textCanvas.width - totalWidth) / 2;
-            let currentX = startX;
-            
-            for(let i = 0; i < currentText.length; i++) {
-                let letter = new KineticLetter(currentX + letterWidths[i]/2, i, currentText.length, currentText, fontSize);
-                kineticLetters.push(letter);
-                currentX += letterWidths[i];
+
+            return Math.max(fontSize, 10);
+        }
+
+        function initLetters() {
+            kineticLines = [];
+            const lines = currentText.split('\n');
+            const fontSize = manualFontSize > 0 ? manualFontSize : calcAutoFontSize(lines);
+
+            textCtx.font = `800 ${fontSize}px "Abhaya Libre", serif`;
+            const lineHeight = fontSize * 1.2;
+            const totalTextH = lineHeight * lines.length;
+            const startY = (textCanvas.height - totalTextH) / 2 + fontSize * 0.85;
+
+            let globalLetterIndex = 0; // сквозной индекс для delay
+
+            for (let li = 0; li < lines.length; li++) {
+                const line = lines[li];
+                const cy = startY + li * lineHeight;
+
+                let totalWidth = 0;
+                let letterWidths = [];
+                for (let i = 0; i < line.length; i++) {
+                    const metrics = textCtx.measureText(line[i]);
+                    const w = metrics.width || (fontSize * 0.6);
+                    letterWidths.push(w);
+                    totalWidth += w;
+                }
+
+                const startX = (textCanvas.width - totalWidth) / 2;
+                let currentX = startX;
+                const lineLetters = [];
+
+                for (let i = 0; i < line.length; i++) {
+                    const letter = new KineticLetter(
+                        currentX + letterWidths[i] / 2,
+                        globalLetterIndex,
+                        currentText.replace(/\n/g, '').length || 1,
+                        line,
+                        fontSize
+                    );
+                    // Переопределяем n для отображения нужного символа строки
+                    letter.charIndex = i;
+                    lineLetters.push({ letter, cy });
+                    currentX += letterWidths[i];
+                    globalLetterIndex++;
+                }
+
+                kineticLines.push(lineLetters);
             }
+
             frameCounter = 0;
         }
 
@@ -611,7 +663,7 @@
         // ПРИВЯЗКА СОБЫТИЙ UI
         // ============================================
         document.getElementById('text-input').addEventListener('input', (e) => {
-            currentText = (e.target.value || " ").toUpperCase();
+            currentText = e.target.value || " ";
             initLetters();
         });
         document.getElementById('blur-range').addEventListener('input', (e) => {
@@ -622,6 +674,12 @@
         });
         document.getElementById('anim-influ').addEventListener('input', (e) => {
             document.getElementById('val-influ').innerText = e.target.value;
+        });
+        document.getElementById('font-size-range').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            manualFontSize = val;
+            document.getElementById('val-fontsize').innerText = val > 0 ? val + 'px' : 'auto';
+            initLetters();
         });
         document.getElementById('btn-restart').addEventListener('click', () => {
             initLetters();
@@ -664,23 +722,27 @@
             // 1. Очистка и отрисовка Canvas текста
             textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
             textCtx.fillStyle = '#ffffff';
-            textCtx.textAlign = 'center';
-            textCtx.textBaseline = 'middle';
-            textCtx.font = '800 300px "Abhaya Libre", serif';
-            textCtx.filter = 'none'; // Никакого базового размытия!
+            textCtx.textAlign = 'left';
+            textCtx.textBaseline = 'alphabetic';
+            textCtx.filter = 'none';
 
             const speed = parseFloat(document.getElementById('anim-speed').value);
             const influ = parseFloat(document.getElementById('anim-influ').value);
             frameCounter += speed;
-            
-            let accumulatedBudge = 0;
-            const centerY = textCanvas.height / 2;
-            
-            for(let letter of kineticLetters) {
-                letter.update(frameCounter, influ);
-                let budgeForNext = letter.display(textCtx, centerY, accumulatedBudge);
-                accumulatedBudge += budgeForNext;
+
+            for (const lineLetters of kineticLines) {
+                let accumulatedBudge = 0;
+                for (const { letter, cy } of lineLetters) {
+                    letter.update(frameCounter, influ);
+                    // Используем charIndex для отрисовки правильного символа
+                    const origN = letter.n;
+                    letter.n = letter.charIndex;
+                    let budgeForNext = letter.display(textCtx, cy, accumulatedBudge);
+                    letter.n = origN;
+                    accumulatedBudge += budgeForNext;
+                }
             }
+
             textTexture.needsUpdate = true;
 
             // 2. WEBGL ПРОХОД 1 (Горизонтальное размытие в буфер)
