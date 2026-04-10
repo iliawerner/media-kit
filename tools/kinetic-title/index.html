@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetic Title — Design Lovers</title>
+    <!-- Подключаем шрифт Abhaya Libre -->
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #FFFF00;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+        
+        /* Сворачиваемая Панель управления UI */
+        #controls-wrapper {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(15, 15, 20, 0.85);
+            border-radius: 12px;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 280px;
+            overflow: hidden;
+            transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 410px; /* Высота в развернутом виде */
+        }
+        #controls-wrapper.collapsed {
+            height: 50px;
+        }
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            height: 20px;
+        }
+        #controls-wrapper.collapsed .controls-header {
+            border-bottom: 1px solid transparent;
+        }
+        #toggle-controls {
+            font-size: 18px;
+            line-height: 1;
+            transition: transform 0.3s;
+        }
+        #controls-wrapper.collapsed #toggle-controls {
+            transform: rotate(-180deg);
+        }
+        #controls-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 1;
+            transition: opacity 0.2s ease;
+        }
+        #controls-wrapper.collapsed #controls-body {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            display: flex;
+            justify-content: space-between;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #ff8800;
+        }
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: #ff8800;
+        }
+        button {
+            padding: 10px;
+            background: #ff8800;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            background: #fff;
+            transform: translateY(-2px);
+        }
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls-wrapper">
+        <div class="controls-header" id="controls-header">
+            <span>Настройки</span>
+            <span id="toggle-controls">▼</span>
+        </div>
+        <div id="controls-body">
+            <div class="control-group">
+                <label for="text-input">Текст (Text)</label>
+                <input type="text" id="text-input" value="DESIGN LOVERS" autocomplete="off" maxlength="20">
+            </div>
+            
+            <div class="divider"></div>
+
+            <div class="control-group">
+                <label for="anim-speed"><span>Скорость SNAP</span> <span id="val-speed">0.5x</span></label>
+                <input type="range" id="anim-speed" min="0.5" max="3" step="0.1" value="0.5">
+            </div>
+            <div class="control-group">
+                <label for="anim-influ"><span>Резкость (Easing)</span> <span id="val-influ">4</span></label>
+                <input type="range" id="anim-influ" min="4" max="15" step="1" value="4">
+            </div>
+            
+            <button id="btn-restart">Перезапустить (Snap!)</button>
+
+            <div class="divider"></div>
+
+            <div class="control-group">
+                <label for="blur-range">Интенсивность Heat Map</label>
+                <input type="range" id="blur-range" min="0" max="0.15" step="0.005" value="0.06">
+            </div>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // ============================================
+        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ И МАТЕМАТИКА
+        // ============================================
+        const random = (min, max) => Math.random() * (max - min) + min;
+        const map = (n, start1, stop1, start2, stop2) => ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
+        
+        function aSet(ticker, influ) {
+            const capTicker = ticker % 1;
+            const numerator = Math.pow(capTicker, influ);
+            const denominator = numerator + Math.pow(1 - capTicker, influ);
+            return numerator / denominator;
+        }
+
+        // ============================================
+        // КЛАСС KINETIC LETTER 
+        // ============================================
+        class KineticLetter {
+            constructor(x, index, totalLetters, text, fontSize) {
+                this.x0 = x;
+                this.y0 = 0;
+                this.n = index;
+                this.text = text;
+                this.fontSize = fontSize;
+                
+                const scaleFactor = fontSize / 80;
+                
+                this.yA = 0;
+                this.yAmax = 0; 
+                this.xA = 0;
+                this.xAmax = 0; 
+                
+                this.xScale = 1;
+                this.xScaleMax = random(1.5, 4);      
+                this.xScaleMaxB = random(0.6, 1.4);   
+                
+                this.xShear = 0;
+                this.xShearMax = random(-Math.PI/3, Math.PI/3);
+                this.xShearMaxB = 0;
+                
+                if (random(0, 100) < 100 * (1 / totalLetters)) {
+                    this.xShearMaxB = random(-Math.PI/4, Math.PI/4);
+                }
+                
+                this.delay = this.n * 3; 
+                this.anim01 = 30;
+                this.anim12 = this.anim01 + 30;
+                this.anim23 = this.anim12 + 30;
+                
+                this.xBudgeScale = 0;
+                this.xBudgePre = 0;
+                this.xBudgePost = 0;
+                this.xTrack = 0; 
+                
+                this.visible = false;
+            }
+            
+            update(globalFrame, influ) {
+                let localTicker = globalFrame - this.delay;
+                
+                if (localTicker < 0) {
+                    this.visible = false;
+                    return;
+                }
+                this.visible = true;
+                
+                if (localTicker < this.anim01) {
+                    const tick0 = map(localTicker, 0, this.anim01, 0.5, 1);
+                    const tick1 = aSet(tick0, influ);
+                    
+                    this.xA = map(tick1, 0.5, 1, this.xAmax, 0);
+                    this.yA = map(tick1, 0.5, 1, this.yAmax, 0);
+                    this.xScale = map(tick1, 0.5, 1, this.xScaleMax, 1);
+                    this.xShear = map(tick1, 0.5, 1, this.xShearMax, 0);
+                    
+                    this.xBudgeScale = 0;
+                    this.xBudgePre = 0;
+                    this.xBudgePost = 0;
+                }
+                else if (localTicker < this.anim12) {
+                    const tick0 = map(localTicker, this.anim01, this.anim12, 0, 1);
+                    const tick1 = aSet(tick0, influ);
+                    
+                    this.xScale = map(tick1, 0, 1, 1, this.xScaleMaxB);
+                    this.xBudgeScale = (this.xScale * this.fontSize * 0.5) - (this.fontSize * 0.5);
+                    
+                    this.xShear = map(tick1, 0, 1, 0, this.xShearMaxB);
+                    if (this.xShear < 0) {
+                        this.xBudgePost = -Math.tan(this.xShear) * this.fontSize * 0.65;
+                        this.xBudgePre = 0;
+                    } else {
+                        this.xBudgePre = Math.tan(this.xShear) * this.fontSize * 0.65;
+                        this.xBudgePost = 0;
+                    }
+                }
+                else if (localTicker < this.anim23) {
+                    const tick0 = map(localTicker, this.anim12, this.anim23, 0, 0.5);
+                    const tick1 = aSet(tick0, influ);
+                    
+                    this.yA = 0; 
+                    this.xScale = map(tick1, 0, 0.5, this.xScaleMaxB, 1);
+                    this.xBudgeScale = (this.xScale * this.fontSize * 0.5) - (this.fontSize * 0.5);
+                    
+                    this.xShear = map(tick1, 0, 0.5, this.xShearMaxB, 0);
+                    if (this.xShear < 0) {
+                        this.xBudgePost = -Math.tan(this.xShear) * this.fontSize * 0.65;
+                        this.xBudgePre = 0;
+                    } else {
+                        this.xBudgePre = Math.tan(this.xShear) * this.fontSize * 0.65;
+                        this.xBudgePost = 0;
+                    }
+                } else {
+                    this.visible = true;
+                    this.xA = 0;
+                    this.yA = 0;
+                    
+                    const idleTime = (localTicker - this.anim23) * 0.05;
+                    this.xScale = 1 + Math.sin(idleTime * 0.7 + this.n) * 0.04; 
+                    this.xShear = Math.cos(idleTime * 0.9 + this.n) * 0.03;
+                    
+                    this.xBudgeScale = (this.xScale * this.fontSize * 0.5) - (this.fontSize * 0.5);
+                    if (this.xShear < 0) {
+                        this.xBudgePost = -Math.tan(this.xShear) * this.fontSize * 0.65;
+                        this.xBudgePre = 0;
+                    } else {
+                        this.xBudgePre = Math.tan(this.xShear) * this.fontSize * 0.65;
+                        this.xBudgePost = 0;
+                    }
+                }
+            }
+            
+            display(ctx, cy, accumulatedBudge) {
+                if (!this.visible) return 0;
+                
+                ctx.save();
+                ctx.translate(this.x0 + accumulatedBudge + this.xBudgePre, cy);
+                ctx.translate(this.xA, this.yA);
+                ctx.transform(1, 0, Math.tan(this.xShear), 1, 0, 0);
+                ctx.scale(this.xScale, 1);
+                
+                ctx.font = `800 ${this.fontSize}px "Abhaya Libre", serif`;
+                ctx.fillText(this.text.charAt(this.n), 0, 0);
+                ctx.restore();
+                
+                return this.xBudgeScale + this.xBudgePost + this.xTrack;
+            }
+        }
+
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ THREE.JS И WEBGL
+        // ============================================
+        const container = document.getElementById('canvas-container');
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        const scene = new THREE.Scene();
+        const geometry = new THREE.PlaneGeometry(2, 2);
+
+        // ХОЛСТ ДЛЯ ТЕКСТА
+        const textCanvas = document.createElement('canvas');
+        textCanvas.width = 2048;
+        textCanvas.height = 1024;
+        const textCtx = textCanvas.getContext('2d');
+        const textTexture = new THREE.CanvasTexture(textCanvas);
+        textTexture.minFilter = THREE.LinearFilter;
+        textTexture.magFilter = THREE.LinearFilter;
+        textTexture.generateMipmaps = false; 
+
+        // RENDER TARGET ДЛЯ ДВУХПРОХОДНОГО БЛЮРА
+        const renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+            minFilter: THREE.LinearFilter,
+            magFilter: THREE.LinearFilter,
+            format: THREE.RGBAFormat
+        });
+
+        // ПАЛИТРА COLORAMA (Dark Heat Map)
+        const paletteCanvas = document.createElement('canvas');
+        paletteCanvas.width = 256;
+        paletteCanvas.height = 1;
+        const paletteCtx = paletteCanvas.getContext('2d');
+        const grad = paletteCtx.createLinearGradient(0, 0, 256, 0);
+        
+        grad.addColorStop(0.00, '#FFFF00'); // Фон - желтый
+        grad.addColorStop(0.05, '#FF9900'); // Оранжевый
+        grad.addColorStop(0.15, '#FF0044'); // Розово-красный
+        grad.addColorStop(0.35, '#880088'); // Фиолетовый
+        grad.addColorStop(0.60, '#0000AA'); // Синий
+        grad.addColorStop(0.85, '#000044'); // Темно-синий
+        grad.addColorStop(1.00, '#000000'); // Центр - черный
+        
+        paletteCtx.fillStyle = grad;
+        paletteCtx.fillRect(0, 0, 256, 1);
+        const paletteTexture = new THREE.CanvasTexture(paletteCanvas);
+
+        // ОБЩИЕ ЮНИФОРМЫ
+        const uniformsShared = {
+            u_time: { value: 0.0 },
+            u_mouse: { value: new THREE.Vector2(-10.0, -10.0) }, // Стартуем вне экрана
+            u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+            u_max_blur: { value: 0.06 }
+        };
+
+        // --- ШЕЙДЕР ПРОХОД 1: ГОРИЗОНТАЛЬНОЕ РАЗМЫТИЕ ---
+        const pass1Material = new THREE.ShaderMaterial({
+            uniforms: {
+                ...uniformsShared,
+                u_text_texture: { value: textTexture }
+            },
+            vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position, 1.0); }`,
+            fragmentShader: `
+                uniform float u_time;
+                uniform vec2 u_mouse;
+                uniform vec2 u_resolution;
+                uniform sampler2D u_text_texture;
+                uniform float u_max_blur;
+                varying vec2 vUv;
+
+                float getBlurMap(vec2 uv) {
+                    vec2 uvA = uv; uvA.x *= u_resolution.x / u_resolution.y;
+                    vec2 w1A = u_mouse; w1A.x *= u_resolution.x / u_resolution.y;
+                    
+                    // Блуждающие пятна (автоматическая анимация тепла)
+                    vec2 h1 = vec2(0.5 + 0.4 * sin(u_time * 0.4), 0.5 + 0.3 * cos(u_time * 0.5));
+                    vec2 h2 = vec2(0.5 + 0.3 * cos(u_time * 0.7), 0.5 + 0.4 * sin(u_time * 0.2));
+                    h1.x *= u_resolution.x / u_resolution.y;
+                    h2.x *= u_resolution.x / u_resolution.y;
+
+                    float val = 0.0;
+                    // Влияние курсора
+                    val += 0.9 * smoothstep(0.4, 0.0, distance(uvA, w1A));
+                    // Влияние блуждающих пятен
+                    val += 0.5 * smoothstep(0.5, 0.0, distance(uvA, h1));
+                    val += 0.5 * smoothstep(0.5, 0.0, distance(uvA, h2));
+                    return clamp(val, 0.0, 1.0);
+                }
+
+                vec2 getAspectCorrectedUV(vec2 uv) {
+                    float screenAspect = u_resolution.x / u_resolution.y;
+                    float texAspect = 2.0; // 2048x1024
+                    vec2 newUV = uv - 0.5;
+                    if (screenAspect > texAspect) {
+                        newUV.x *= screenAspect / texAspect;
+                    } else {
+                        newUV.y *= texAspect / screenAspect;
+                    }
+                    return newUV + 0.5;
+                }
+
+                void main() {
+                    float blurAmount = getBlurMap(vUv) * u_max_blur;
+                    vec2 centerUv = getAspectCorrectedUV(vUv);
+                    
+                    // Если зона не задета блюром - не тратим ресурсы, отдаем резкий пиксель
+                    if (blurAmount < 0.001) {
+                        if(centerUv.x < 0.0 || centerUv.x > 1.0 || centerUv.y < 0.0 || centerUv.y > 1.0) {
+                            gl_FragColor = vec4(0.0);
+                        } else {
+                            gl_FragColor = texture2D(u_text_texture, centerUv);
+                        }
+                        return;
+                    }
+
+                    // 31-Tap Гауссово горизонтальное размытие (Идеальная гладкость)
+                    vec4 color = vec4(0.0);
+                    float totalWeight = 0.0;
+                    float sigma = 5.0;
+                    float aspectCorrection = u_resolution.y / u_resolution.x;
+
+                    for(float x = -15.0; x <= 15.0; x += 1.0) {
+                        float weight = exp(-(x * x) / (2.0 * sigma * sigma));
+                        float offsetAmount = (x / 15.0) * blurAmount;
+                        vec2 offset = vec2(offsetAmount * aspectCorrection, 0.0);
+                        
+                        vec2 sampleUv = centerUv + offset;
+                        if(sampleUv.x >= 0.0 && sampleUv.x <= 1.0 && sampleUv.y >= 0.0 && sampleUv.y <= 1.0) {
+                            color += texture2D(u_text_texture, sampleUv) * weight;
+                            totalWeight += weight;
+                        }
+                    }
+
+                    gl_FragColor = totalWeight > 0.0 ? (color / totalWeight) : vec4(0.0);
+                }
+            `
+        });
+
+        // --- ШЕЙДЕР ПРОХОД 2: ВЕРТИКАЛЬНОЕ РАЗМЫТИЕ + ЦВЕТА + ЗЕРНО ---
+        const pass2Material = new THREE.ShaderMaterial({
+            uniforms: {
+                ...uniformsShared,
+                u_blurred_texture: { value: renderTarget.texture },
+                u_sharp_texture: { value: textTexture },
+                u_palette: { value: paletteTexture }
+            },
+            vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position, 1.0); }`,
+            fragmentShader: `
+                uniform float u_time;
+                uniform vec2 u_mouse;
+                uniform vec2 u_resolution;
+                uniform sampler2D u_blurred_texture;
+                uniform sampler2D u_sharp_texture;
+                uniform sampler2D u_palette;
+                uniform float u_max_blur;
+                varying vec2 vUv;
+
+                float getBlurMap(vec2 uv) {
+                    vec2 uvA = uv; uvA.x *= u_resolution.x / u_resolution.y;
+                    vec2 w1A = u_mouse; w1A.x *= u_resolution.x / u_resolution.y;
+                    vec2 h1 = vec2(0.5 + 0.4 * sin(u_time * 0.4), 0.5 + 0.3 * cos(u_time * 0.5));
+                    vec2 h2 = vec2(0.5 + 0.3 * cos(u_time * 0.7), 0.5 + 0.4 * sin(u_time * 0.2));
+                    h1.x *= u_resolution.x / u_resolution.y;
+                    h2.x *= u_resolution.x / u_resolution.y;
+
+                    float val = 0.0;
+                    val += 0.9 * smoothstep(0.4, 0.0, distance(uvA, w1A));
+                    val += 0.5 * smoothstep(0.5, 0.0, distance(uvA, h1));
+                    val += 0.5 * smoothstep(0.5, 0.0, distance(uvA, h2));
+                    return clamp(val, 0.0, 1.0);
+                }
+
+                float random(vec2 st) {
+                    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+                }
+
+                vec2 getAspectCorrectedUV(vec2 uv) {
+                    float screenAspect = u_resolution.x / u_resolution.y;
+                    float texAspect = 2.0; 
+                    vec2 newUV = uv - 0.5;
+                    if (screenAspect > texAspect) {
+                        newUV.x *= screenAspect / texAspect;
+                    } else {
+                        newUV.y *= texAspect / screenAspect;
+                    }
+                    return newUV + 0.5;
+                }
+
+                void main() {
+                    float blurMapValue = getBlurMap(vUv);
+                    float blurAmount = blurMapValue * u_max_blur;
+                    vec4 blurredColor = vec4(0.0);
+                    
+                    if (blurAmount < 0.001) {
+                        blurredColor = texture2D(u_blurred_texture, vUv);
+                    } else {
+                        // 31-Tap Гауссово вертикальное размытие
+                        float totalWeight = 0.0;
+                        float sigma = 5.0;
+
+                        for(float y = -15.0; y <= 15.0; y += 1.0) {
+                            float weight = exp(-(y * y) / (2.0 * sigma * sigma));
+                            float offsetAmount = (y / 15.0) * blurAmount;
+                            vec2 offset = vec2(0.0, offsetAmount);
+                            blurredColor += texture2D(u_blurred_texture, clamp(vUv + offset, 0.0, 1.0)) * weight;
+                            totalWeight += weight;
+                        }
+                        blurredColor /= totalWeight;
+                    }
+
+                    // --- РЕЗКИЙ ЧЕРНЫЙ ТЕКСТ (в зоне без блюра) ---
+                    vec2 centerUv = getAspectCorrectedUV(vUv);
+                    float sharpAlpha = 0.0;
+                    if(centerUv.x >= 0.0 && centerUv.x <= 1.0 && centerUv.y >= 0.0 && centerUv.y <= 1.0) {
+                        sharpAlpha = texture2D(u_sharp_texture, centerUv).a;
+                    }
+                    // Черный текст на желтом фоне, без радужных краев!
+                    vec3 sharpColor = mix(vec3(1.0, 1.0, 0.0), vec3(0.0, 0.0, 0.0), sharpAlpha);
+
+                    // --- ТЕПЛОВАЯ КАРТА ---
+                    float intensity = blurredColor.a;
+                    vec3 heatColor = texture2D(u_palette, vec2(intensity, 0.5)).rgb;
+
+                    // Плавно проявляем тепловизор только там, где есть блюр
+                    float mixFactor = smoothstep(0.0, 0.1, blurMapValue);
+                    vec3 finalColor = mix(sharpColor, heatColor, mixFactor);
+
+                    // --- КИНЕМАТОГРАФИЧНОЕ ЗЕРНО ---
+                    float noiseTime = fract(u_time * 10.0);
+                    vec3 grain = vec3(
+                        random(vUv + noiseTime),
+                        random(vUv + noiseTime + 1.0),
+                        random(vUv + noiseTime + 2.0)
+                    ) * 2.0 - 1.0;
+                    
+                    float lum = dot(finalColor, vec3(0.299, 0.587, 0.114));
+                    float grainAmount = mix(0.18, 0.04, lum); // В черном зерна больше, в желтом меньше
+                    finalColor += grain * grainAmount;
+
+                    // Виньетка удалена, выводим чистый цвет с зерном
+                    gl_FragColor = vec4(finalColor, 1.0);
+                }
+            `
+        });
+
+        const mesh = new THREE.Mesh(geometry, pass1Material); // Инициализируем первым проходом
+        scene.add(mesh);
+
+        // ============================================
+        // ЛОГИКА АНИМАЦИИ
+        // ============================================
+        let kineticLetters = [];
+        let frameCounter = 0;
+        let currentText = "DESIGN LOVERS";
+        
+        function initLetters() {
+            kineticLetters = [];
+            let fontSize = 300;
+            textCtx.font = `800 ${fontSize}px "Abhaya Libre", serif`;
+            
+            let fullMetrics = textCtx.measureText(currentText);
+            if (fullMetrics.width > textCanvas.width * 0.9) {
+                fontSize = Math.floor(fontSize * ((textCanvas.width * 0.9) / fullMetrics.width));
+                textCtx.font = `800 ${fontSize}px "Abhaya Libre", serif`;
+            }
+
+            let totalWidth = 0;
+            let letterWidths = [];
+            for(let i = 0; i < currentText.length; i++) {
+                let metrics = textCtx.measureText(currentText[i]);
+                let w = metrics.width || (fontSize * 0.6);
+                letterWidths.push(w);
+                totalWidth += w;
+            }
+            
+            let startX = (textCanvas.width - totalWidth) / 2;
+            let currentX = startX;
+            
+            for(let i = 0; i < currentText.length; i++) {
+                let letter = new KineticLetter(currentX + letterWidths[i]/2, i, currentText.length, currentText, fontSize);
+                kineticLetters.push(letter);
+                currentX += letterWidths[i];
+            }
+            frameCounter = 0;
+        }
+
+        // ============================================
+        // ПРИВЯЗКА СОБЫТИЙ UI
+        // ============================================
+        document.getElementById('text-input').addEventListener('input', (e) => {
+            currentText = (e.target.value || " ").toUpperCase();
+            initLetters();
+        });
+        document.getElementById('blur-range').addEventListener('input', (e) => {
+            uniformsShared.u_max_blur.value = parseFloat(e.target.value);
+        });
+        document.getElementById('anim-speed').addEventListener('input', (e) => {
+            document.getElementById('val-speed').innerText = e.target.value + 'x';
+        });
+        document.getElementById('anim-influ').addEventListener('input', (e) => {
+            document.getElementById('val-influ').innerText = e.target.value;
+        });
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            initLetters();
+        });
+        
+        // Сворачивание панели
+        document.getElementById('controls-header').addEventListener('click', () => {
+            document.getElementById('controls-wrapper').classList.toggle('collapsed');
+        });
+
+        // Отслеживание курсора мыши
+        window.addEventListener('mousemove', (e) => {
+            uniformsShared.u_mouse.value.x = e.clientX / window.innerWidth;
+            uniformsShared.u_mouse.value.y = 1.0 - (e.clientY / window.innerHeight);
+        });
+        
+        // Поддержка касаний для мобильных
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                uniformsShared.u_mouse.value.x = e.touches[0].clientX / window.innerWidth;
+                uniformsShared.u_mouse.value.y = 1.0 - (e.touches[0].clientY / window.innerHeight);
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderTarget.setSize(window.innerWidth, window.innerHeight);
+            uniformsShared.u_resolution.value.set(window.innerWidth, window.innerHeight);
+        });
+
+        // ============================================
+        // ОСНОВНОЙ ЦИКЛ РЕНДЕРА
+        // ============================================
+        const clock = new THREE.Clock();
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            uniformsShared.u_time.value = clock.getElapsedTime();
+
+            // 1. Очистка и отрисовка Canvas текста
+            textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
+            textCtx.fillStyle = '#ffffff';
+            textCtx.textAlign = 'center';
+            textCtx.textBaseline = 'middle';
+            textCtx.font = '800 300px "Abhaya Libre", serif';
+            textCtx.filter = 'none'; // Никакого базового размытия!
+
+            const speed = parseFloat(document.getElementById('anim-speed').value);
+            const influ = parseFloat(document.getElementById('anim-influ').value);
+            frameCounter += speed;
+            
+            let accumulatedBudge = 0;
+            const centerY = textCanvas.height / 2;
+            
+            for(let letter of kineticLetters) {
+                letter.update(frameCounter, influ);
+                let budgeForNext = letter.display(textCtx, centerY, accumulatedBudge);
+                accumulatedBudge += budgeForNext;
+            }
+            textTexture.needsUpdate = true;
+
+            // 2. WEBGL ПРОХОД 1 (Горизонтальное размытие в буфер)
+            mesh.material = pass1Material;
+            renderer.setRenderTarget(renderTarget);
+            renderer.render(scene, camera);
+
+            // 3. WEBGL ПРОХОД 2 (Вертикальное размытие + Цвета + На экран)
+            mesh.material = pass2Material;
+            renderer.setRenderTarget(null);
+            renderer.render(scene, camera);
+        }
+        
+        // Запуск после загрузки шрифтов
+        document.fonts.ready.then(() => {
+            initLetters();
+            animate();
+        });
+    </script>
+</body>
+</html>

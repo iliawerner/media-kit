@@ -2,6 +2,14 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/tools",
+      "destination": "/tools/index.html"
+    },
+    {
+      "source": "/tools/kinetic-title",
+      "destination": "/tools/kinetic-title/index.html"
+    },
+    {
       "source": "/v2",
       "destination": "/v2/index.html"
     },
