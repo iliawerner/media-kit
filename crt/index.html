@@ -101,21 +101,77 @@
     98% { opacity: 0.04; }
     99% { opacity: 0; }
   }
-  .crt-boot {
-    position: fixed; inset: 0; background: #fff5e0;
-    z-index: 10000; pointer-events: none;
-    animation: boot 1.4s cubic-bezier(.7,.1,.3,.9) forwards;
+  /* Multi-stage boot sequence */
+  .boot {
+    position: fixed; inset: 0; z-index: 10000; pointer-events: none;
+    background: #000;
+    color: var(--phosphor-bright);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(255,210,122,0.9);
+    overflow: hidden;
   }
-  @keyframes boot {
-    0%   { opacity: 1; transform: scaleY(1) scaleX(1); }
-    15%  { opacity: 1; transform: scaleY(0.004) scaleX(1); background: #fff5e0; }
-    25%  { opacity: 0.8; transform: scaleY(0.004) scaleX(0.3); }
-    45%  { opacity: 0.4; transform: scaleY(1) scaleX(1); background: rgba(255,210,122,0.3); }
-    100% { opacity: 0; transform: scaleY(1) scaleX(1); }
+  .boot.done { display: none; }
+  .boot-scene {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 18px;
+    opacity: 0;
   }
+  .boot-scene.on { opacity: 1; }
+  .boot-text {
+    position: relative;
+    font-size: 15px;
+    padding: 10px 18px;
+    border: 1px solid var(--phosphor-dim);
+    background: rgba(20,10,4,0.85);
+  }
+  .boot-text.small { font-size: 12px; letter-spacing: 0.1em; }
+  .boot-dots { display: inline-block; min-width: 1.4em; text-align: left; }
+  .boot-noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 0.7  0 0 0 0 0.28  0 0 0 0.85 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: screen; opacity: 0.4;
+    animation: bootNoiseShift 0.12s steps(4) infinite;
+  }
+  @keyframes bootNoiseShift {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(-4px,3px); }
+    50% { transform: translate(3px,-2px); }
+    75% { transform: translate(-2px,-4px); }
+    100% { transform: translate(0,0); }
+  }
+  .boot-hlines {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(to bottom,
+        transparent 0 2px,
+        rgba(255,210,122,0.06) 2px 3px,
+        transparent 3px 12px);
+    animation: bootHlines 1.2s linear infinite;
+  }
+  @keyframes bootHlines {
+    0% { background-position-y: -60px; }
+    100% { background-position-y: 0; }
+  }
+  .boot-bars {
+    display: flex; gap: 4px; margin-top: 10px;
+  }
+  .boot-bar {
+    width: 24px; height: 6px;
+    background: var(--phosphor-dim);
+    box-shadow: 0 0 4px rgba(255,210,122,0.3) inset;
+  }
+  .boot-bar.lit {
+    background: var(--phosphor-bright);
+    box-shadow: 0 0 12px rgba(255,210,122,0.8);
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .crt-noise, .crt-roll::before, .crt-flicker, .crt-boot { animation: none; }
-    .crt-boot { display: none; }
+    .crt-noise, .crt-roll::before, .crt-flicker, .boot, .boot-noise, .boot-hlines {
+      animation: none;
+    }
+    .boot { display: none; }
   }
 
   ::selection { background: var(--phosphor); color: var(--bg); text-shadow: none; }
@@ -155,27 +211,53 @@
   .titlebar {
     border-bottom: 1px solid var(--phosphor-dim);
     padding: 10px 16px; display: flex;
-    justify-content: space-between; align-items: center;
+    justify-content: space-between; align-items: center; gap: 16px;
     font-size: 11px; text-transform: uppercase;
     letter-spacing: 0.08em;
     background: var(--bg-raised);
     color: var(--phosphor-bright);
   }
-  .titlebar .dots { display: flex; gap: 8px; align-items: center; }
-  .titlebar .dot {
-    width: 10px; height: 10px;
-    border: 1px solid var(--phosphor-dim);
-    border-radius: 50%; background: transparent;
+  .tb-left, .tb-right {
+    display: flex; align-items: center; gap: 10px;
+    font-variant-numeric: tabular-nums;
   }
-  .titlebar .dot.live {
-    background: var(--danger); border-color: var(--danger);
-    box-shadow: 0 0 8px var(--danger), 0 0 2px #fff;
-    animation: pulse 1.4s ease-in-out infinite;
+  .tb-center { font-size: 11px; opacity: 0.9; }
+  .tb-divider {
+    width: 1px; height: 11px; background: var(--phosphor-dim);
+    display: inline-block;
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--danger), 0 0 2px #fff; }
-    50% { opacity: 0.45; box-shadow: 0 0 3px var(--danger); }
+  .rec-dot {
+    color: var(--danger);
+    font-size: 12px; line-height: 1;
+    animation: recDotPulse 1.1s ease-in-out infinite;
+    cursor: crosshair;
   }
+  .rec-label {
+    color: var(--danger);
+    letter-spacing: 0.22em; font-weight: 500;
+    text-shadow: 0 0 6px rgba(255,59,31,0.8);
+    animation: recDotPulse 1.1s ease-in-out infinite;
+  }
+  @keyframes recDotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .tb-ch { letter-spacing: 0.16em; }
+  .tb-signal { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+  .sig-bar {
+    width: 3px; background: var(--phosphor-dim);
+    box-shadow: 0 0 3px rgba(255,179,71,0.4) inset;
+  }
+  .sig-bar:nth-child(1) { height: 3px; }
+  .sig-bar:nth-child(2) { height: 5px; }
+  .sig-bar:nth-child(3) { height: 7px; }
+  .sig-bar:nth-child(4) { height: 9px; }
+  .sig-bar:nth-child(5) { height: 11px; }
+  .sig-bar.lit {
+    background: var(--phosphor-bright);
+    box-shadow: 0 0 6px rgba(255,210,122,0.9);
+  }
+  .tb-signal-label { opacity: 0.7; letter-spacing: 0.12em; }
 
   .menubar {
     border-bottom: 1px solid var(--phosphor-dim);
@@ -346,6 +428,49 @@
     font-size: 11px; color: var(--phosphor-dim);
     text-transform: uppercase; letter-spacing: 0.08em;
   }
+  .m-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+    font-size: 10px; letter-spacing: 0.14em;
+    color: var(--phosphor);
+    padding-bottom: 8px;
+    border-bottom: 1px dotted var(--phosphor-dim);
+  }
+  .m-key { font-weight: 500; color: var(--phosphor-bright); }
+  .m-trend {
+    font-size: 10px;
+    color: #9cff6e;
+    text-shadow: 0 0 6px rgba(156,255,110,0.65);
+    font-variant-numeric: tabular-nums;
+  }
+  .m-spark {
+    display: block; width: 100%; height: 40px;
+    margin: 8px 0 16px;
+    overflow: visible;
+  }
+  .m-spark .spark-line {
+    fill: none;
+    stroke: var(--phosphor-bright);
+    stroke-width: 1.5;
+    stroke-linecap: round; stroke-linejoin: round;
+    filter: drop-shadow(0 0 3px rgba(255,210,122,0.85));
+    stroke-dasharray: var(--len, 400);
+    stroke-dashoffset: var(--len, 400);
+    transition: stroke-dashoffset 1.4s cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  .m.in-spark .m-spark .spark-line { stroke-dashoffset: 0; }
+  .m-spark .spark-area {
+    fill: url(#sparkGrad);
+    opacity: 0;
+    transition: opacity 0.8s cubic-bezier(0.45, 0, 0.55, 1) 0.6s;
+  }
+  .m.in-spark .m-spark .spark-area { opacity: 0.45; }
+  .m-spark .spark-dot {
+    fill: var(--phosphor-bright);
+    filter: drop-shadow(0 0 4px rgba(255,210,122,1));
+    opacity: 0; transition: opacity 0.3s 1.2s;
+  }
+  .m.in-spark .m-spark .spark-dot { opacity: 1; }
   .m-corners span {
     position: absolute; width: 9px; height: 9px;
     border: 1px solid var(--phosphor);
@@ -372,6 +497,52 @@
     font-size: 10px; text-transform: uppercase;
     letter-spacing: 0.12em; margin-bottom: 18px;
     text-shadow: none;
+  }
+  .aud-col {
+    position: relative; overflow: hidden;
+  }
+  .aud-header {
+    font-size: 10px; letter-spacing: 0.14em;
+    color: var(--phosphor-bright);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px dotted var(--phosphor-dim);
+    display: flex; justify-content: space-between; align-items: center;
+    text-shadow: 0 0 6px rgba(255,210,122,0.8);
+  }
+  .aud-header .aud-seq {
+    color: var(--phosphor-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .aud-list { list-style: none; }
+  .aud-beam {
+    position: absolute; left: -6%; right: -6%; top: 0;
+    height: 2px; pointer-events: none; z-index: 3;
+    background: linear-gradient(to right,
+      transparent, rgba(255,210,122,0.95) 20%,
+      rgba(255,255,210,1) 50%,
+      rgba(255,210,122,0.95) 80%, transparent);
+    box-shadow: 0 0 18px rgba(255,210,122,0.8);
+    opacity: 0; transform: translateY(0);
+    mix-blend-mode: screen;
+  }
+  .aud-col.in .aud-beam { animation: audBeam 1.1s cubic-bezier(0.45, 0, 0.55, 1) 120ms forwards; }
+  @keyframes audBeam {
+    0%   { opacity: 0; transform: translateY(0); }
+    12%  { opacity: 1; }
+    95%  { opacity: 1; transform: translateY(var(--beam-end, 320px)); }
+    100% { opacity: 0; transform: translateY(var(--beam-end, 320px)); }
+  }
+  .aud-col.in .aud-list li {
+    opacity: 0;
+    animation: audLiReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .aud-col.in .aud-list li:nth-child(1) { animation-delay: 320ms; }
+  .aud-col.in .aud-list li:nth-child(2) { animation-delay: 560ms; }
+  .aud-col.in .aud-list li:nth-child(3) { animation-delay: 800ms; }
+  @keyframes audLiReveal {
+    from { opacity: 0; transform: translateX(-8px); filter: blur(3px); }
+    to   { opacity: 1; transform: translateX(0); filter: blur(0); }
   }
   .aud-col h3 {
     font-family: 'DM Serif Display', Georgia, serif;
@@ -612,6 +783,50 @@
     margin-top: auto; padding-top: 6px;
     border-top: 1px dotted var(--phosphor-dim);
   }
+  .qc-head {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-bottom: 8px;
+    border-bottom: 1px dotted var(--phosphor-dim);
+    margin-bottom: 4px;
+  }
+  .qc-rx {
+    color: var(--danger); font-weight: 500;
+    text-shadow: 0 0 6px rgba(255,59,31,0.7);
+    animation: recDotPulse 1.1s ease-in-out infinite;
+  }
+  .qc-time {
+    color: var(--phosphor-bright);
+    font-variant-numeric: tabular-nums;
+  }
+  .qc-id {
+    color: var(--phosphor);
+    margin-left: auto;
+  }
+  .qc-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--phosphor-dim);
+    color: var(--phosphor-bright);
+    letter-spacing: 0.12em;
+    text-shadow: none;
+    font-size: 9px;
+  }
+  .qc-foot {
+    display: flex; justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--phosphor-dim);
+    padding-top: 6px;
+    border-top: 1px dotted var(--phosphor-dim);
+    margin-top: auto;
+  }
+  .qc:hover .qc-rx { color: var(--bg); text-shadow: none; animation: none; }
+  .qc:hover .qc-tag { background: var(--bg); color: var(--phosphor-bright); }
 
   .cta-sec {
     padding: 64px 36px;
@@ -661,6 +876,80 @@
   }
   .cta-row a::after {
     content: '→'; font-family: 'VT323', monospace; font-size: 21px;
+  }
+  .cta-row a { flex-direction: column; align-items: flex-start; text-align: left; gap: 4px; padding: 18px 22px; }
+  .cta-row a::after { display: none; }
+  .cta-row .ch-prefix {
+    color: var(--phosphor-bright);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .cta-row .ch-name {
+    font-weight: 500; letter-spacing: 0.12em;
+  }
+  .cta-row .ch-val {
+    font-size: 11px; letter-spacing: 0.05em;
+    color: var(--phosphor);
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: none;
+    opacity: 0.9;
+  }
+  .cta-row a:hover .ch-val { color: var(--bg); }
+
+  /* terminal block */
+  .term {
+    max-width: 720px; margin: 0 auto 26px;
+    border: 1px solid var(--phosphor-dim);
+    background: #080402;
+    text-align: left;
+    box-shadow:
+      0 0 40px rgba(255,179,71,0.12) inset,
+      0 0 22px rgba(255,179,71,0.15);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .term-chrome {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--phosphor-dim);
+    background: var(--bg-raised);
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .term-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    border: 1px solid var(--phosphor-dim);
+  }
+  .term-dot.r { background: #ff5f57; border-color: #ff5f57; box-shadow: 0 0 6px #ff5f57; }
+  .term-dot.y { background: #febc2e; border-color: #febc2e; box-shadow: 0 0 6px #febc2e; }
+  .term-dot.g { background: #28c940; border-color: #28c940; box-shadow: 0 0 6px #28c940; }
+  .term-title { flex: 1; color: var(--phosphor); letter-spacing: 0.1em; font-size: 10px; }
+  .term-badge {
+    padding: 2px 6px; background: var(--phosphor-dim); color: var(--phosphor-bright);
+    font-size: 9px;
+  }
+  .term-body {
+    padding: 16px 18px 22px;
+    min-height: 210px;
+    font-size: 13px; line-height: 1.55;
+    color: var(--phosphor);
+    text-shadow: var(--glow-soft);
+    white-space: pre-wrap;
+  }
+  .term-body .t-prompt {
+    color: var(--phosphor-bright);
+    text-shadow: 0 0 8px rgba(255,210,122,0.9);
+  }
+  .term-body .t-cmd { color: var(--phosphor-bright); }
+  .term-body .t-ok   { color: #9cff6e; text-shadow: 0 0 6px rgba(156,255,110,0.55); }
+  .term-body .t-warn { color: var(--danger); text-shadow: 0 0 6px rgba(255,59,31,0.6); }
+  .term-body .t-dim  { color: var(--phosphor-dim); }
+  .term-body .t-br  { display: block; }
+  .term-body .t-cur {
+    display: inline-block; width: 0.55em; height: 1em;
+    background: var(--phosphor-bright); vertical-align: -0.1em;
+    box-shadow: 0 0 8px rgba(255,210,122,0.9);
+    animation: caret 1.05s steps(2) infinite;
+    margin-left: 2px;
   }
 
   .footbar {
@@ -726,21 +1015,13 @@
     pointer-events: none;
   }
 
-  /* --- floating crosshair tracking the cursor --- */
-  .xhair {
-    position: fixed; pointer-events: none; z-index: 9992;
-    width: 22px; height: 22px;
-    transform: translate(-50%, -50%) translate(var(--mx, 50vw), var(--my, 50vh));
-    opacity: 0; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* WebGL phosphor / CRT shader canvas — GPU-driven aperture, vignette, scanlines, mouse beam */
+  .crt-gl {
+    position: fixed; inset: 0; z-index: 9991;
+    pointer-events: none;
     mix-blend-mode: screen;
+    opacity: 0.95;
   }
-  body.has-pointer .xhair { opacity: 0.55; }
-  .xhair::before, .xhair::after {
-    content: ''; position: absolute; background: var(--phosphor-bright);
-    box-shadow: 0 0 6px var(--phosphor);
-  }
-  .xhair::before { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-50%); }
-  .xhair::after  { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-50%); }
 
   /* --- universal reveal pattern (composes opacity + transform from one progress) --- */
   .rv {
@@ -835,9 +1116,12 @@
     }
   }
 
-  /* --- ambient: subtle hue drift on the live dot --- */
-  .titlebar .dot.live {
-    animation: pulse 1.4s ease-in-out infinite, hueDrift 18s ease-in-out infinite;
+  /* --- ambient: subtle hue drift on REC indicator --- */
+  .rec-dot, .rec-label {
+    animation-name: recDotPulse, hueDrift;
+    animation-duration: 1.1s, 18s;
+    animation-timing-function: ease-in-out, ease-in-out;
+    animation-iteration-count: infinite, infinite;
   }
   @keyframes hueDrift {
     0%, 100% { filter: hue-rotate(0deg); }
@@ -1087,19 +1371,36 @@
     100% { top: 100%; opacity: 0; }
   }
 
-  /* --- hero h1 word-by-word reveal (when JS splits into spans) --- */
-  .word {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(24px);
-    filter: blur(6px);
-    transition:
-      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
-      transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
-      filter 0.7s cubic-bezier(0.45, 0, 0.55, 1) var(--d, 0ms);
+  /* --- hero lines: scanline decoder effect ---
+     Each .deco-line is a <span> containing the target text.
+     JS replaces its textContent with scrambled chars until the scan beam passes.
+     The beam itself is a ::after pseudo drawn as a phosphor blade. */
+  .deco-line {
+    position: relative; display: inline-block;
+    white-space: nowrap;
   }
-  .word.in { opacity: 1; transform: translateY(0); filter: blur(0); }
-  .word.space { white-space: pre; }
+  .deco-line::after {
+    content: ''; position: absolute; inset: -2px auto -2px 0;
+    width: 18px;
+    background: linear-gradient(to right,
+      transparent 0%,
+      rgba(255,210,122,0.55) 40%,
+      rgba(255,255,210,0.95) 50%,
+      rgba(255,210,122,0.55) 60%,
+      transparent 100%);
+    box-shadow: 0 0 22px rgba(255,210,122,0.85);
+    mix-blend-mode: screen;
+    opacity: 0;
+    transform: translateX(var(--scan, 0px));
+    pointer-events: none;
+    z-index: 2;
+  }
+  .deco-line.scanning::after { opacity: 1; }
+  .deco-line.done::after { opacity: 0; }
+  .deco-line .deco-inner {
+    display: inline-block;
+    position: relative; z-index: 1;
+  }
 
   /* --- bottom telemetry strip (data ticker) --- */
   .telemetry {
@@ -1138,9 +1439,9 @@
 </head>
 <body>
 
-<div class="crt-boot"></div>
+<!-- CRT stack: shader canvas is the hero effect; CSS overlays are a graceful fallback -->
+<canvas id="crt-gl" class="crt-gl"></canvas>
 <div class="crt-noise"></div>
-<div class="crt-aperture"></div>
 <div class="crt-scanlines"></div>
 <div class="crt-roll"></div>
 <div class="crt-flicker"></div>
@@ -1148,18 +1449,56 @@
 <div class="crt-tear" id="tear"></div>
 <div class="degauss" id="degauss"></div>
 <div class="scroll-bar" id="scrollbar"></div>
-<div class="xhair" id="xhair"></div>
+
+<!-- Multi-stage boot overlay — replaces the old single-flash .crt-boot -->
+<div id="boot" class="boot">
+  <div class="boot-scene boot-s1">
+    <div class="boot-noise"></div>
+    <div class="boot-text">&gt; SYNC<span class="boot-dots">...</span></div>
+  </div>
+  <div class="boot-scene boot-s2">
+    <div class="boot-hlines"></div>
+    <div class="boot-text">&gt; CHANNEL LOCK ACQUIRED</div>
+  </div>
+  <div class="boot-scene boot-s3">
+    <div class="boot-text small">&gt; DECODING SIGNAL ::
+      <span class="boot-hex" id="boot-hex">0x00</span>
+    </div>
+    <div class="boot-bars">
+      <div class="boot-bar"></div>
+      <div class="boot-bar"></div>
+      <div class="boot-bar"></div>
+      <div class="boot-bar"></div>
+      <div class="boot-bar"></div>
+      <div class="boot-bar"></div>
+    </div>
+  </div>
+</div>
 
 <div class="frame">
 
   <div class="titlebar">
-    <div class="dots">
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot live"></span>
+    <div class="tb-left">
+      <span class="rec-dot">&#x25CF;</span>
+      <span class="rec-label">REC</span>
+      <span class="tb-divider"></span>
+      <span class="tb-ch">CH.<span id="chNum">047</span></span>
+      <span class="tb-divider"></span>
+      <span class="tb-signal" aria-hidden="true">
+        <span class="sig-bar"></span>
+        <span class="sig-bar"></span>
+        <span class="sig-bar"></span>
+        <span class="sig-bar"></span>
+        <span class="sig-bar"></span>
+      </span>
+      <span class="tb-signal-label">SIGNAL</span>
     </div>
-    <div>design-lovers.com :: /media-kit</div>
-    <div id="clock">--:--:--</div>
+    <div class="tb-center">design-lovers.com :: /media-kit</div>
+    <div class="tb-right">
+      <span id="frameCount">F.000000</span>
+      <span class="tb-divider"></span>
+      <span id="clock">--:--:-- UTC</span>
+    </div>
   </div>
 
   <div class="menubar">
@@ -1183,16 +1522,16 @@
   </div>
 
   <section class="hero">
-    <h1 class="chromatic" data-words="Documentary essays | for a high-value | design audience.">
-      Documentary essays<br>
-      for a <em>high-value</em><br>
-      <span class="hl" data-text="design audience.">design audience.</span>
+    <h1 class="chromatic">
+      <span class="deco-line" data-final="Documentary essays"><span class="deco-inner">Documentary essays</span></span><br>
+      <span class="deco-line" data-final="for a"><span class="deco-inner">for a</span></span> <em><span class="deco-line deco-em" data-final="high-value"><span class="deco-inner">high-value</span></span></em><br>
+      <span class="hl" data-text="design audience."><span class="deco-line" data-final="design audience."><span class="deco-inner">design audience.</span></span></span>
     </h1>
     <div class="right-col rv-stagger">
-      <div class="log rv" data-type="Essay-driven. Slow. On purpose."></div>
+      <div class="log rv" data-type="LOG 0x01 :: Essay-driven. Slow. On purpose."></div>
       <p class="rv">We don't interrupt stories with advertising. We integrate your product into the story itself &mdash; the part people remember a week later, not the part they skip.</p>
-      <div class="log rv" data-type="Host :: Ilya Werner"></div>
-      <div class="log rv" data-type="Company :: DELO STUDIO LTD (UK)"></div>
+      <div class="log rv" data-type="LOG 0x02 :: Host = Ilya Werner"></div>
+      <div class="log rv" data-type="LOG 0x03 :: Company = DELO STUDIO LTD (UK)"></div>
       <div class="status rv" id="hero-status">[STATUS] BOOKING Q1&ndash;Q2 2026 &mdash; 2 SLOTS REMAINING<span class="cursor"></span></div>
     </div>
   </section>
@@ -1205,23 +1544,38 @@
       <span>VERIFIED / YT_STUDIO</span>
     </div>
     <div class="metrics rv-stagger">
-      <div class="m rv-pop">
+      <div class="m rv-pop" data-sparkline="62 64 66 69 68 72 74 73 76 78">
         <div class="m-corners"><span></span><span></span><span></span><span></span></div>
-        <div class="m-num display"><em class="num-count" data-target="78" data-decimals="0">0</em><span class="unit">%</span></div>
+        <div class="m-head">
+          <span class="m-key">RETENTION.30S</span>
+          <span class="m-trend">&#x25B2; +4.2</span>
+        </div>
+        <div class="m-num display"><em class="num-count" data-target="78" data-decimals="0" data-jitter="0.6">0</em><span class="unit">%</span></div>
+        <svg class="m-spark" viewBox="0 0 200 40" preserveAspectRatio="none"></svg>
         <div class="m-label">Viewers retained at the 30-second mark</div>
-        <div class="m-sub">Top-tier engagement</div>
+        <div class="m-sub">TOP-TIER ENGAGEMENT &middot; 10 WK</div>
       </div>
-      <div class="m rv-pop">
+      <div class="m rv-pop" data-sparkline="44 46 48 47 50 49 51 52 51 52">
         <div class="m-corners"><span></span><span></span><span></span><span></span></div>
-        <div class="m-num display"><em class="num-count" data-target="52" data-decimals="0">0</em><span class="unit">%</span></div>
+        <div class="m-head">
+          <span class="m-key">WATCH.AVG</span>
+          <span class="m-trend">&#x25B2; +1.8</span>
+        </div>
+        <div class="m-num display"><em class="num-count" data-target="52" data-decimals="0" data-jitter="0.4">0</em><span class="unit">%</span></div>
+        <svg class="m-spark" viewBox="0 0 200 40" preserveAspectRatio="none"></svg>
         <div class="m-label">Average watch rate on 12-minute essays</div>
-        <div class="m-sub">Above industry average</div>
+        <div class="m-sub">ABOVE INDUSTRY AVG &middot; 10 WK</div>
       </div>
-      <div class="m rv-pop">
+      <div class="m rv-pop" data-sparkline="34 36 33 37 38 36 39 40 41 41">
         <div class="m-corners"><span></span><span></span><span></span><span></span></div>
-        <div class="m-num display"><em class="num-count" data-target="41" data-decimals="0">0</em><span class="unit">%</span></div>
+        <div class="m-head">
+          <span class="m-key">LOYALTY.MOM</span>
+          <span class="m-trend">&#x25B2; +2.6</span>
+        </div>
+        <div class="m-num display"><em class="num-count" data-target="41" data-decimals="0" data-jitter="0.3">0</em><span class="unit">%</span></div>
+        <svg class="m-spark" viewBox="0 0 200 40" preserveAspectRatio="none"></svg>
         <div class="m-label">Returning viewers, month over month</div>
-        <div class="m-sub">Rare loyalty</div>
+        <div class="m-sub">RARE LOYALTY &middot; 10 WK</div>
       </div>
     </div>
   </section>
@@ -1235,31 +1589,34 @@
     </div>
     <div class="aud-grid rv-stagger">
       <div class="aud-col rv">
-        <div class="tag">01 / Who</div>
+        <div class="aud-header">&gt;&gt; PACKET 01 / WHO <span class="aud-seq">0x41A</span></div>
         <h3>Builders and<br>decision-makers.</h3>
-        <ul>
+        <ul class="aud-list">
           <li>Professionals in IT &amp; creative industries</li>
           <li>Product managers, developers, founders</li>
           <li>Decision-makers and early adopters</li>
         </ul>
+        <div class="aud-beam"></div>
       </div>
       <div class="aud-col rv">
-        <div class="tag">02 / How</div>
+        <div class="aud-header">&gt;&gt; PACKET 02 / HOW <span class="aud-seq">0x41B</span></div>
         <h3>Found us on<br>their own.</h3>
-        <ul>
+        <ul class="aud-list">
           <li>100% organic traffic</li>
           <li>90%+ from YouTube recommendations</li>
           <li>No paid promotion. Ever.</li>
         </ul>
+        <div class="aud-beam"></div>
       </div>
       <div class="aud-col rv">
-        <div class="tag">03 / Why</div>
+        <div class="aud-header">&gt;&gt; PACKET 03 / WHY <span class="aud-seq">0x41C</span></div>
         <h3>They respond<br>to craft.</h3>
-        <ul>
+        <ul class="aud-list">
           <li>Tools that respect restraint</li>
           <li>Products with a clear point of view</li>
           <li>Work that holds up on a second look</li>
         </ul>
+        <div class="aud-beam"></div>
       </div>
     </div>
   </section>
@@ -1390,45 +1747,104 @@
   <section class="sec" id="quotes">
     <div class="sec-label">
       <span class="blk"></span>
-      <span>&sect; 06 &mdash; WHAT VIEWERS SAY</span>
+      <span>&sect; 06 &mdash; COMMS.LOG / INTERCEPTED VIEWER CHATTER</span>
       <div class="dash"></div>
-      <span>UNEDITED_COMMENTS</span>
+      <span>RX / UNEDITED</span>
     </div>
     <div class="quotes-stack rv-stagger">
       <div class="qc rv">
+        <div class="qc-head">
+          <span class="qc-rx">[RX]</span>
+          <span class="qc-time">2025.09.11 08:42 UTC</span>
+          <span class="qc-id">@zoganje</span>
+          <span class="qc-tag">DECRYPTED</span>
+        </div>
         <p>Simply the best review of the new iPhone line I've come across. A true sociological analysis.</p>
-        <cite><span>@zoganje</span><span>11.sep.25</span></cite>
+        <div class="qc-foot"><span>PACKET.0x01</span><span>SIG: 98%</span></div>
       </div>
       <div class="qc rv">
+        <div class="qc-head">
+          <span class="qc-rx">[RX]</span>
+          <span class="qc-time">2025.10.07 14:11 UTC</span>
+          <span class="qc-id">@deimoskrijgsman</span>
+          <span class="qc-tag">DECRYPTED</span>
+        </div>
         <p>Completely humbled me on my design skills and changed the way I see design.</p>
-        <cite><span>@deimoskrijgsman</span><span>07.oct.25</span></cite>
+        <div class="qc-foot"><span>PACKET.0x02</span><span>SIG: 96%</span></div>
       </div>
       <div class="qc rv">
+        <div class="qc-head">
+          <span class="qc-rx">[RX]</span>
+          <span class="qc-time">2025.09.01 19:03 UTC</span>
+          <span class="qc-id">@AlexVain</span>
+          <span class="qc-tag">DECRYPTED</span>
+        </div>
         <p>The most sophisticated analysis out there. Always sharp, always fresh.</p>
-        <cite><span>@AlexVain</span><span>01.sep.25</span></cite>
+        <div class="qc-foot"><span>PACKET.0x03</span><span>SIG: 94%</span></div>
       </div>
       <div class="qc rv">
+        <div class="qc-head">
+          <span class="qc-rx">[RX]</span>
+          <span class="qc-time">2025.09.10 06:56 UTC</span>
+          <span class="qc-id">@gravesddd</span>
+          <span class="qc-tag">DECRYPTED</span>
+        </div>
         <p>Good content is so hard to find. Your channel is a needle in the haystack.</p>
-        <cite><span>@gravesddd</span><span>10.sep.25</span></cite>
+        <div class="qc-foot"><span>PACKET.0x04</span><span>SIG: 93%</span></div>
       </div>
       <div class="qc rv">
+        <div class="qc-head">
+          <span class="qc-rx">[RX]</span>
+          <span class="qc-time">2025.09.14 22:31 UTC</span>
+          <span class="qc-id">@Kolmir</span>
+          <span class="qc-tag">DECRYPTED</span>
+        </div>
         <p>Explains design, sociology, and marketing at once. Excellent.</p>
-        <cite><span>@Kolmir</span><span>14.sep.25</span></cite>
+        <div class="qc-foot"><span>PACKET.0x05</span><span>SIG: 91%</span></div>
       </div>
       <div class="qc rv">
+        <div class="qc-head">
+          <span class="qc-rx">[RX]</span>
+          <span class="qc-time">2025.09.29 11:08 UTC</span>
+          <span class="qc-id">@yperokeanios</span>
+          <span class="qc-tag">DECRYPTED</span>
+        </div>
         <p>He leveraged the ad itself as another case study in design thinking.</p>
-        <cite><span>@yperokeanios</span><span>29.sep.25</span></cite>
+        <div class="qc-foot"><span>PACKET.0x06</span><span>SIG: 89%</span></div>
       </div>
     </div>
   </section>
 
   <section class="cta-sec" id="contact">
-    <h2 class="display rv-pop"><span class="scramble" data-text="Let's">Let's</span> <em><span class="scramble" data-text="make">make</span></em> <span class="scramble" data-text="something">something</span><br><span class="scramble" data-text="worth remembering.">worth remembering.</span></h2>
-    <div class="line rv">&gt; awaiting_input_<span class="cursor"></span></div>
-    <div class="cta-row rv-stagger">
-      <a class="rv-pop" href="mailto:hello@iliawerner.com">Email</a>
-      <a class="rv-pop" href="https://wa.me/447944473843">WhatsApp</a>
-      <a class="rv-pop" href="https://t.me/simplygreen">Telegram</a>
+    <h2 class="display rv-pop">Let's <em>make</em> something<br>worth remembering.</h2>
+    <div class="term rv" id="term">
+      <div class="term-chrome">
+        <span class="term-dot r"></span>
+        <span class="term-dot y"></span>
+        <span class="term-dot g"></span>
+        <span class="term-title">bash :: design-lovers :: booking.sh</span>
+        <span class="term-badge">PTY/0</span>
+      </div>
+      <div class="term-body" id="termBody">
+<!-- filled by JS: prompt + typed command + response lines -->
+      </div>
+    </div>
+    <div class="cta-row rv-stagger" id="ctaRow">
+      <a class="rv-pop" href="mailto:hello@iliawerner.com" data-label="email">
+        <span class="ch-prefix">[&rarr;]</span>
+        <span class="ch-name">EMAIL</span>
+        <span class="ch-val">hello@iliawerner.com</span>
+      </a>
+      <a class="rv-pop" href="https://wa.me/447944473843" data-label="whatsapp">
+        <span class="ch-prefix">[&rarr;]</span>
+        <span class="ch-name">WHATSAPP</span>
+        <span class="ch-val">+44 7944 473843</span>
+      </a>
+      <a class="rv-pop" href="https://t.me/simplygreen" data-label="telegram">
+        <span class="ch-prefix">[&rarr;]</span>
+        <span class="ch-name">TELEGRAM</span>
+        <span class="ch-val">@simplygreen</span>
+      </a>
     </div>
   </section>
 
@@ -1529,69 +1945,114 @@
     });
   });
 
-  // ---------- Hero h1: split into words with cascading delays ----------
-  (function splitHero() {
-    var h1 = document.querySelector('.hero h1');
-    if (!h1) return;
-    // Re-walk text nodes only, preserving inline tags (em, span.hl, br)
-    function walk(node, accIdx) {
-      var children = Array.from(node.childNodes);
-      children.forEach(function (n) {
-        if (n.nodeType === 3) {
-          var text = n.nodeValue;
-          var parts = text.split(/(\s+)/);
-          var frag = document.createDocumentFragment();
-          parts.forEach(function (p) {
-            if (!p) return;
-            if (/^\s+$/.test(p)) {
-              // Preserve whitespace as a plain text node — no inline-block wrapper
-              // (otherwise word-wrap + newlines break the line layout).
-              frag.appendChild(document.createTextNode(' '));
-            } else {
-              var w = document.createElement('span');
-              w.className = 'word';
-              w.textContent = p;
-              w.style.setProperty('--d', (accIdx.i * 80) + 'ms');
-              frag.appendChild(w);
-              accIdx.i++;
-            }
-          });
-          node.replaceChild(frag, n);
-        } else if (n.nodeType === 1 && n.tagName !== 'BR') {
-          // Wrap whole inline element as one "word"
-          if (n.classList.contains('hl')) {
-            n.classList.add('word');
-            n.style.setProperty('--d', (accIdx.i * 80) + 'ms');
-            accIdx.i++;
-          } else {
-            walk(n, accIdx);
-          }
-        }
-      });
-    }
-    walk(h1, { i: 0 });
-  })();
+  // ---------- HERO :: Scanline decoder ----------
+  // Replace text with random glyphs, then pass a scan beam across each line.
+  // As the beam advances, characters "lock" (random → target) left-to-right.
+  var glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&*+=<>/?!\u25A0\u25A1\u25CF\u25CB';
+  function randGlyph(orig) {
+    // Preserve spaces and punctuation-ish to keep visual length stable
+    if (orig === ' ') return ' ';
+    return glyphs[(Math.random() * glyphs.length) | 0];
+  }
+  var decoLines = Array.from(document.querySelectorAll('.deco-line'));
+  decoLines.forEach(function (line) {
+    var inner = line.querySelector('.deco-inner');
+    var final = line.dataset.final || (inner ? inner.textContent : line.textContent);
+    line.dataset.final = final;
+    // Initialize as scrambled
+    if (inner) inner.textContent = final.replace(/./g, function (c) { return randGlyph(c); });
+  });
 
-  // ---------- Count-up numbers (overshoot pop) ----------
+  function runDecoder(line, opts) {
+    opts = opts || {};
+    var inner = line.querySelector('.deco-inner');
+    var final = line.dataset.final;
+    if (!inner || !final) return;
+    var duration = opts.duration || 1100;
+    var width = line.getBoundingClientRect().width || 200;
+    var start = performance.now();
+    line.classList.add('scanning');
+    // cycle scrambled state fast
+    var scrambleTimer = setInterval(function () {
+      // Only scramble chars that haven't been locked yet
+      var locked = Math.floor((performance.now() - start) / duration * final.length);
+      var out = '';
+      for (var i = 0; i < final.length; i++) {
+        if (i < locked) out += final[i];
+        else out += randGlyph(final[i]);
+      }
+      inner.textContent = out;
+    }, 40);
+    function frame(t) {
+      var p = Math.min(1, (t - start) / duration);
+      var ease = EASE.calm(p);
+      var scanX = ease * (width + 20);
+      line.style.setProperty('--scan', scanX + 'px');
+      if (p < 1) requestAnimationFrame(frame);
+      else finishDecoder();
+    }
+    function finishDecoder() {
+      if (line.classList.contains('done')) return;
+      clearInterval(scrambleTimer);
+      inner.textContent = final;
+      line.classList.remove('scanning');
+      line.classList.add('done');
+    }
+    requestAnimationFrame(frame);
+    // Safety net: if rAF is suspended (hidden tab, throttling), force-complete
+    // after duration plus 50% buffer so the text never stays scrambled forever.
+    setTimeout(finishDecoder, duration + Math.max(400, duration * 0.5));
+  }
+  // Run decoder cascade on hero lines after boot settles
+  function startHeroDecode() {
+    if (reduce) {
+      decoLines.forEach(function (line) {
+        var inner = line.querySelector('.deco-inner');
+        if (inner) inner.textContent = line.dataset.final;
+        line.classList.add('done');
+      });
+      return;
+    }
+    decoLines.forEach(function (line, i) {
+      setTimeout(function () { runDecoder(line, { duration: 1100 + i * 50 }); }, i * 220);
+    });
+  }
+
+  // ---------- Count-up numbers (overshoot pop, continuous micro-jitter) ----------
   function countUp(el) {
     if (el.dataset.done === '1') return;
     el.dataset.done = '1';
     var target = parseFloat(el.dataset.target);
     var dec = parseInt(el.dataset.decimals || '0', 10);
+    var jitter = parseFloat(el.dataset.jitter || '0');
     var dur = 1500;
     var start = performance.now();
     var startVal = 0;
+    var settled = false;
+    function settle() {
+      if (settled) return;
+      settled = true;
+      el.textContent = target.toFixed(dec);
+      // Continuous live-data jitter
+      if (jitter > 0 && !reduce) {
+        setInterval(function () {
+          var j = target + (Math.random() - 0.5) * jitter;
+          el.textContent = j.toFixed(dec);
+        }, 1200 + Math.random() * 1400);
+      }
+    }
     function frame(t) {
       var p = Math.min(1, (t - start) / dur);
       var eased = EASE.pop(p);
       var v = startVal + (target - startVal) * eased;
-      // CRT charm: occasional flicker mid-count
       if (p > 0.05 && p < 0.95 && Math.random() > 0.93) v += (Math.random() - 0.5) * (target * 0.08);
       el.textContent = v.toFixed(dec);
       if (p < 1) requestAnimationFrame(frame);
-      else el.textContent = target.toFixed(dec);
+      else settle();
     }
     requestAnimationFrame(frame);
+    // Safety net for throttled / hidden tabs.
+    setTimeout(settle, dur + 600);
   }
 
   // ---------- Typewriter: type into [data-type] elements ----------
@@ -1667,8 +2128,14 @@
         var idx = Array.prototype.indexOf.call(t.parentNode.children, t);
         setTimeout(function () { t.classList.add('in-view'); }, idx * 110);
       }
-      // word reveal
-      if (t.classList.contains('word')) t.classList.add('in');
+      // metric cards: kick sparkline + measure beam-end for audience
+      if (t.classList.contains('m')) {
+        setTimeout(function () { t.classList.add('in-spark'); }, 320);
+      }
+      if (t.classList.contains('aud-col')) {
+        // measure bottom target for the scan beam
+        t.style.setProperty('--beam-end', (t.offsetHeight - 8) + 'px');
+      }
       io.unobserve(t);
     });
   }, { threshold: 0.06, rootMargin: '0px 0px 0px 0px' });
@@ -1684,27 +2151,7 @@
   }
   observeAll();
 
-  // Hero h1 words reveal as a single coordinated group when the h1 enters view —
-  // even words below the fold get triggered together (Remotion-style: one progress
-  // drives the whole stagger via per-word --d delay).
-  (function heroWordsTrigger() {
-    var h1 = document.querySelector('.hero h1');
-    if (!h1) return;
-    var words = h1.querySelectorAll('.word');
-    var fired = false;
-    function fire() {
-      if (fired) return;
-      fired = true;
-      words.forEach(function (w) { w.classList.add('in'); });
-    }
-    // Always fire shortly after load (hero is above fold by definition)
-    setTimeout(fire, 350);
-    // Backup: IO in case animation needs to wait for scroll
-    var io2 = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) { fire(); io2.unobserve(e.target); } });
-    }, { threshold: 0.05 });
-    io2.observe(h1);
-  })();
+  // Hero decoder is kicked by the boot sequence when it completes (below).
 
   // Hero numbers in the metrics: also kick on initial frame if already visible
   // (handled by IO above)
@@ -1870,22 +2317,8 @@
     });
   });
 
-  // ---------- Crosshair follows pointer ----------
-  var xhair = document.getElementById('xhair');
-  var hasPointer = false;
-  document.addEventListener('pointermove', function (e) {
-    if (!hasPointer) { document.body.classList.add('has-pointer'); hasPointer = true; }
-    if (xhair) {
-      xhair.style.setProperty('--mx', e.clientX + 'px');
-      xhair.style.setProperty('--my', e.clientY + 'px');
-    }
-  });
-  document.addEventListener('pointerleave', function () {
-    document.body.classList.remove('has-pointer'); hasPointer = false;
-  });
-
-  // ---------- Click the live dot to degauss ----------
-  var liveDot = document.querySelector('.titlebar .dot.live');
+  // ---------- Click REC indicator to degauss (shader + tear flash) ----------
+  var liveDot = document.querySelector('.rec-dot');
   var degauss = document.getElementById('degauss');
   function fireDegauss() {
     if (!degauss || reduce) return;
@@ -1895,7 +2328,6 @@
     fireTear();
   }
   if (liveDot) {
-    liveDot.style.cursor = 'crosshair';
     liveDot.title = 'Degauss';
     liveDot.addEventListener('click', fireDegauss);
   }
@@ -1905,7 +2337,7 @@
     if (e.key === 'g' || e.key === 'G') fireDegauss();
   });
 
-  // ---------- One last touch: brief hero h1 phosphor flicker (already had this) ----------
+  // ---------- One last touch: brief hero h1 phosphor flicker ----------
   var heroH1 = document.querySelector('.hero h1');
   if (heroH1 && !reduce) {
     setInterval(function () {
@@ -1915,6 +2347,326 @@
       setTimeout(function () { heroH1.style.opacity = '1'; }, 60);
     }, 11000);
   }
+
+  // ---------- SVG sparklines on metric cards ----------
+  (function sparklines() {
+    var grad = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    grad.innerHTML = '<linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#ffd27a" stop-opacity="0.45"/>' +
+      '<stop offset="100%" stop-color="#ffd27a" stop-opacity="0"/>' +
+    '</linearGradient>';
+    document.querySelectorAll('.m-spark').forEach(function (svg, idx) {
+      if (idx === 0) svg.appendChild(grad.cloneNode(true));
+      var card = svg.closest('.m');
+      var data = (card.dataset.sparkline || '').trim().split(/\s+/).map(parseFloat);
+      if (!data.length) return;
+      var w = 200, h = 40;
+      var max = Math.max.apply(null, data);
+      var min = Math.min.apply(null, data);
+      var pad = 3;
+      var pts = data.map(function (v, i) {
+        var x = (i / (data.length - 1)) * (w - pad * 2) + pad;
+        var y = h - pad - ((v - min) / Math.max(1e-6, max - min)) * (h - pad * 2);
+        return [x, y];
+      });
+      var linePath = 'M ' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L ');
+      var areaPath = linePath + ' L ' + pts[pts.length - 1][0].toFixed(1) + ' ' + h + ' L ' + pts[0][0].toFixed(1) + ' ' + h + ' Z';
+      var areaEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      areaEl.setAttribute('d', areaPath);
+      areaEl.setAttribute('class', 'spark-area');
+      svg.appendChild(areaEl);
+      var lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      lineEl.setAttribute('d', linePath);
+      lineEl.setAttribute('class', 'spark-line');
+      svg.appendChild(lineEl);
+      // dot at last point
+      var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', pts[pts.length - 1][0]);
+      dot.setAttribute('cy', pts[pts.length - 1][1]);
+      dot.setAttribute('r', 3);
+      dot.setAttribute('class', 'spark-dot');
+      svg.appendChild(dot);
+      // Set stroke-dashoffset via --len for reveal
+      var length = lineEl.getTotalLength ? lineEl.getTotalLength() : 400;
+      lineEl.style.setProperty('--len', length);
+    });
+  })();
+
+  // ---------- Titlebar signal meter ----------
+  (function signal() {
+    var bars = document.querySelectorAll('.sig-bar');
+    if (!bars.length) return;
+    setInterval(function () {
+      var strength = Math.floor(3 + Math.random() * 2.999); // 3..5 bars
+      bars.forEach(function (b, i) {
+        if (i < strength) b.classList.add('lit');
+        else b.classList.remove('lit');
+      });
+    }, 1100);
+    // Frame counter
+    var fc = document.getElementById('frameCount');
+    if (fc) {
+      var n = 0;
+      setInterval(function () {
+        n += Math.floor(30 + Math.random() * 30);
+        fc.textContent = 'F.' + String(n).padStart(6, '0');
+      }, 33);
+    }
+  })();
+
+  // ---------- Multi-stage boot sequence ----------
+  (function boot() {
+    var b = document.getElementById('boot');
+    if (!b) { startHeroDecode(); return; }
+    if (reduce) {
+      b.classList.add('done');
+      startHeroDecode();
+      return;
+    }
+    var s1 = b.querySelector('.boot-s1');
+    var s2 = b.querySelector('.boot-s2');
+    var s3 = b.querySelector('.boot-s3');
+    var hex = document.getElementById('boot-hex');
+    var dots = b.querySelector('.boot-dots');
+    var bars = b.querySelectorAll('.boot-bar');
+    // Stage 1: SYNC...
+    s1.classList.add('on');
+    var dotI = 0;
+    var dotTimer = setInterval(function () {
+      dotI = (dotI + 1) % 4;
+      dots.textContent = '.'.repeat(dotI);
+    }, 140);
+    setTimeout(function () {
+      clearInterval(dotTimer);
+      s1.classList.remove('on');
+      // Stage 2: LOCK
+      s2.classList.add('on');
+      setTimeout(function () {
+        s2.classList.remove('on');
+        // Stage 3: DECODE with progress bars + hex counter
+        s3.classList.add('on');
+        var hv = 0;
+        var barIdx = 0;
+        var decTimer = setInterval(function () {
+          hv += Math.floor(1 + Math.random() * 14);
+          if (hex) hex.textContent = '0x' + hv.toString(16).toUpperCase().padStart(2, '0');
+          if (hv > (barIdx + 1) * 42 && barIdx < bars.length) {
+            bars[barIdx].classList.add('lit');
+            barIdx++;
+          }
+        }, 40);
+        setTimeout(function () {
+          clearInterval(decTimer);
+          if (hex) hex.textContent = '0xFF';
+          bars.forEach(function (x) { x.classList.add('lit'); });
+          setTimeout(function () {
+            b.style.transition = 'opacity 0.4s linear';
+            b.style.opacity = '0';
+            setTimeout(function () { b.classList.add('done'); }, 440);
+            startHeroDecode();
+          }, 260);
+        }, 820);
+      }, 520);
+    }, 780);
+  })();
+
+  // ---------- CTA terminal session ----------
+  (function terminalSession() {
+    var body = document.getElementById('termBody');
+    if (!body) return;
+    var lines = [
+      { t: '<span class="t-prompt">design-lovers:~$</span> ', delay: 0, speed: 0 },
+      { t: '<span class="t-cmd">book --slot=q1 --priority=high --package=flagship</span>', delay: 0, speed: 26, typed: true },
+      { t: '\n<span class="t-dim">&gt; authenticating...</span>', delay: 200, speed: 0 },
+      { t: '\n<span class="t-dim">&gt; fetching availability</span>', delay: 320, speed: 0 },
+      { t: '\n<span class="t-ok">&gt; LOCK ACQUIRED :: Q1 2026 / 2 SLOTS REMAINING</span>', delay: 280, speed: 0 },
+      { t: '\n<span class="t-ok">&gt; PACKAGE CONFIGURED :: FLAGSHIP / NARRATIVE SERIES</span>', delay: 240, speed: 0 },
+      { t: '\n<span class="t-warn">&gt; RATE VALID UNTIL Q4 2025 :: SECURE BELOW</span>', delay: 220, speed: 0 },
+      { t: '\n<span class="t-dim">&gt; OPENING CHANNELS &#x2500;&#x2500;&gt;</span>', delay: 240, speed: 0 },
+      { t: '\n<span class="t-prompt">design-lovers:~$</span> <span class="t-cur"></span>', delay: 320, speed: 0 }
+    ];
+    var idx = 0;
+    function step() {
+      if (idx >= lines.length) {
+        // Reveal CTA row smoothly
+        var row = document.getElementById('ctaRow');
+        if (row) row.style.opacity = '1';
+        return;
+      }
+      var ln = lines[idx++];
+      var wait = ln.delay || 0;
+      setTimeout(function () {
+        if (ln.typed) {
+          // Parse out the text inside <span class="t-cmd">...</span>
+          var m = ln.t.match(/^<span class="t-cmd">([^<]+)<\/span>$/);
+          if (m) {
+            var prefix = body.innerHTML;
+            var target = m[1];
+            var i = 0;
+            var wrap = document.createElement('span');
+            wrap.className = 't-cmd';
+            body.appendChild(wrap);
+            (function typeChar() {
+              if (i <= target.length) {
+                wrap.textContent = target.slice(0, i);
+                i++;
+                setTimeout(typeChar, ln.speed || 24);
+              } else {
+                step();
+              }
+            })();
+            return;
+          }
+        }
+        body.innerHTML += ln.t;
+        step();
+      }, wait);
+    }
+    // Delay terminal start until boot is done
+    setTimeout(step, 2800);
+  })();
+
+  // ---------- WebGL phosphor shader ----------
+  (function glPhosphor() {
+    var canvas = document.getElementById('crt-gl');
+    if (!canvas || reduce) {
+      if (canvas) canvas.style.display = 'none';
+      return;
+    }
+    var gl = canvas.getContext('webgl', { premultipliedAlpha: false, antialias: false }) ||
+             canvas.getContext('experimental-webgl');
+    if (!gl) { canvas.style.display = 'none'; return; }
+
+    var vsrc = [
+      'attribute vec2 a_pos;',
+      'varying vec2 v_uv;',
+      'void main() {',
+      '  v_uv = a_pos * 0.5 + 0.5;',
+      '  gl_Position = vec4(a_pos, 0.0, 1.0);',
+      '}'
+    ].join('\n');
+
+    var fsrc = [
+      'precision mediump float;',
+      'varying vec2 v_uv;',
+      'uniform vec2 u_res;',
+      'uniform vec2 u_mouse;',
+      'uniform float u_time;',
+      'uniform float u_decay;',  // mouse bloom decay after idle
+      'float hash(vec2 p) {',
+      '  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);',
+      '}',
+      'float noise(vec2 p) {',
+      '  vec2 i = floor(p); vec2 f = fract(p);',
+      '  float a = hash(i); float b = hash(i + vec2(1.0,0.0));',
+      '  float c = hash(i + vec2(0.0,1.0)); float d = hash(i + vec2(1.0,1.0));',
+      '  vec2 u = f*f*(3.0-2.0*f);',
+      '  return mix(a,b,u.x) + (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y;',
+      '}',
+      'void main() {',
+      '  vec2 p = gl_FragCoord.xy;',
+      '  vec2 uv = p / u_res;',
+      '  // Barrel-ish warp for fringe shift',
+      '  vec2 cc = uv - 0.5;',
+      '  float r2 = dot(cc, cc);',
+      '  float warp = 1.0 + 0.18 * r2;',
+      '  // Aperture grille (RGB subpixels, 3-wide)',
+      '  float stripe = mod(p.x, 3.0);',
+      '  vec3 aperture = vec3(0.0);',
+      '  if (stripe < 1.0) aperture = vec3(1.0, 0.35, 0.05);',
+      '  else if (stripe < 2.0) aperture = vec3(0.25, 1.0, 0.25);',
+      '  else aperture = vec3(0.1, 0.35, 1.0);',
+      '  // Amber-bias aperture so it reads as phosphor not RGB TV',
+      '  aperture = mix(aperture, vec3(1.0, 0.7, 0.28), 0.65);',
+      '  vec3 col = aperture * 0.045;',
+      '  // Moving scan bands (two frequencies, drifting)',
+      '  float scanFine = sin(p.y * 2.3 - u_time * 4.0) * 0.5 + 0.5;',
+      '  float scanBand = sin(p.y * 0.06 - u_time * 0.45) * 0.5 + 0.5;',
+      '  col -= (1.0 - scanFine) * 0.035;',
+      '  col += vec3(0.9, 0.6, 0.25) * scanBand * 0.025;',
+      '  // Electron beam bloom near cursor',
+      '  float d = distance(p, u_mouse);',
+      '  float bloom = exp(-d / 260.0) * (0.75 + u_decay * 0.25);',
+      '  col += vec3(1.0, 0.78, 0.38) * bloom * 0.28;',
+      '  // Corner darkening (curvature)',
+      '  float vign = 1.0 - pow(length(cc) * 1.25, 2.6);',
+      '  col *= clamp(vign, 0.2, 1.0);',
+      '  // Animated noise',
+      '  float n = noise(p * 0.9 + u_time * 13.0);',
+      '  col += (n - 0.5) * 0.055;',
+      '  // Chromatic fringe toward edges (radial)',
+      '  float fringe = smoothstep(0.35, 0.9, length(cc));',
+      '  col.r += fringe * 0.03;',
+      '  col.b += fringe * 0.015;',
+      '  gl_FragColor = vec4(col, 1.0);',
+      '}'
+    ].join('\n');
+
+    function sh(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+        console.warn('shader', gl.getShaderInfoLog(s)); return null;
+      }
+      return s;
+    }
+    var vs = sh(gl.VERTEX_SHADER, vsrc);
+    var fs = sh(gl.FRAGMENT_SHADER, fsrc);
+    if (!vs || !fs) { canvas.style.display = 'none'; return; }
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      canvas.style.display = 'none'; return;
+    }
+    gl.useProgram(prog);
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+    var a_pos = gl.getAttribLocation(prog, 'a_pos');
+    gl.enableVertexAttribArray(a_pos);
+    gl.vertexAttribPointer(a_pos, 2, gl.FLOAT, false, 0, 0);
+    var u_res = gl.getUniformLocation(prog, 'u_res');
+    var u_mouse = gl.getUniformLocation(prog, 'u_mouse');
+    var u_time = gl.getUniformLocation(prog, 'u_time');
+    var u_decay = gl.getUniformLocation(prog, 'u_decay');
+
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    function resize() {
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    var mouse = [canvas.width * 0.5, canvas.height * 0.5];
+    var targetMouse = mouse.slice();
+    var lastMove = 0;
+    window.addEventListener('pointermove', function (e) {
+      targetMouse[0] = e.clientX * dpr;
+      targetMouse[1] = (window.innerHeight - e.clientY) * dpr;
+      lastMove = performance.now();
+    });
+
+    var t0 = performance.now();
+    function render(now) {
+      // lerp mouse for smoothing
+      mouse[0] += (targetMouse[0] - mouse[0]) * 0.12;
+      mouse[1] += (targetMouse[1] - mouse[1]) * 0.12;
+      var idle = Math.min(1, (now - lastMove) / 1200);
+      var decay = 1.0 - idle * 0.7;
+      gl.uniform2f(u_res, canvas.width, canvas.height);
+      gl.uniform2f(u_mouse, mouse[0], mouse[1]);
+      gl.uniform1f(u_time, (now - t0) * 0.001);
+      gl.uniform1f(u_decay, decay);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+  })();
 
 })();
 </script>
