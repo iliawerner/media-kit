@@ -259,6 +259,48 @@
   }
   .tb-signal-label { opacity: 0.7; letter-spacing: 0.12em; }
 
+  /* --- SND toggle: appearance mirrors the rest of titlebar chips --- */
+  .tb-snd {
+    appearance: none; -webkit-appearance: none;
+    border: 1px solid var(--phosphor-dim);
+    background: transparent;
+    color: var(--phosphor);
+    font: inherit;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 3px 8px 3px 20px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s;
+    font-variant-numeric: tabular-nums;
+  }
+  .tb-snd:hover {
+    border-color: var(--phosphor);
+    color: var(--phosphor-bright);
+    box-shadow: 0 0 10px rgba(255,179,71,0.25);
+  }
+  .tb-snd::before {
+    content: '';
+    position: absolute; left: 8px; top: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--phosphor-dim);
+    transform: translateY(-50%);
+    transition: all 0.15s;
+  }
+  .tb-snd.on {
+    color: var(--phosphor-bright);
+    border-color: var(--phosphor);
+    text-shadow: 0 0 6px rgba(255,210,122,0.8);
+  }
+  .tb-snd.on::before {
+    background: var(--phosphor-bright);
+    box-shadow: 0 0 8px rgba(255,210,122,0.9);
+    animation: sndPulse 1.4s ease-in-out infinite;
+  }
+  @keyframes sndPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+
   .menubar {
     border-bottom: 1px solid var(--phosphor-dim);
     padding: 8px 14px; display: flex; gap: 0;
@@ -312,7 +354,10 @@
   .hero {
     padding: 56px 36px;
     border-bottom: 1px solid var(--phosphor-dim);
-    display: grid; grid-template-columns: 1.2fr 1fr;
+    display: grid;
+    /* minmax(0,...) prevents intrinsic content (nowrap decoder lines) from
+       inflating tracks and squeezing the right column while scramble runs */
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     gap: 40px; position: relative;
   }
   .hero h1 {
@@ -1331,7 +1376,13 @@
   }
 
   /* --- count-up numbers: keep tabular alignment + small skeleton --- */
-  .num-count { font-variant-numeric: tabular-nums; }
+  .num-count {
+    font-variant-numeric: tabular-nums;
+    /* inline-block so JS can set min-width at init without layout drama;
+       text-align:right keeps the units glyph (%, K) glued to a stable column */
+    display: inline-block;
+    text-align: right;
+  }
 
   /* --- bar chart: scanning lock-on indicator at fill edge --- */
   .geo-bar-fill::after {
@@ -1374,10 +1425,25 @@
   /* --- hero lines: scanline decoder effect ---
      Each .deco-line is a <span> containing the target text.
      JS replaces its textContent with scrambled chars until the scan beam passes.
-     The beam itself is a ::after pseudo drawn as a phosphor blade. */
+     The beam itself is a ::after pseudo drawn as a phosphor blade.
+     ::before is an invisible ghost holding data-final text — it reserves the
+     final pixel width so scramble glyphs of varying widths cannot push the
+     parent grid track and squeeze the right column. .deco-inner is absolutely
+     positioned on top of the ghost so its textContent mutations never change
+     the reserved footprint. */
   .deco-line {
     position: relative; display: inline-block;
     white-space: nowrap;
+    vertical-align: baseline;
+  }
+  .deco-line::before {
+    content: attr(data-final);
+    display: inline-block;
+    white-space: nowrap;
+    visibility: hidden;
+    pointer-events: none;
+    /* Ghost must not participate in text-shadow glow */
+    text-shadow: none;
   }
   .deco-line::after {
     content: ''; position: absolute; inset: -2px auto -2px 0;
@@ -1398,8 +1464,10 @@
   .deco-line.scanning::after { opacity: 1; }
   .deco-line.done::after { opacity: 0; }
   .deco-line .deco-inner {
-    display: inline-block;
-    position: relative; z-index: 1;
+    position: absolute;
+    left: 0; top: 0;
+    white-space: nowrap;
+    z-index: 1;
   }
 
   /* --- bottom telemetry strip (data ticker) --- */
@@ -1492,6 +1560,8 @@
         <span class="sig-bar"></span>
       </span>
       <span class="tb-signal-label">SIGNAL</span>
+      <span class="tb-divider"></span>
+      <button class="tb-snd" id="sndBtn" type="button" aria-pressed="false" title="Toggle CRT sound (procedural, zero assets)">SND.OFF</button>
     </div>
     <div class="tb-center">design-lovers.com :: /media-kit</div>
     <div class="tb-right">
@@ -1937,6 +2007,247 @@
     pop:    bezier(0.34, 1.56, 0.64, 1)  // overshoot
   };
 
+  // ---------- Procedural CRT sound (Web Audio, zero assets) ----------
+  // Every sound is synthesized on demand from oscillators + pre-generated noise.
+  // Muted by default: browsers block AudioContext until a user gesture, so the
+  // SND toggle in the titlebar is the single authoritative on/off. A restored
+  // "on" state from localStorage arms a one-shot gesture listener rather than
+  // trying (and failing) to auto-start.
+  var CRT_SND = (function () {
+    var ctx = null;
+    var master = null;
+    var comp = null;
+    var ambientGain = null;
+    var noiseBuf = null;
+    var enabled = false;
+
+    function makeNoise(c) {
+      var len = c.sampleRate * 1.2;
+      var buf = c.createBuffer(1, len, c.sampleRate);
+      var data = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return buf;
+    }
+    function init() {
+      if (ctx) return;
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      ctx = new AC();
+      // Master chain: compressor -> master gain -> destination.
+      comp = ctx.createDynamicsCompressor();
+      comp.threshold.value = -14;
+      comp.knee.value = 10;
+      comp.ratio.value = 4;
+      comp.attack.value = 0.003;
+      comp.release.value = 0.12;
+      master = ctx.createGain();
+      master.gain.value = 0.55;
+      comp.connect(master);
+      master.connect(ctx.destination);
+      noiseBuf = makeNoise(ctx);
+
+      // Ambient: very faint 15.7kHz CRT horizontal-deflection whine + 60Hz hum.
+      ambientGain = ctx.createGain();
+      ambientGain.gain.value = 0;
+      var whine = ctx.createOscillator();
+      whine.type = 'sine';
+      whine.frequency.value = 15734; // NTSC horizontal sync
+      var whineGain = ctx.createGain();
+      whineGain.gain.value = 0.55;
+      whine.connect(whineGain); whineGain.connect(ambientGain);
+      var hum = ctx.createOscillator();
+      hum.type = 'sine';
+      hum.frequency.value = 60;
+      var humGain = ctx.createGain();
+      humGain.gain.value = 0.22;
+      hum.connect(humGain); humGain.connect(ambientGain);
+      ambientGain.connect(comp);
+      whine.start(); hum.start();
+    }
+    function resume() {
+      if (!ctx) init();
+      if (ctx && ctx.state === 'suspended') ctx.resume();
+    }
+
+    // --- Sound primitives (each is ~guard+schedule, no state) -----------
+    function ping(freq, dur, gain) {
+      if (!enabled || !ctx) return;
+      var t = ctx.currentTime;
+      var o = ctx.createOscillator();
+      var g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = freq || 1200;
+      var peak = gain || 0.07, d = dur || 0.06;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(peak, t + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(g); g.connect(comp);
+      o.start(t); o.stop(t + d + 0.02);
+    }
+    function click() {
+      if (!enabled || !ctx) return;
+      var t = ctx.currentTime;
+      var src = ctx.createBufferSource(); src.buffer = noiseBuf;
+      var f = ctx.createBiquadFilter();
+      f.type = 'bandpass';
+      f.frequency.value = 2200 + Math.random() * 800;
+      f.Q.value = 4;
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.09, t + 0.001);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
+      src.connect(f); f.connect(g); g.connect(comp);
+      src.start(t); src.stop(t + 0.06);
+    }
+    function tick() {
+      if (!enabled || !ctx) return;
+      var t = ctx.currentTime;
+      var o = ctx.createOscillator(); var g = ctx.createGain();
+      o.type = 'square';
+      o.frequency.value = 3200 + Math.random() * 600;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.028, t + 0.001);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.022);
+      o.connect(g); g.connect(comp);
+      o.start(t); o.stop(t + 0.03);
+    }
+    function keyclick() {
+      if (!enabled || !ctx) return;
+      var t = ctx.currentTime;
+      // Noise burst (the actual "click")
+      var src = ctx.createBufferSource(); src.buffer = noiseBuf;
+      var f = ctx.createBiquadFilter();
+      f.type = 'highpass'; f.frequency.value = 1600;
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.04, t + 0.001);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.028);
+      src.connect(f); f.connect(g); g.connect(comp);
+      src.start(t); src.stop(t + 0.04);
+      // Soft sub thunk (mechanical feel)
+      var o = ctx.createOscillator(); var og = ctx.createGain();
+      o.type = 'triangle';
+      o.frequency.value = 130 + Math.random() * 50;
+      og.gain.setValueAtTime(0, t);
+      og.gain.linearRampToValueAtTime(0.03, t + 0.001);
+      og.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
+      o.connect(og); og.connect(comp);
+      o.start(t); o.stop(t + 0.05);
+    }
+    function bell() {
+      if (!enabled || !ctx) return;
+      var t = ctx.currentTime;
+      var o = ctx.createOscillator(); var g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(1000, t);
+      o.frequency.exponentialRampToValueAtTime(960, t + 0.45);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.14, t + 0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+      o.connect(g); g.connect(comp);
+      o.start(t); o.stop(t + 0.6);
+    }
+    function thunk() {
+      if (!enabled || !ctx) return;
+      var t = ctx.currentTime;
+      // Low triangle burst (CRT degauss chunk)
+      var o = ctx.createOscillator(); var g = ctx.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(130, t);
+      o.frequency.exponentialRampToValueAtTime(40, t + 0.4);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.26, t + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+      o.connect(g); g.connect(comp);
+      o.start(t); o.stop(t + 0.6);
+      // Descending high whine (flyback transformer "degaussing")
+      var w = ctx.createOscillator(); var wg = ctx.createGain();
+      w.type = 'sawtooth';
+      w.frequency.setValueAtTime(14000, t);
+      w.frequency.exponentialRampToValueAtTime(60, t + 1.0);
+      var wf = ctx.createBiquadFilter();
+      wf.type = 'lowpass'; wf.frequency.value = 3000;
+      wg.gain.setValueAtTime(0, t);
+      wg.gain.linearRampToValueAtTime(0.045, t + 0.05);
+      wg.gain.exponentialRampToValueAtTime(0.0001, t + 1.0);
+      w.connect(wf); wf.connect(wg); wg.connect(comp);
+      w.start(t); w.stop(t + 1.1);
+    }
+    function sweep() {
+      if (!enabled || !ctx) return;
+      var t = ctx.currentTime;
+      var src = ctx.createBufferSource(); src.buffer = noiseBuf;
+      var f = ctx.createBiquadFilter();
+      f.type = 'bandpass'; f.Q.value = 6;
+      f.frequency.setValueAtTime(800, t);
+      f.frequency.exponentialRampToValueAtTime(4800, t + 0.32);
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.05, t + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.34);
+      src.connect(f); f.connect(g); g.connect(comp);
+      src.start(t); src.stop(t + 0.4);
+    }
+
+    function setEnabled(on) {
+      enabled = !!on;
+      if (enabled) {
+        resume();
+        if (ambientGain && ctx) {
+          ambientGain.gain.cancelScheduledValues(ctx.currentTime);
+          ambientGain.gain.linearRampToValueAtTime(0.022, ctx.currentTime + 0.35);
+        }
+      } else if (ambientGain && ctx) {
+        ambientGain.gain.cancelScheduledValues(ctx.currentTime);
+        ambientGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.18);
+      }
+    }
+    function isEnabled() { return enabled; }
+    return {
+      init: init, resume: resume, setEnabled: setEnabled, isEnabled: isEnabled,
+      ping: ping, click: click, tick: tick, keyclick: keyclick,
+      bell: bell, thunk: thunk, sweep: sweep
+    };
+  })();
+
+  // ---------- SND toggle wiring ----------
+  (function () {
+    var btn = document.getElementById('sndBtn');
+    if (!btn) return;
+    var KEY = 'crt.snd';
+    function flip(on, userInitiated) {
+      if (on) {
+        btn.classList.add('on'); btn.textContent = 'SND.ON';
+        btn.setAttribute('aria-pressed', 'true');
+      } else {
+        btn.classList.remove('on'); btn.textContent = 'SND.OFF';
+        btn.setAttribute('aria-pressed', 'false');
+      }
+      CRT_SND.setEnabled(on);
+      try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {}
+      if (on && userInitiated) {
+        // Power-on chord: dramatic CRT tube turning on.
+        CRT_SND.thunk();
+        setTimeout(function () { CRT_SND.ping(1400, 0.08, 0.09); }, 220);
+      }
+    }
+    btn.addEventListener('click', function () {
+      flip(!btn.classList.contains('on'), true);
+    });
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    if (saved === '1') {
+      // Can't auto-init audio (autoplay policy). Arm a one-shot listener on
+      // the first real pointer/key gesture anywhere on the page.
+      var arm = function () {
+        document.removeEventListener('pointerdown', arm, true);
+        document.removeEventListener('keydown', arm, true);
+        flip(true, false);
+      };
+      document.addEventListener('pointerdown', arm, true);
+      document.addEventListener('keydown', arm, true);
+    }
+  })();
+
   // ---------- Stagger index assignment for all .rv-stagger > * ----------
   document.querySelectorAll('.rv-stagger').forEach(function (group) {
     Array.prototype.forEach.call(group.children, function (child, i) {
@@ -1944,6 +2255,59 @@
       child.style.setProperty('--d', (i * 90) + 'ms');
     });
   });
+
+  // ---------- Layout containment: reserve footprint before animations run ----
+  // Animations that mutate text (count-up, typewriter) are the main source of
+  // layout thrash. We pre-measure each element's FINAL rendered size once and
+  // pin min-width / min-height so the visible mutation never shifts siblings.
+  function reserveNumCountWidths() {
+    var nodes = document.querySelectorAll('.num-count');
+    nodes.forEach(function (el) {
+      if (el.dataset.wReserved === '1') return;
+      var dec = parseInt(el.dataset.decimals || '0', 10);
+      var target = parseFloat(el.dataset.target);
+      if (isNaN(target)) return;
+      var finalText = target.toFixed(dec);
+      var original = el.textContent;
+      el.textContent = finalText;
+      // Force layout, then measure. getBoundingClientRect() honors tabular-nums
+      // and the element's own font-family / size / letter-spacing.
+      var w = el.getBoundingClientRect().width;
+      el.textContent = original;
+      // A 1-px nudge so sub-pixel rounding never exposes a flicker.
+      el.style.minWidth = (Math.ceil(w) + 1) + 'px';
+      el.dataset.wReserved = '1';
+    });
+  }
+  function reserveTypedHeights() {
+    // .log and .rv paragraphs with data-type attribute are typewritten; reserve
+    // their fully-typed height so the column below never jumps as chars arrive.
+    var nodes = document.querySelectorAll('[data-type]');
+    nodes.forEach(function (el) {
+      if (el.dataset.hReserved === '1') return;
+      var full = el.dataset.type || '';
+      if (!full) return;
+      var original = el.textContent;
+      el.textContent = full;
+      // Measure real laid-out height with the final text present.
+      var h = el.getBoundingClientRect().height;
+      el.textContent = original;
+      el.style.minHeight = Math.ceil(h) + 'px';
+      el.dataset.hReserved = '1';
+    });
+  }
+  // Run once now, and again after fonts finish loading (glyph metrics shift).
+  reserveNumCountWidths();
+  reserveTypedHeights();
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      // Re-measure once fonts are applied, in case metrics differ from fallback.
+      document.querySelectorAll('.num-count').forEach(function (el) { el.dataset.wReserved = ''; });
+      document.querySelectorAll('[data-type]').forEach(function (el) { el.dataset.hReserved = ''; });
+      reserveNumCountWidths();
+      reserveTypedHeights();
+    });
+  }
 
   // ---------- HERO :: Scanline decoder ----------
   // Replace text with random glyphs, then pass a scan beam across each line.
@@ -1972,6 +2336,8 @@
     var width = line.getBoundingClientRect().width || 200;
     var start = performance.now();
     line.classList.add('scanning');
+    // Scan-beam entering the line: soft bandpass noise sweep.
+    CRT_SND.sweep();
     // cycle scrambled state fast
     var scrambleTimer = setInterval(function () {
       // Only scramble chars that haven't been locked yet
@@ -1997,6 +2363,8 @@
       inner.textContent = final;
       line.classList.remove('scanning');
       line.classList.add('done');
+      // Lock-in tick as the line resolves.
+      CRT_SND.tick();
     }
     requestAnimationFrame(frame);
     // Safety net: if rAF is suspended (hidden tab, throttling), force-complete
@@ -2033,6 +2401,8 @@
       if (settled) return;
       settled = true;
       el.textContent = target.toFixed(dec);
+      // Soft click as the counter locks in.
+      CRT_SND.click();
       // Continuous live-data jitter
       if (jitter > 0 && !reduce) {
         setInterval(function () {
@@ -2067,9 +2437,12 @@
     function step() {
       i++;
       el.textContent = full.slice(0, i);
+      // Keyclick: fire probabilistically so it reads as "typing" rather than a
+      // metronome. Skip spaces (no click on whitespace feels right).
+      var ch = full[i-1];
+      if (ch && ch !== ' ' && Math.random() < 0.55) CRT_SND.keyclick();
       if (i < full.length) {
         // Slight pause after punctuation
-        var ch = full[i-1];
         var delay = perChar + ((ch === '.' || ch === ',' || ch === ':') ? 90 : 0);
         if (Math.random() > 0.97) delay += 120; // human pause
         setTimeout(step, delay);
@@ -2315,6 +2688,18 @@
       card.style.setProperty('--gx', x + '%');
       card.style.setProperty('--gy', y + '%');
     });
+    // High-tone ping when the cursor enters a metric.
+    card.addEventListener('pointerenter', function () {
+      CRT_SND.ping(1600 + Math.random() * 200, 0.05, 0.04);
+    });
+  });
+
+  // ---------- Hover pings on primary interactive elements ----------
+  // Nav links, CTA contact chips, package cards.
+  document.querySelectorAll('.menubar a, .cta-row a, .pkg').forEach(function (el) {
+    el.addEventListener('pointerenter', function () {
+      CRT_SND.ping(900 + Math.random() * 160, 0.045, 0.035);
+    });
   });
 
   // ---------- Click REC indicator to degauss (shader + tear flash) ----------
@@ -2326,6 +2711,8 @@
     void degauss.offsetWidth;
     degauss.classList.add('fire');
     fireTear();
+    // Classic CRT degauss chunk: low thunk + descending flyback whine.
+    CRT_SND.thunk();
   }
   if (liveDot) {
     liveDot.title = 'Degauss';
@@ -2477,12 +2864,12 @@
     var lines = [
       { t: '<span class="t-prompt">design-lovers:~$</span> ', delay: 0, speed: 0 },
       { t: '<span class="t-cmd">book --slot=q1 --priority=high --package=flagship</span>', delay: 0, speed: 26, typed: true },
-      { t: '\n<span class="t-dim">&gt; authenticating...</span>', delay: 200, speed: 0 },
-      { t: '\n<span class="t-dim">&gt; fetching availability</span>', delay: 320, speed: 0 },
-      { t: '\n<span class="t-ok">&gt; LOCK ACQUIRED :: Q1 2026 / 2 SLOTS REMAINING</span>', delay: 280, speed: 0 },
-      { t: '\n<span class="t-ok">&gt; PACKAGE CONFIGURED :: FLAGSHIP / NARRATIVE SERIES</span>', delay: 240, speed: 0 },
-      { t: '\n<span class="t-warn">&gt; RATE VALID UNTIL Q4 2025 :: SECURE BELOW</span>', delay: 220, speed: 0 },
-      { t: '\n<span class="t-dim">&gt; OPENING CHANNELS &#x2500;&#x2500;&gt;</span>', delay: 240, speed: 0 },
+      { t: '\n<span class="t-dim">&gt; authenticating...</span>', delay: 200, speed: 0, snd: 'tick' },
+      { t: '\n<span class="t-dim">&gt; fetching availability</span>', delay: 320, speed: 0, snd: 'tick' },
+      { t: '\n<span class="t-ok">&gt; LOCK ACQUIRED :: Q1 2026 / 2 SLOTS REMAINING</span>', delay: 280, speed: 0, snd: 'bell' },
+      { t: '\n<span class="t-ok">&gt; PACKAGE CONFIGURED :: FLAGSHIP / NARRATIVE SERIES</span>', delay: 240, speed: 0, snd: 'tick' },
+      { t: '\n<span class="t-warn">&gt; RATE VALID UNTIL Q4 2025 :: SECURE BELOW</span>', delay: 220, speed: 0, snd: 'click' },
+      { t: '\n<span class="t-dim">&gt; OPENING CHANNELS &#x2500;&#x2500;&gt;</span>', delay: 240, speed: 0, snd: 'tick' },
       { t: '\n<span class="t-prompt">design-lovers:~$</span> <span class="t-cur"></span>', delay: 320, speed: 0 }
     ];
     var idx = 0;
@@ -2509,6 +2896,9 @@
             (function typeChar() {
               if (i <= target.length) {
                 wrap.textContent = target.slice(0, i);
+                // Keyclick on real chars only, not spaces / first empty tick.
+                var justTyped = target[i - 1];
+                if (justTyped && justTyped !== ' ' && Math.random() < 0.5) CRT_SND.keyclick();
                 i++;
                 setTimeout(typeChar, ln.speed || 24);
               } else {
@@ -2519,6 +2909,7 @@
           }
         }
         body.innerHTML += ln.t;
+        if (ln.snd && typeof CRT_SND[ln.snd] === 'function') CRT_SND[ln.snd]();
         step();
       }, wait);
     }
