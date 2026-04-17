@@ -6,7 +6,7 @@
 <title>DESIGN_LOVERS :: MEDIA_KIT [v1.0]</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=VT323&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=DM+Serif+Display:ital@0;1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=VT323&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
 <style>
   /* CRT TERMINAL :: AMBER PHOSPHOR */
   :root {
@@ -176,7 +176,12 @@
 
   ::selection { background: var(--phosphor); color: var(--bg); text-shadow: none; }
   a { color: inherit; text-decoration: none; }
-  .display { font-family: 'DM Serif Display', Georgia, serif; text-shadow: var(--glow-med); }
+  .display {
+    font-family: 'VT323', 'Courier New', monospace;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    text-shadow: var(--glow-med);
+  }
   .crt-font { font-family: 'VT323', 'JetBrains Mono', monospace; }
 
   .cursor {
@@ -262,29 +267,52 @@
   /* --- SND toggle: appearance mirrors the rest of titlebar chips --- */
   .tb-snd {
     appearance: none; -webkit-appearance: none;
-    border: 1px solid var(--phosphor-dim);
+    border: 1px solid var(--phosphor);
     background: transparent;
-    color: var(--phosphor);
+    color: var(--phosphor-bright);
     font: inherit;
     font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
-    padding: 3px 8px 3px 20px;
+    padding: 3px 10px 3px 22px;
     cursor: pointer;
     position: relative;
-    transition: all 0.15s;
+    transition: border-color 0.15s, color 0.15s;
     font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 6px rgba(255,210,122,0.7);
   }
   .tb-snd:hover {
-    border-color: var(--phosphor);
+    border-color: var(--phosphor-bright);
     color: var(--phosphor-bright);
-    box-shadow: 0 0 10px rgba(255,179,71,0.25);
+    box-shadow: 0 0 14px rgba(255,210,122,0.55);
   }
   .tb-snd::before {
     content: '';
     position: absolute; left: 8px; top: 50%;
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--phosphor-dim);
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--phosphor-bright);
+    box-shadow: 0 0 10px rgba(255,210,122,0.95);
     transform: translateY(-50%);
-    transition: all 0.15s;
+    transition: all 0.2s;
+  }
+  /* OFF state: attention-grabbing beacon until the user interacts */
+  .tb-snd.off {
+    animation: sndAttn 1.3s ease-in-out infinite;
+  }
+  .tb-snd.off::before {
+    animation: sndBeacon 1.3s ease-in-out infinite;
+  }
+  @keyframes sndAttn {
+    0%, 100% {
+      border-color: var(--phosphor);
+      box-shadow: 0 0 0 rgba(255,210,122,0);
+    }
+    50% {
+      border-color: var(--phosphor-bright);
+      box-shadow: 0 0 18px rgba(255,210,122,0.7), 0 0 2px rgba(255,255,255,0.4);
+    }
+  }
+  @keyframes sndBeacon {
+    0%, 100% { transform: translateY(-50%) scale(0.9); opacity: 0.55; }
+    50%      { transform: translateY(-50%) scale(1.15); opacity: 1; }
   }
   .tb-snd.on {
     color: var(--phosphor-bright);
@@ -357,24 +385,42 @@
     display: grid;
     /* minmax(0,...) prevents intrinsic content (nowrap decoder lines) from
        inflating tracks and squeezing the right column while scramble runs */
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    gap: 40px; position: relative;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 44px; position: relative;
   }
   .hero h1 {
-    font-family: 'DM Serif Display', Georgia, serif;
+    font-family: 'VT323', 'Courier New', monospace;
     font-weight: 400;
-    font-size: clamp(2.4rem, 5.5vw, 5rem);
-    line-height: 1; letter-spacing: -0.02em;
+    font-size: clamp(2rem, 4.4vw, 3.8rem);
+    line-height: 1.02;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
     color: var(--phosphor-bright);
     text-shadow:
       0 0 4px rgba(255,210,122,0.95),
       0 0 14px rgba(255,179,71,0.6),
       0 0 30px rgba(255,179,71,0.35);
   }
-  .hero h1 em { font-style: italic; color: var(--phosphor); }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--phosphor-bright);
+    text-shadow:
+      0 0 6px rgba(255,210,122,1),
+      0 0 18px rgba(255,179,71,0.75);
+  }
+  .hero h1 em::before {
+    content: '['; color: var(--phosphor);
+    margin-right: 2px;
+    text-shadow: var(--glow-soft);
+  }
+  .hero h1 em::after {
+    content: ']'; color: var(--phosphor);
+    margin-left: 2px;
+    text-shadow: var(--glow-soft);
+  }
   .hero h1 .hl {
     background: var(--phosphor); color: var(--bg);
-    padding: 0 8px; font-style: italic;
+    padding: 0 10px;
     text-shadow: none;
     box-shadow: 0 0 18px rgba(255,179,71,0.7);
   }
@@ -448,9 +494,9 @@
   .m:hover .m-corners span { border-color: var(--bg) !important; }
 
   .m-num {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-size: clamp(3.5rem, 8vw, 6rem);
-    line-height: 1; letter-spacing: -0.02em;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: clamp(3.8rem, 8.4vw, 6.4rem);
+    line-height: 0.9; letter-spacing: 0;
     margin-bottom: 18px;
     color: var(--phosphor-bright);
     text-shadow:
@@ -458,11 +504,13 @@
       0 0 16px rgba(255,179,71,0.7),
       0 0 30px rgba(255,179,71,0.4);
   }
-  .m-num em { font-style: italic; color: var(--phosphor-bright); }
+  .m-num em { font-style: normal; color: var(--phosphor-bright); }
   .m-num .unit {
-    font-size: 0.38em; vertical-align: 0.9em;
+    font-size: 0.42em; vertical-align: 0.6em;
     font-family: 'JetBrains Mono', monospace;
     font-style: normal; opacity: 0.65;
+    letter-spacing: 0.02em;
+    margin-left: 2px;
   }
   .m-label {
     font-size: 13px; margin-bottom: 6px;
@@ -590,10 +638,12 @@
     to   { opacity: 1; transform: translateX(0); filter: blur(0); }
   }
   .aud-col h3 {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-size: 1.45rem; font-weight: 400;
-    font-style: italic; margin-bottom: 18px;
-    letter-spacing: -0.01em;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 1.9rem; font-weight: 400;
+    font-style: normal; margin-bottom: 18px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    line-height: 1;
     color: var(--phosphor-bright);
     text-shadow: var(--glow-med);
   }
@@ -613,20 +663,22 @@
     gap: 40px; align-items: center;
   }
   .geo-big {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-size: clamp(6rem, 16vw, 12rem);
-    line-height: 0.85; letter-spacing: -0.04em;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: clamp(6rem, 17vw, 13rem);
+    line-height: 0.9; letter-spacing: 0;
     color: var(--phosphor-bright);
     text-shadow:
       0 0 6px rgba(255,210,122,1),
       0 0 22px rgba(255,179,71,0.75),
       0 0 50px rgba(255,179,71,0.4);
   }
-  .geo-big em { font-style: italic; }
+  .geo-big em { font-style: normal; }
   .geo-big .unit {
-    font-size: 0.32em;
+    font-size: 0.34em;
     font-family: 'JetBrains Mono', monospace;
-    font-style: normal; vertical-align: 0.95em; opacity: 0.6;
+    font-style: normal; vertical-align: 0.6em; opacity: 0.6;
+    letter-spacing: 0.02em;
+    margin-left: 2px;
   }
   .geo-big.caption {
     font-family: 'JetBrains Mono', monospace;
@@ -745,16 +797,18 @@
     align-items: baseline; gap: 20px; flex-wrap: wrap;
   }
   .pkg-head h3 {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-size: 2.1rem; font-weight: 400;
-    line-height: 0.95; letter-spacing: -0.02em;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 2.6rem; font-weight: 400;
+    line-height: 0.95; letter-spacing: 0.01em;
+    text-transform: uppercase;
     color: var(--phosphor-bright);
     text-shadow: var(--glow-med);
   }
-  .pkg-head h3 em { font-style: italic; }
+  .pkg-head h3 em { font-style: normal; color: inherit; opacity: 0.75; }
   .pkg-price {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-size: 2.6rem; font-style: italic;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 3.4rem; font-style: normal;
+    line-height: 1;
     color: var(--phosphor-bright);
     font-variant-numeric: tabular-nums;
     text-shadow: var(--glow-strong);
@@ -805,19 +859,19 @@
   .qc:hover { background: var(--phosphor); color: var(--bg); }
   .qc:hover * { color: var(--bg) !important; text-shadow: none !important; }
   .qc p {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-size: 1.1rem; font-style: italic;
-    line-height: 1.4; letter-spacing: -0.005em;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 1.35rem; font-style: normal;
+    line-height: 1.2; letter-spacing: 0.01em;
     color: var(--phosphor-bright);
     text-shadow: var(--glow-soft);
   }
   .qc p::before {
     content: '"'; color: var(--phosphor);
-    font-size: 1.6em; vertical-align: -0.25em; margin-right: 2px;
+    font-size: 1.3em; vertical-align: -0.1em; margin-right: 2px;
   }
   .qc p::after {
     content: '"'; color: var(--phosphor);
-    font-size: 1.6em; vertical-align: -0.25em; margin-left: 2px;
+    font-size: 1.3em; vertical-align: -0.1em; margin-left: 2px;
   }
   .qc cite {
     font-family: 'JetBrains Mono', monospace;
@@ -883,17 +937,20 @@
     position: relative;
   }
   .cta-sec h2 {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-size: clamp(2.4rem, 5.5vw, 4.8rem);
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: clamp(2.4rem, 5.5vw, 4.4rem);
     font-weight: 400; line-height: 1;
-    letter-spacing: -0.02em; margin-bottom: 18px;
+    letter-spacing: 0.01em; margin-bottom: 18px;
+    text-transform: uppercase;
     color: var(--phosphor-bright);
     text-shadow:
       0 0 6px rgba(255,210,122,1),
       0 0 20px rgba(255,179,71,0.75),
       0 0 40px rgba(255,179,71,0.4);
   }
-  .cta-sec h2 em { font-style: italic; color: var(--phosphor); }
+  .cta-sec h2 em { font-style: normal; color: var(--phosphor); }
+  .cta-sec h2 em::before { content: '['; color: var(--phosphor-dim); }
+  .cta-sec h2 em::after { content: ']'; color: var(--phosphor-dim); }
   .cta-sec .line {
     font-family: 'VT323', monospace;
     font-size: 21px; color: var(--phosphor);
@@ -1561,7 +1618,7 @@
       </span>
       <span class="tb-signal-label">SIGNAL</span>
       <span class="tb-divider"></span>
-      <button class="tb-snd" id="sndBtn" type="button" aria-pressed="false" title="Toggle CRT sound (procedural, zero assets)">SND.OFF</button>
+      <button class="tb-snd off" id="sndBtn" type="button" aria-pressed="false" title="Sound activates on first interaction — procedural CRT audio, no assets">SND.OFF</button>
     </div>
     <div class="tb-center">design-lovers.com :: /media-kit</div>
     <div class="tb-right">
@@ -1615,7 +1672,6 @@
     </div>
     <div class="metrics rv-stagger">
       <div class="m rv-pop" data-sparkline="62 64 66 69 68 72 74 73 76 78">
-        <div class="m-corners"><span></span><span></span><span></span><span></span></div>
         <div class="m-head">
           <span class="m-key">RETENTION.30S</span>
           <span class="m-trend">&#x25B2; +4.2</span>
@@ -1626,7 +1682,6 @@
         <div class="m-sub">TOP-TIER ENGAGEMENT &middot; 10 WK</div>
       </div>
       <div class="m rv-pop" data-sparkline="44 46 48 47 50 49 51 52 51 52">
-        <div class="m-corners"><span></span><span></span><span></span><span></span></div>
         <div class="m-head">
           <span class="m-key">WATCH.AVG</span>
           <span class="m-trend">&#x25B2; +1.8</span>
@@ -1637,7 +1692,6 @@
         <div class="m-sub">ABOVE INDUSTRY AVG &middot; 10 WK</div>
       </div>
       <div class="m rv-pop" data-sparkline="34 36 33 37 38 36 39 40 41 41">
-        <div class="m-corners"><span></span><span></span><span></span><span></span></div>
         <div class="m-head">
           <span class="m-key">LOYALTY.MOM</span>
           <span class="m-trend">&#x25B2; +2.6</span>
@@ -1659,7 +1713,7 @@
     </div>
     <div class="aud-grid rv-stagger">
       <div class="aud-col rv">
-        <div class="aud-header">&gt;&gt; PACKET 01 / WHO <span class="aud-seq">0x41A</span></div>
+        <div class="aud-header">&gt;&gt; PACKET 01 / WHO</div>
         <h3>Builders and<br>decision-makers.</h3>
         <ul class="aud-list">
           <li>Professionals in IT &amp; creative industries</li>
@@ -1669,7 +1723,7 @@
         <div class="aud-beam"></div>
       </div>
       <div class="aud-col rv">
-        <div class="aud-header">&gt;&gt; PACKET 02 / HOW <span class="aud-seq">0x41B</span></div>
+        <div class="aud-header">&gt;&gt; PACKET 02 / HOW</div>
         <h3>Found us on<br>their own.</h3>
         <ul class="aud-list">
           <li>100% organic traffic</li>
@@ -1679,7 +1733,7 @@
         <div class="aud-beam"></div>
       </div>
       <div class="aud-col rv">
-        <div class="aud-header">&gt;&gt; PACKET 03 / WHY <span class="aud-seq">0x41C</span></div>
+        <div class="aud-header">&gt;&gt; PACKET 03 / WHY</div>
         <h3>They respond<br>to craft.</h3>
         <ul class="aud-list">
           <li>Tools that respect restraint</li>
@@ -1830,7 +1884,6 @@
           <span class="qc-tag">DECRYPTED</span>
         </div>
         <p>Simply the best review of the new iPhone line I've come across. A true sociological analysis.</p>
-        <div class="qc-foot"><span>PACKET.0x01</span><span>SIG: 98%</span></div>
       </div>
       <div class="qc rv">
         <div class="qc-head">
@@ -1840,7 +1893,6 @@
           <span class="qc-tag">DECRYPTED</span>
         </div>
         <p>Completely humbled me on my design skills and changed the way I see design.</p>
-        <div class="qc-foot"><span>PACKET.0x02</span><span>SIG: 96%</span></div>
       </div>
       <div class="qc rv">
         <div class="qc-head">
@@ -1850,7 +1902,6 @@
           <span class="qc-tag">DECRYPTED</span>
         </div>
         <p>The most sophisticated analysis out there. Always sharp, always fresh.</p>
-        <div class="qc-foot"><span>PACKET.0x03</span><span>SIG: 94%</span></div>
       </div>
       <div class="qc rv">
         <div class="qc-head">
@@ -1860,7 +1911,6 @@
           <span class="qc-tag">DECRYPTED</span>
         </div>
         <p>Good content is so hard to find. Your channel is a needle in the haystack.</p>
-        <div class="qc-foot"><span>PACKET.0x04</span><span>SIG: 93%</span></div>
       </div>
       <div class="qc rv">
         <div class="qc-head">
@@ -1870,7 +1920,6 @@
           <span class="qc-tag">DECRYPTED</span>
         </div>
         <p>Explains design, sociology, and marketing at once. Excellent.</p>
-        <div class="qc-foot"><span>PACKET.0x05</span><span>SIG: 91%</span></div>
       </div>
       <div class="qc rv">
         <div class="qc-head">
@@ -1880,7 +1929,6 @@
           <span class="qc-tag">DECRYPTED</span>
         </div>
         <p>He leveraged the ad itself as another case study in design thinking.</p>
-        <div class="qc-foot"><span>PACKET.0x06</span><span>SIG: 89%</span></div>
       </div>
     </div>
   </section>
@@ -2216,10 +2264,14 @@
     var KEY = 'crt.snd';
     function flip(on, userInitiated) {
       if (on) {
-        btn.classList.add('on'); btn.textContent = 'SND.ON';
+        btn.classList.add('on');
+        btn.classList.remove('off');
+        btn.textContent = 'SND.ON';
         btn.setAttribute('aria-pressed', 'true');
       } else {
-        btn.classList.remove('on'); btn.textContent = 'SND.OFF';
+        btn.classList.remove('on');
+        btn.classList.add('off');
+        btn.textContent = 'SND.OFF';
         btn.setAttribute('aria-pressed', 'false');
       }
       CRT_SND.setEnabled(on);
@@ -2235,13 +2287,22 @@
     });
     var saved = null;
     try { saved = localStorage.getItem(KEY); } catch (e) {}
-    if (saved === '1') {
-      // Can't auto-init audio (autoplay policy). Arm a one-shot listener on
-      // the first real pointer/key gesture anywhere on the page.
-      var arm = function () {
+    // Default posture: sound is ON unless the user has explicitly opted out.
+    // Autoplay policy still blocks AudioContext until a gesture, so we arm a
+    // one-shot listener and flip audio on at the first pointer/key event
+    // anywhere on the page. Clicking the SND button itself is handled by its
+    // own click handler — let that take over if that's the first gesture.
+    if (saved !== '0') {
+      var firstTime = saved !== '1';
+      var arm = function (e) {
+        if (e && e.target && btn.contains(e.target)) {
+          document.removeEventListener('pointerdown', arm, true);
+          document.removeEventListener('keydown', arm, true);
+          return;
+        }
         document.removeEventListener('pointerdown', arm, true);
         document.removeEventListener('keydown', arm, true);
-        flip(true, false);
+        flip(true, firstTime);
       };
       document.addEventListener('pointerdown', arm, true);
       document.addEventListener('keydown', arm, true);
@@ -2790,14 +2851,14 @@
         else b.classList.remove('lit');
       });
     }, 1100);
-    // Frame counter
+    // Frame counter — slow "playhead" feel, not a blur of digits
     var fc = document.getElementById('frameCount');
     if (fc) {
       var n = 0;
       setInterval(function () {
-        n += Math.floor(30 + Math.random() * 30);
+        n += Math.floor(2 + Math.random() * 3);
         fc.textContent = 'F.' + String(n).padStart(6, '0');
-      }, 33);
+      }, 160);
     }
   })();
 
