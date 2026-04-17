@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DESIGN_LOVERS :: BADGES [v1.0]</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --phosphor: #ffb347;
+    --phosphor-bright: #ffd27a;
+    --phosphor-dim: #8a5a1f;
+    --phosphor-faint: #3a2410;
+    --bg-deep: #0a0604;
+    --bg: #110a06;
+    --bg-raised: #1a0e08;
+    --rule: #3a2410;
+    --danger: #ff3b1f;
+    --glow-soft: 0 0 6px rgba(255,179,71,0.45);
+    --glow-med: 0 0 12px rgba(255,179,71,0.55), 0 0 2px rgba(255,179,71,0.9);
+    --glow-strong: 0 0 22px rgba(255,179,71,0.7), 0 0 4px rgba(255,210,122,1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: var(--bg-deep); }
+  body {
+    background: var(--bg);
+    color: var(--phosphor);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 14px; line-height: 1.45;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    text-shadow: var(--glow-soft);
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--phosphor); color: var(--bg); text-shadow: none; }
+
+  /* CRT overlays — only on the chrome, not on the exported badges */
+  .crt-scanlines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+    background-image: repeating-linear-gradient(to bottom,
+      rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.35) 3px, rgba(0,0,0,0.35) 4px);
+    mix-blend-mode: multiply; opacity: 0.8;
+  }
+  .crt-vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9996;
+    background: radial-gradient(ellipse 120% 90% at center,
+      transparent 55%, rgba(0,0,0,0.55) 90%, rgba(0,0,0,0.9) 100%);
+  }
+  .crt-noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9995;
+    opacity: 0.05; mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 0.7  0 0 0 0 0.28  0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: noise 0.6s steps(4) infinite;
+  }
+  @keyframes noise {
+    0% { transform: translate(0,0); } 25% { transform: translate(-3px,2px); }
+    50% { transform: translate(4px,-1px); } 75% { transform: translate(-2px,-3px); }
+    100% { transform: translate(0,0); }
+  }
+
+  /* Frame wrapper matching /crt style */
+  .frame {
+    max-width: 1280px; margin: 28px auto;
+    border: 1px solid var(--phosphor-dim);
+    background: var(--bg); position: relative; z-index: 3;
+    box-shadow:
+      0 0 40px rgba(255,179,71,0.08) inset,
+      0 0 80px rgba(0,0,0,0.6);
+  }
+  .titlebar {
+    border-bottom: 1px solid var(--phosphor-dim);
+    padding: 10px 16px; display: flex;
+    justify-content: space-between; align-items: center; gap: 16px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--bg-raised); color: var(--phosphor-bright);
+  }
+  .tb-left, .tb-right { display: flex; align-items: center; gap: 10px; }
+  .tb-divider { width: 1px; height: 11px; background: var(--phosphor-dim); display: inline-block; }
+  .rec-dot { color: var(--danger); font-size: 12px; line-height: 1; }
+  .rec-label {
+    color: var(--danger); letter-spacing: 0.22em; font-weight: 500;
+    text-shadow: 0 0 6px rgba(255,59,31,0.8);
+  }
+  .menubar {
+    border-bottom: 1px solid var(--phosphor-dim);
+    padding: 8px 14px; display: flex; gap: 0;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+    background: var(--bg); flex-wrap: wrap;
+  }
+  .menubar a {
+    padding: 5px 14px; border-right: 1px dotted var(--phosphor-dim);
+    transition: all 0.15s;
+  }
+  .menubar a:last-child { border-right: none; }
+  .menubar a:hover { background: var(--phosphor); color: var(--bg); text-shadow: none; }
+  .menubar a.active { color: var(--phosphor-bright); text-shadow: var(--glow-med); }
+
+  /* Intro */
+  .intro {
+    padding: 48px 28px 24px; border-bottom: 1px dashed var(--phosphor-dim);
+    text-align: center; background: linear-gradient(to bottom, var(--bg-raised), var(--bg));
+  }
+  .intro h1 {
+    font-family: 'VT323', monospace; font-weight: 400;
+    font-size: clamp(32px, 5vw, 56px);
+    color: var(--phosphor-bright); letter-spacing: 0.02em;
+    text-shadow: var(--glow-strong);
+    text-transform: uppercase;
+  }
+  .intro p {
+    margin-top: 10px; font-size: 12px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--phosphor);
+  }
+
+  /* Grid of badges */
+  .grid {
+    padding: 28px; display: grid; gap: 28px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 900px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .card.full { grid-column: 1 / -1; }
+  }
+  .card {
+    border: 1px solid var(--phosphor-dim);
+    background: var(--bg-raised);
+    min-width: 0; align-self: start;
+  }
+  .card .card-head {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 10px 14px; border-bottom: 1px dashed var(--phosphor-dim);
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--phosphor-bright); background: var(--bg);
+  }
+  .card .card-head h3 {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+  .card .dims { color: var(--phosphor); opacity: 0.8; font-size: 10px; }
+  .dl {
+    appearance: none; border: 1px solid var(--phosphor);
+    background: transparent; color: var(--phosphor-bright);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 4px 10px; cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+    text-shadow: 0 0 6px rgba(255,210,122,0.7);
+  }
+  .dl:hover { background: var(--phosphor); color: var(--bg); text-shadow: none; }
+  .dl:disabled { opacity: 0.5; cursor: wait; }
+
+  .preview {
+    padding: 16px;
+    display: flex; align-items: center; justify-content: center;
+    background:
+      repeating-linear-gradient(45deg,
+        transparent 0 10px,
+        rgba(255,179,71,0.03) 10px 11px);
+    overflow: hidden; position: relative;
+    min-width: 0; width: 100%;
+  }
+  .stage { transform-origin: center center; flex: 0 0 auto; }
+
+  /* ====================== BADGE SURFACES ====================== */
+  /* Raw surface of each badge, what gets exported. No CRT overlays here
+     (they'd look bad when rasterised). Instead we bake CRT details in as
+     static background layers + ASCII art + titlebar. */
+  .badge {
+    position: relative;
+    background: var(--bg);
+    color: var(--phosphor);
+    overflow: hidden;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    text-shadow: var(--glow-soft);
+    isolation: isolate;
+  }
+  /* Static "scanlines" baked as a background (rasteriser-friendly) */
+  .badge .scan {
+    position: absolute; inset: 0; pointer-events: none; z-index: 3;
+    background-image: repeating-linear-gradient(to bottom,
+      rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.35) 3px, rgba(0,0,0,0.35) 4px);
+    mix-blend-mode: multiply; opacity: 0.6;
+  }
+  .badge .vignette {
+    position: absolute; inset: 0; pointer-events: none; z-index: 4;
+    background: radial-gradient(ellipse 120% 90% at center,
+      transparent 55%, rgba(0,0,0,0.55) 90%, rgba(0,0,0,0.95) 100%);
+  }
+  .badge .grid-bg {
+    position: absolute; inset: 0; pointer-events: none; z-index: 1; opacity: 0.07;
+    background-image:
+      linear-gradient(rgba(255,179,71,0.8) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,179,71,0.8) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .badge .glow {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(60% 40% at 50% 50%, rgba(255,179,71,0.14), transparent 60%),
+      radial-gradient(80% 60% at 50% 100%, rgba(255,179,71,0.08), transparent 70%);
+  }
+  .badge .content { position: relative; z-index: 5; height: 100%; width: 100%; display: flex; flex-direction: column; }
+
+  /* Titlebar baked inside the badge */
+  .badge .b-titlebar {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--phosphor-dim);
+    background: var(--bg-raised);
+    color: var(--phosphor-bright);
+    padding: 0.8em 1.2em;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    font-size: 0.85em;
+  }
+  .badge .b-titlebar .l, .badge .b-titlebar .r { display: flex; align-items: center; gap: 0.8em; }
+  .badge .b-titlebar .rd { color: var(--danger); text-shadow: 0 0 6px rgba(255,59,31,0.8); }
+  .badge .b-titlebar .rl { color: var(--danger); letter-spacing: 0.24em; font-weight: 500; text-shadow: 0 0 6px rgba(255,59,31,0.8); }
+  .badge .b-titlebar .div {
+    width: 1px; background: var(--phosphor-dim);
+    display: inline-block; align-self: stretch;
+  }
+  .badge .b-titlebar .sig { display: inline-flex; align-items: flex-end; gap: 2px; height: 1em; }
+  .badge .b-titlebar .sig span {
+    width: 3px; background: var(--phosphor-dim);
+  }
+  .badge .b-titlebar .sig .lit { background: var(--phosphor-bright); box-shadow: 0 0 6px rgba(255,210,122,0.9); }
+  .badge .b-titlebar .sig span:nth-child(1) { height: 25%; }
+  .badge .b-titlebar .sig span:nth-child(2) { height: 45%; }
+  .badge .b-titlebar .sig span:nth-child(3) { height: 65%; }
+  .badge .b-titlebar .sig span:nth-child(4) { height: 85%; }
+  .badge .b-titlebar .sig span:nth-child(5) { height: 100%; }
+
+  /* Inside of the badge main area */
+  .badge .b-body {
+    flex: 1; position: relative;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 4%;
+    text-align: center;
+  }
+  .badge .ascii {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-weight: 700;
+    white-space: pre;
+    line-height: 1.05;
+    color: var(--phosphor-bright);
+    text-shadow:
+      0 0 3px rgba(255,210,122,0.95),
+      0 0 10px rgba(255,179,71,0.7),
+      0 0 20px rgba(255,179,71,0.4);
+    display: inline-block;
+    letter-spacing: 0;
+  }
+  .badge .sub {
+    margin-top: 1.2em;
+    font-size: 0.9em;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--phosphor);
+  }
+  .badge .tagline {
+    font-family: 'VT323', 'JetBrains Mono', monospace;
+    font-weight: 400;
+    color: var(--phosphor-bright);
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    margin-top: 1em;
+    text-shadow: var(--glow-med);
+    text-transform: uppercase;
+  }
+  .badge .meta {
+    margin-top: 1em;
+    color: var(--phosphor);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 0.8em;
+  }
+  .badge .status-line {
+    border-top: 1px dashed var(--phosphor-dim);
+    padding: 0.7em 1.2em;
+    font-size: 0.75em;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--phosphor);
+    display: flex; justify-content: space-between;
+    background: rgba(0,0,0,0.4);
+  }
+  .badge .cursor {
+    display: inline-block; width: 0.55em; height: 1em;
+    background: var(--phosphor-bright); vertical-align: -0.1em;
+    margin-left: 3px;
+    box-shadow: 0 0 8px rgba(255,210,122,0.9);
+  }
+
+  /* ---- Square 1080×1080 ---- */
+  .badge.square { width: 1080px; height: 1080px; font-size: 24px; }
+  .badge.square .ascii { font-size: 14px; }
+  .badge.square .tagline { font-size: 68px; max-width: 900px; }
+  .badge.square .sub { font-size: 22px; margin-top: 40px; }
+  .badge.square .b-titlebar { font-size: 18px; padding: 18px 32px; }
+  .badge.square .status-line { font-size: 16px; padding: 16px 32px; }
+
+  /* ---- Story 1080×1920 ---- */
+  .badge.story { width: 1080px; height: 1920px; font-size: 28px; }
+  .badge.story .ascii { font-size: 17px; }
+  .badge.story .tagline { font-size: 96px; max-width: 960px; }
+  .badge.story .sub { font-size: 26px; margin-top: 44px; }
+  .badge.story .b-titlebar { font-size: 20px; padding: 22px 36px; }
+  .badge.story .meta { font-size: 26px; margin-top: 48px; }
+  .badge.story .status-line { font-size: 18px; padding: 22px 36px; }
+
+  /* ---- OG 1200×630 ---- */
+  .badge.og { width: 1200px; height: 630px; font-size: 18px; }
+  .badge.og .ascii { font-size: 10px; }
+  .badge.og .tagline { font-size: 46px; max-width: 1000px; }
+  .badge.og .sub { font-size: 16px; margin-top: 24px; }
+  .badge.og .b-titlebar { font-size: 14px; padding: 10px 22px; }
+  .badge.og .status-line { font-size: 13px; padding: 10px 22px; }
+
+  /* ---- Twitter header 1500×500 ---- */
+  .badge.banner { width: 1500px; height: 500px; font-size: 16px; }
+  .badge.banner .ascii { font-size: 10px; }
+  .badge.banner .tagline { font-size: 38px; }
+  .badge.banner .sub { font-size: 14px; margin-top: 16px; }
+  .badge.banner .b-titlebar { font-size: 13px; padding: 10px 22px; }
+  .badge.banner .status-line { font-size: 12px; padding: 10px 22px; }
+  .badge.banner .b-body {
+    flex-direction: row; align-items: center; justify-content: space-between;
+    text-align: left; padding: 24px 40px;
+  }
+  .badge.banner .b-body > .left { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .badge.banner .b-body > .right { text-align: right; max-width: 600px; align-self: center; }
+
+  /* ---- LinkedIn cover 1584×396 ---- */
+  .badge.linkedin { width: 1584px; height: 396px; font-size: 14px; }
+  .badge.linkedin .ascii { font-size: 8.5px; }
+  .badge.linkedin .tagline { font-size: 26px; line-height: 1.15; }
+  .badge.linkedin .sub { font-size: 12px; margin-top: 10px; }
+  .badge.linkedin .b-titlebar { font-size: 11px; padding: 8px 18px; }
+  .badge.linkedin .status-line { font-size: 11px; padding: 8px 18px; }
+  .badge.linkedin .b-body {
+    flex-direction: row; align-items: center; justify-content: space-between;
+    text-align: left; padding: 18px 36px;
+  }
+  .badge.linkedin .b-body > .left { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .badge.linkedin .b-body > .right { text-align: right; align-self: center; max-width: 560px; }
+
+  /* ---- YouTube/16:9 1280×720 ---- */
+  .badge.yt { width: 1280px; height: 720px; font-size: 22px; }
+  .badge.yt .ascii { font-size: 11px; }
+  .badge.yt .tagline { font-size: 54px; max-width: 1100px; }
+  .badge.yt .sub { font-size: 18px; margin-top: 28px; }
+  .badge.yt .b-titlebar { font-size: 15px; padding: 12px 24px; }
+  .badge.yt .meta { font-size: 18px; }
+  .badge.yt .status-line { font-size: 13px; padding: 12px 24px; }
+
+  /* small utility blocks */
+  .tag { color: var(--phosphor); text-transform: uppercase; letter-spacing: 0.18em; }
+  .hot { color: var(--danger); text-shadow: 0 0 6px rgba(255,59,31,0.8); }
+</style>
+</head>
+<body>
+
+<div class="crt-scanlines"></div>
+<div class="crt-vignette"></div>
+<div class="crt-noise"></div>
+
+<div class="frame">
+  <div class="titlebar">
+    <div class="tb-left">
+      <span class="rec-dot">&#x25CF;</span>
+      <span class="rec-label">REC</span>
+      <span class="tb-divider"></span>
+      <span>CH.047</span>
+      <span class="tb-divider"></span>
+      <span>SIGNAL: LOCKED</span>
+    </div>
+    <div>design-lovers.com :: /media-kit/badges</div>
+    <div class="tb-right">
+      <span>F.000000</span>
+      <span class="tb-divider"></span>
+      <span id="clock">--:--:-- UTC</span>
+    </div>
+  </div>
+
+  <div class="menubar">
+    <a href="/crt">~/terminal</a>
+    <a href="/crt#metrics">./metrics</a>
+    <a href="/crt#audience">./audience</a>
+    <a href="/crt#packages">./packages</a>
+    <a href="/crt/badges" class="active">./badges</a>
+  </div>
+
+  <div class="intro">
+    <h1>&gt; ./export_badges --all</h1>
+    <p>// broadcast_assets.v1 :: social_feeds :: ready_to_ship<span style="display:inline-block; width:0.55em; height:1em; background: var(--phosphor-bright); vertical-align: -0.1em; margin-left: 3px; box-shadow: 0 0 8px rgba(255,210,122,0.9);"></span></p>
+  </div>
+
+  <div class="grid">
+    <!-- 1. Square -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>[01] AVATAR_POST.PNG</h3>
+          <div class="dims">1080 × 1080 :: INSTAGRAM POST / PROFILE COVER</div>
+        </div>
+        <button class="dl" data-target="badge-square">&gt; DOWNLOAD</button>
+      </div>
+      <div class="preview">
+        <div class="stage" data-w="1080" data-h="1080">
+          <div class="badge square" id="badge-square">
+            <div class="glow"></div>
+            <div class="grid-bg"></div>
+            <div class="content">
+              <div class="b-titlebar">
+                <div class="l">
+                  <span class="rd">&#x25CF;</span>
+                  <span class="rl">REC</span>
+                  <span class="div"></span>
+                  <span>CH.047</span>
+                  <span class="div"></span>
+                  <span class="sig" aria-hidden="true">
+                    <span class="lit"></span><span class="lit"></span><span class="lit"></span><span class="lit"></span><span></span>
+                  </span>
+                  <span>SIGNAL</span>
+                </div>
+                <div class="r"><span>v1.0</span></div>
+              </div>
+              <div class="b-body">
+<pre class="ascii">██████╗ ███████╗███████╗██╗ ██████╗ ███╗   ██╗
+██╔══██╗██╔════╝██╔════╝██║██╔════╝ ████╗  ██║
+██║  ██║█████╗  ███████╗██║██║  ███╗██╔██╗ ██║
+██║  ██║██╔══╝  ╚════██║██║██║   ██║██║╚██╗██║
+██████╔╝███████╗███████║██║╚██████╔╝██║ ╚████║
+╚═════╝ ╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+██╗      ██████╗ ██╗   ██╗███████╗██████╗ ███████╗
+██║     ██╔═══██╗██║   ██║██╔════╝██╔══██╗██╔════╝
+██║     ██║   ██║██║   ██║█████╗  ██████╔╝███████╗
+██║     ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗╚════██║
+███████╗╚██████╔╝ ╚████╔╝ ███████╗██║  ██║███████║
+╚══════╝ ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚══════╝</pre>
+                <div class="sub">// MEDIA_KIT :: V1 :: Q4.2025</div>
+                <div class="tagline">Documentary essays<br>for&nbsp;a high-value<br>design audience.</div>
+              </div>
+              <div class="status-line">
+                <span>[STATUS] BOOKING Q1&ndash;Q2 2026</span>
+                <span class="hot">&#x25CF; 2 SLOTS REMAIN</span>
+              </div>
+            </div>
+            <div class="grid-bg"></div>
+            <div class="vignette"></div>
+            <div class="scan"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Story -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>[02] STORY.PNG</h3>
+          <div class="dims">1080 × 1920 :: INSTAGRAM / TIKTOK STORY</div>
+        </div>
+        <button class="dl" data-target="badge-story">&gt; DOWNLOAD</button>
+      </div>
+      <div class="preview">
+        <div class="stage" data-w="1080" data-h="1920">
+          <div class="badge story" id="badge-story">
+            <div class="glow"></div>
+            <div class="grid-bg"></div>
+            <div class="content">
+              <div class="b-titlebar">
+                <div class="l">
+                  <span class="rd">&#x25CF;</span>
+                  <span class="rl">REC</span>
+                  <span class="div"></span>
+                  <span>CH.047</span>
+                  <span class="div"></span>
+                  <span class="sig" aria-hidden="true">
+                    <span class="lit"></span><span class="lit"></span><span class="lit"></span><span class="lit"></span><span class="lit"></span>
+                  </span>
+                  <span>SIGNAL</span>
+                </div>
+                <div class="r"><span>F.000042</span></div>
+              </div>
+              <div class="b-body">
+<pre class="ascii">██████╗ ███████╗███████╗██╗ ██████╗ ███╗   ██╗
+██╔══██╗██╔════╝██╔════╝██║██╔════╝ ████╗  ██║
+██║  ██║█████╗  ███████╗██║██║  ███╗██╔██╗ ██║
+██║  ██║██╔══╝  ╚════██║██║██║   ██║██║╚██╗██║
+██████╔╝███████╗███████║██║╚██████╔╝██║ ╚████║
+╚═════╝ ╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+██╗      ██████╗ ██╗   ██╗███████╗██████╗ ███████╗
+██║     ██╔═══██╗██║   ██║██╔════╝██╔══██╗██╔════╝
+██║     ██║   ██║██║   ██║█████╗  ██████╔╝███████╗
+██║     ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗╚════██║
+███████╗╚██████╔╝ ╚████╔╝ ███████╗██║  ██║███████║
+╚══════╝ ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚══════╝</pre>
+                <div class="sub">// MEDIA_KIT :: V1 :: Q4.2025</div>
+                <div class="tagline">Documentary<br>essays for&nbsp;a<br>high-value<br>design<br>audience.</div>
+                <div class="meta">&gt; @design_lovers :: youtube</div>
+              </div>
+              <div class="status-line">
+                <span>362.2K VIEWERS · 70% RETENTION · 55% TIER-1</span>
+                <span class="hot">&#x25CF; LIVE</span>
+              </div>
+            </div>
+            <div class="vignette"></div>
+            <div class="scan"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. OG -->
+    <div class="card full">
+      <div class="card-head">
+        <div>
+          <h3>[03] OG_CARD.PNG</h3>
+          <div class="dims">1200 × 630 :: TWITTER / FACEBOOK / LINKEDIN PREVIEW</div>
+        </div>
+        <button class="dl" data-target="badge-og">&gt; DOWNLOAD</button>
+      </div>
+      <div class="preview">
+        <div class="stage" data-w="1200" data-h="630">
+          <div class="badge og" id="badge-og">
+            <div class="glow"></div>
+            <div class="grid-bg"></div>
+            <div class="content">
+              <div class="b-titlebar">
+                <div class="l">
+                  <span class="rd">&#x25CF;</span>
+                  <span class="rl">REC</span>
+                  <span class="div"></span>
+                  <span>CH.047</span>
+                  <span class="div"></span>
+                  <span class="sig" aria-hidden="true">
+                    <span class="lit"></span><span class="lit"></span><span class="lit"></span><span class="lit"></span><span></span>
+                  </span>
+                  <span>SIGNAL</span>
+                </div>
+                <div class="r">
+                  <span>design-lovers.com</span>
+                  <span class="div"></span>
+                  <span>v1.0</span>
+                </div>
+              </div>
+              <div class="b-body">
+<pre class="ascii">██████╗ ███████╗███████╗██╗ ██████╗ ███╗   ██╗    ██╗      ██████╗ ██╗   ██╗███████╗██████╗ ███████╗
+██╔══██╗██╔════╝██╔════╝██║██╔════╝ ████╗  ██║    ██║     ██╔═══██╗██║   ██║██╔════╝██╔══██╗██╔════╝
+██║  ██║█████╗  ███████╗██║██║  ███╗██╔██╗ ██║    ██║     ██║   ██║██║   ██║█████╗  ██████╔╝███████╗
+██║  ██║██╔══╝  ╚════██║██║██║   ██║██║╚██╗██║    ██║     ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗╚════██║
+██████╔╝███████╗███████║██║╚██████╔╝██║ ╚████║    ███████╗╚██████╔╝ ╚████╔╝ ███████╗██║  ██║███████║
+╚═════╝ ╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝    ╚══════╝ ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚══════╝</pre>
+                <div class="sub">// MEDIA_KIT :: V1 :: Q4.2025 :: BOOKING_OPEN</div>
+                <div class="tagline">Documentary essays for&nbsp;a high-value design audience.</div>
+              </div>
+              <div class="status-line">
+                <span>362.2K VIEWERS · 70% RETENTION · 55% TIER-1</span>
+                <span class="hot">&#x25CF; 2 SLOTS REMAIN</span>
+              </div>
+            </div>
+            <div class="vignette"></div>
+            <div class="scan"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Twitter banner -->
+    <div class="card full">
+      <div class="card-head">
+        <div>
+          <h3>[04] X_HEADER.PNG</h3>
+          <div class="dims">1500 × 500 :: TWITTER / X PROFILE BANNER</div>
+        </div>
+        <button class="dl" data-target="badge-banner">&gt; DOWNLOAD</button>
+      </div>
+      <div class="preview">
+        <div class="stage" data-w="1500" data-h="500">
+          <div class="badge banner" id="badge-banner">
+            <div class="glow"></div>
+            <div class="grid-bg"></div>
+            <div class="content">
+              <div class="b-titlebar">
+                <div class="l">
+                  <span class="rd">&#x25CF;</span>
+                  <span class="rl">REC</span>
+                  <span class="div"></span>
+                  <span>CH.047</span>
+                  <span class="div"></span>
+                  <span>SIGNAL: LOCKED</span>
+                </div>
+                <div class="r"><span>design-lovers.com</span></div>
+              </div>
+              <div class="b-body">
+                <div class="left">
+<pre class="ascii">██████╗ ███████╗███████╗██╗ ██████╗ ███╗   ██╗    ██╗      ██████╗ ██╗   ██╗███████╗██████╗ ███████╗
+██╔══██╗██╔════╝██╔════╝██║██╔════╝ ████╗  ██║    ██║     ██╔═══██╗██║   ██║██╔════╝██╔══██╗██╔════╝
+██║  ██║█████╗  ███████╗██║██║  ███╗██╔██╗ ██║    ██║     ██║   ██║██║   ██║█████╗  ██████╔╝███████╗
+██║  ██║██╔══╝  ╚════██║██║██║   ██║██║╚██╗██║    ██║     ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗╚════██║
+██████╔╝███████╗███████║██║╚██████╔╝██║ ╚████║    ███████╗╚██████╔╝ ╚████╔╝ ███████╗██║  ██║███████║
+╚═════╝ ╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝    ╚══════╝ ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚══════╝</pre>
+                  <div class="sub">// MEDIA_KIT :: V1 :: Q4.2025</div>
+                </div>
+                <div class="right">
+                  <div class="tagline">Documentary essays<br>for a high-value<br>design audience.</div>
+                </div>
+              </div>
+              <div class="status-line">
+                <span>362.2K VIEWERS · 70% RETENTION</span>
+                <span class="hot">&#x25CF; 2 SLOTS REMAIN</span>
+              </div>
+            </div>
+            <div class="vignette"></div>
+            <div class="scan"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. LinkedIn cover -->
+    <div class="card full">
+      <div class="card-head">
+        <div>
+          <h3>[05] LINKEDIN_COVER.PNG</h3>
+          <div class="dims">1584 × 396 :: LINKEDIN PROFILE / PAGE</div>
+        </div>
+        <button class="dl" data-target="badge-linkedin">&gt; DOWNLOAD</button>
+      </div>
+      <div class="preview">
+        <div class="stage" data-w="1584" data-h="396">
+          <div class="badge linkedin" id="badge-linkedin">
+            <div class="glow"></div>
+            <div class="grid-bg"></div>
+            <div class="content">
+              <div class="b-titlebar">
+                <div class="l">
+                  <span class="rd">&#x25CF;</span>
+                  <span class="rl">REC</span>
+                  <span class="div"></span>
+                  <span>CH.047</span>
+                  <span class="div"></span>
+                  <span>SIGNAL: LOCKED</span>
+                </div>
+                <div class="r"><span>design-lovers.com</span></div>
+              </div>
+              <div class="b-body">
+                <div class="left">
+<pre class="ascii">██████╗ ███████╗███████╗██╗ ██████╗ ███╗   ██╗    ██╗      ██████╗ ██╗   ██╗███████╗██████╗ ███████╗
+██╔══██╗██╔════╝██╔════╝██║██╔════╝ ████╗  ██║    ██║     ██╔═══██╗██║   ██║██╔════╝██╔══██╗██╔════╝
+██║  ██║█████╗  ███████╗██║██║  ███╗██╔██╗ ██║    ██║     ██║   ██║██║   ██║█████╗  ██████╔╝███████╗
+██║  ██║██╔══╝  ╚════██║██║██║   ██║██║╚██╗██║    ██║     ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗╚════██║
+██████╔╝███████╗███████║██║╚██████╔╝██║ ╚████║    ███████╗╚██████╔╝ ╚████╔╝ ███████╗██║  ██║███████║
+╚═════╝ ╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝    ╚══════╝ ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚══════╝</pre>
+                  <div class="sub">// MEDIA_KIT :: V1 :: Q4.2025</div>
+                </div>
+                <div class="right">
+                  <div class="tagline">Documentary essays for a high-value design audience.</div>
+                </div>
+              </div>
+              <div class="status-line">
+                <span>362.2K VIEWERS · 70% RETENTION · 55% TIER-1</span>
+                <span class="hot">&#x25CF; BOOKING OPEN</span>
+              </div>
+            </div>
+            <div class="vignette"></div>
+            <div class="scan"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. YouTube / 16:9 -->
+    <div class="card full">
+      <div class="card-head">
+        <div>
+          <h3>[06] YT_THUMB.PNG</h3>
+          <div class="dims">1280 × 720 :: YOUTUBE THUMBNAIL / 16:9 CARD</div>
+        </div>
+        <button class="dl" data-target="badge-yt">&gt; DOWNLOAD</button>
+      </div>
+      <div class="preview">
+        <div class="stage" data-w="1280" data-h="720">
+          <div class="badge yt" id="badge-yt">
+            <div class="glow"></div>
+            <div class="grid-bg"></div>
+            <div class="content">
+              <div class="b-titlebar">
+                <div class="l">
+                  <span class="rd">&#x25CF;</span>
+                  <span class="rl">REC</span>
+                  <span class="div"></span>
+                  <span>CH.047</span>
+                  <span class="div"></span>
+                  <span class="sig" aria-hidden="true">
+                    <span class="lit"></span><span class="lit"></span><span class="lit"></span><span class="lit"></span><span></span>
+                  </span>
+                  <span>SIGNAL</span>
+                </div>
+                <div class="r"><span>F.000042</span></div>
+              </div>
+              <div class="b-body">
+<pre class="ascii">██████╗ ███████╗███████╗██╗ ██████╗ ███╗   ██╗    ██╗      ██████╗ ██╗   ██╗███████╗██████╗ ███████╗
+██╔══██╗██╔════╝██╔════╝██║██╔════╝ ████╗  ██║    ██║     ██╔═══██╗██║   ██║██╔════╝██╔══██╗██╔════╝
+██║  ██║█████╗  ███████╗██║██║  ███╗██╔██╗ ██║    ██║     ██║   ██║██║   ██║█████╗  ██████╔╝███████╗
+██║  ██║██╔══╝  ╚════██║██║██║   ██║██║╚██╗██║    ██║     ██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗╚════██║
+██████╔╝███████╗███████║██║╚██████╔╝██║ ╚████║    ███████╗╚██████╔╝ ╚████╔╝ ███████╗██║  ██║███████║
+╚═════╝ ╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝    ╚══════╝ ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝╚══════╝</pre>
+                <div class="sub">// MEDIA_KIT :: V1 :: Q4.2025</div>
+                <div class="tagline">Documentary essays for&nbsp;a high-value design audience.</div>
+                <div class="meta">&gt; 362.2K viewers // 70% retention // 55% tier-1</div>
+              </div>
+              <div class="status-line">
+                <span>design-lovers.com</span>
+                <span class="hot">&#x25CF; 2 SLOTS REMAIN</span>
+              </div>
+            </div>
+            <div class="vignette"></div>
+            <div class="scan"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="titlebar" style="border-top:1px solid var(--phosphor-dim); border-bottom:none;">
+    <div class="tb-left"><span>&copy; 2025 DESIGN_LOVERS</span></div>
+    <div></div>
+    <div class="tb-right"><span>EOF</span></div>
+  </div>
+</div>
+
+<script>
+  // Clock
+  function tick() {
+    var d = new Date();
+    var hh = String(d.getUTCHours()).padStart(2,'0');
+    var mm = String(d.getUTCMinutes()).padStart(2,'0');
+    var ss = String(d.getUTCSeconds()).padStart(2,'0');
+    var el = document.getElementById('clock');
+    if (el) el.textContent = hh + ':' + mm + ':' + ss + ' UTC';
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Scale preview stages
+  function fitStages() {
+    document.querySelectorAll('.preview').forEach(function (p) {
+      var stage = p.querySelector('.stage');
+      if (!stage) return;
+      var w = parseFloat(stage.dataset.w);
+      var h = parseFloat(stage.dataset.h);
+
+      stage.style.width = w + 'px';
+      stage.style.height = h + 'px';
+
+      var card = p.closest('.card');
+      var avail = card.clientWidth - 32; // preview padding (1rem each side)
+      var scale = Math.min(1, avail / w);
+
+      var mx = -(w * (1 - scale) / 2);
+      var my = -(h * (1 - scale) / 2);
+      stage.style.margin = my + 'px ' + mx + 'px';
+      stage.style.transform = 'scale(' + scale + ')';
+    });
+  }
+  window.addEventListener('load', fitStages);
+  window.addEventListener('resize', fitStages);
+  // Fit again after fonts have loaded so measurements settle
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitStages);
+  }
+
+  // Download buttons
+  document.querySelectorAll('.dl').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.dataset.target;
+      var el = document.getElementById(id);
+      if (!el) return;
+
+      var prev = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '&gt; RENDERING…';
+
+      var stage = el.closest('.stage');
+      var prevT = stage.style.transform;
+      var prevM = stage.style.margin;
+      stage.style.transform = 'none';
+      stage.style.margin = '0';
+
+      html2canvas(el, {
+        backgroundColor: '#110a06',
+        scale: 1,
+        useCORS: true,
+        logging: false,
+        width: el.offsetWidth,
+        height: el.offsetHeight
+      }).then(function (canvas) {
+        var link = document.createElement('a');
+        link.download = 'design-lovers-crt-' + id.replace('badge-', '') + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(function (e) {
+        console.error(e);
+        alert('Render failed: ' + e.message);
+      }).finally(function () {
+        stage.style.transform = prevT;
+        stage.style.margin = prevM;
+        btn.disabled = false;
+        btn.innerHTML = prev;
+      });
+    });
+  });
+</script>
+</body>
+</html>
