@@ -44,6 +44,10 @@
     {
       "source": "/behind",
       "destination": "/behind/index.html"
+    },
+    {
+      "source": "/crt",
+      "destination": "/crt/index.html"
     }
   ]
 }
