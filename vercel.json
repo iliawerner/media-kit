@@ -48,6 +48,14 @@
     {
       "source": "/crt",
       "destination": "/crt/index.html"
+    },
+    {
+      "source": "/badges",
+      "destination": "/badges/index.html"
+    },
+    {
+      "source": "/crt/badges",
+      "destination": "/crt/badges/index.html"
     }
   ]
 }
