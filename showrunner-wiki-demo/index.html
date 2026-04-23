@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Design Lovers — Showrunner Wiki</title>
+<link rel="icon" href="/favicon.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --hue: 12;
+  --sat: 70%;
+  --accent: hsl(var(--hue) var(--sat) 56%);
+  --accent-soft: hsl(var(--hue) var(--sat) 56% / 0.12);
+  --accent-edge: hsl(var(--hue) var(--sat) 56% / 0.30);
+
+  --bg: #0b0b0c;
+  --surface: #131314;
+  --surface-2: #1a1a1c;
+  --line: rgba(255,255,255,0.07);
+  --line-strong: rgba(255,255,255,0.14);
+  --text: #e9e9ea;
+  --text-dim: #a1a1a4;
+  --text-faint: #6a6a6e;
+
+  --base-size: 15px;
+  --pad-y: 14px;
+  --pad-x: 18px;
+  --gap: 18px;
+  --radius: 10px;
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font: var(--font-sans);
+}
+
+[data-theme="light"] {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --surface-2: #f3f3f4;
+  --line: rgba(0,0,0,0.08);
+  --line-strong: rgba(0,0,0,0.16);
+  --text: #18181b;
+  --text-dim: #5b5b62;
+  --text-faint: #8e8e94;
+}
+
+[data-density="compact"] {
+  --pad-y: 9px;
+  --pad-x: 13px;
+  --gap: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--base-size);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "cv11";
+}
+
+a { color: var(--text); text-decoration: none; }
+a:hover { color: var(--accent); }
+code, kbd { font-family: var(--font-mono); font-size: 0.88em; background: var(--surface-2); padding: 1px 6px; border-radius: 4px; }
+hr { border: 0; border-top: 1px solid var(--line); margin: calc(var(--gap) * 1.6) 0; }
+
+/* Layout */
+.app {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+}
+.sidebar {
+  position: sticky; top: 0;
+  height: 100vh;
+  border-right: 1px solid var(--line);
+  padding: 24px 18px;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 22px;
+  background: var(--bg);
+}
+.main {
+  padding: 40px clamp(20px, 4vw, 56px) 80px;
+  max-width: 1080px;
+}
+
+/* Brand */
+.brand {
+  display: flex; align-items: center; gap: 10px;
+}
+.brand-mark {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent);
+  display: grid; place-items: center;
+  font-family: var(--font-serif);
+  font-weight: 600; color: #fff; font-size: 14px;
+}
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-text strong { font-size: 14px; font-weight: 600; letter-spacing: -0.005em; }
+.brand-text span { font-size: 11px; color: var(--text-faint); letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* Nav */
+nav.toc { display: flex; flex-direction: column; gap: 1px; }
+nav.toc a {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 7px;
+  color: var(--text-dim);
+  font-size: 13px;
+  letter-spacing: -0.005em;
+  transition: background .15s, color .15s;
+}
+nav.toc a:hover { background: var(--surface-2); color: var(--text); }
+nav.toc a.active { background: var(--accent-soft); color: var(--accent); }
+nav.toc a span.idx {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+}
+nav.toc a.active span.idx { color: var(--accent); }
+nav.toc .group {
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin: 18px 10px 4px;
+  font-weight: 600;
+}
+
+/* Appearance panel */
+.appear {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.appear-title {
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-faint); font-weight: 600;
+}
+.row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.row label { font-size: 12px; color: var(--text-dim); }
+
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.seg button {
+  background: transparent;
+  border: 0;
+  color: var(--text-dim);
+  padding: 5px 9px;
+  font-size: 11px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.seg button:hover { color: var(--text); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+[data-theme="light"] .seg button[aria-pressed="true"] { color: #fff; }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 110px;
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+
+/* Hero / sections */
+section { padding-top: 56px; margin-top: -1px; scroll-margin-top: 12px; }
+section:first-child { padding-top: 0; }
+.kicker {
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.kicker::before {
+  content: ""; display: inline-block;
+  width: 18px; height: 1px; background: var(--accent);
+}
+h1 {
+  font-size: clamp(32px, 4vw, 44px);
+  line-height: 1.05; letter-spacing: -0.02em;
+  margin: 12px 0 16px;
+  font-weight: 600;
+  font-family: var(--font);
+}
+h2 {
+  font-size: 24px;
+  letter-spacing: -0.015em;
+  margin: 8px 0 18px;
+  font-weight: 600;
+}
+h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+h4 {
+  font-size: 13px;
+  margin: 0 0 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+.lead { font-size: 17px; color: var(--text-dim); max-width: 64ch; line-height: 1.55; }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--pad-y) var(--pad-x);
+}
+.card.tight { padding: 12px 14px; }
+.grid {
+  display: grid;
+  gap: var(--gap);
+}
+.grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 720px) {
+  .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; }
+}
+
+/* Stat cards */
+.stat .num {
+  font-size: 28px; line-height: 1.05; letter-spacing: -0.02em;
+  font-weight: 600; font-family: var(--font);
+  margin-bottom: 4px;
+}
+.stat .label { font-size: 12px; color: var(--text-dim); }
+.stat .delta { font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+
+/* Tables */
+table.dl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table.dl th, table.dl td {
+  text-align: left;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+table.dl th {
+  font-weight: 600;
+  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  position: sticky; top: 0;
+  background: var(--bg);
+  z-index: 1;
+}
+table.dl td.num, table.dl th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); font-size: 12px; }
+table.dl tr:hover td { background: var(--surface-2); }
+table.dl td .title-cell { max-width: 380px; }
+
+/* Badges */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.badge.green { background: rgba(34,197,94,.12); color: #4ade80; border-color: rgba(34,197,94,.25); }
+.badge.yellow { background: rgba(234,179,8,.12); color: #facc15; border-color: rgba(234,179,8,.25); }
+.badge.red { background: rgba(239,68,68,.12); color: #f87171; border-color: rgba(239,68,68,.25); }
+.badge.blue { background: rgba(59,130,246,.12); color: #60a5fa; border-color: rgba(59,130,246,.25); }
+.badge.accent { background: var(--accent-soft); color: var(--accent); border-color: var(--accent-edge); }
+
+/* Search */
+.search {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 9px 12px;
+  margin-bottom: 14px;
+}
+.search input {
+  flex: 1;
+  background: transparent;
+  border: 0; outline: 0;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+}
+.search .count { font-size: 11px; color: var(--text-faint); font-family: var(--font-mono); }
+
+/* Charts */
+.chart { width: 100%; height: auto; }
+.chart .bar { fill: var(--accent); transition: fill .15s; }
+.chart .bar:hover { fill: var(--text); }
+.chart .axis { fill: var(--text-faint); font-size: 11px; font-family: var(--font-mono); }
+.chart .label { fill: var(--text-dim); font-size: 11px; }
+.chart .value { fill: var(--text); font-size: 11px; font-family: var(--font-mono); font-weight: 600; }
+.chart .grid-line { stroke: var(--line); stroke-width: 1; }
+.chart .ref-line { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2,3; opacity: .5; }
+
+/* Quote */
+.quote {
+  border-left: 2px solid var(--accent);
+  padding: 6px 0 6px 16px;
+  margin: 16px 0;
+  color: var(--text-dim);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Pill list */
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+}
+
+/* Lists */
+ul.minor { padding-left: 18px; margin: 8px 0; }
+ul.minor li { color: var(--text-dim); margin-bottom: 4px; font-size: 14px; }
+ul.minor li strong { color: var(--text); font-weight: 600; }
+ul.tick { list-style: none; padding: 0; margin: 8px 0; }
+ul.tick li { position: relative; padding-left: 22px; color: var(--text-dim); margin-bottom: 6px; font-size: 14px; }
+ul.tick li::before {
+  content: "→"; position: absolute; left: 0; top: 0; color: var(--accent); font-family: var(--font-mono);
+}
+ul.tick li strong { color: var(--text); font-weight: 600; }
+
+/* Two-col text */
+.two-col { display: grid; gap: var(--gap); grid-template-columns: 1fr 1fr; }
+@media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+/* Mobile */
+.mobile-bar { display: none; }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed; left: 0; right: 0; top: 0;
+    height: auto; max-height: 100vh;
+    transform: translateY(-100%);
+    transition: transform .25s;
+    z-index: 10;
+    border-right: 0; border-bottom: 1px solid var(--line);
+  }
+  .sidebar.open { transform: translateY(0); }
+  .mobile-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    position: sticky; top: 0; z-index: 9;
+  }
+  .mobile-bar button { background: transparent; border: 1px solid var(--line); color: var(--text); padding: 6px 10px; border-radius: 6px; font-family: var(--font); cursor: pointer; }
+  .main { padding: 24px 18px 60px; }
+}
+
+/* Misc */
+.muted { color: var(--text-dim); }
+.tiny { font-size: 11px; color: var(--text-faint); letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+.divider-label {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--text-faint); font-weight: 600;
+  margin: 24px 0 14px;
+}
+.divider-label::after { content: ""; flex: 1; border-bottom: 1px solid var(--line); }
+.k { color: var(--text); font-weight: 600; }
+.formula-line { display: flex; gap: 8px; align-items: baseline; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.formula-line:last-child { border-bottom: 0; }
+.formula-line .name { flex: 1; font-size: 13px; color: var(--text); }
+.formula-line .mult { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-weight: 600; }
+.formula-line .conf { font-size: 10px; color: var(--text-faint); font-family: var(--font-mono); }
+
+.client {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.client .head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.client .head h3 { margin: 0; }
+.client .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 11px; color: var(--text-faint); }
+.client .desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+.empty { color: var(--text-faint); font-size: 13px; padding: 20px 0; text-align: center; }
+
+::selection { background: var(--accent); color: #fff; }
+
+/* Print */
+@media print {
+  .sidebar, .mobile-bar { display: none; }
+  .app { grid-template-columns: 1fr; }
+  body { background: #fff; color: #000; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">D</div>
+      <div class="brand-text">
+        <strong>Design Lovers</strong>
+        <span>Showrunner Wiki</span>
+      </div>
+    </div>
+
+    <nav class="toc" id="toc">
+      <div class="group">Channel</div>
+      <a href="#overview"><span>Overview</span><span class="idx">01</span></a>
+      <a href="#performance"><span>Performance</span><span class="idx">02</span></a>
+      <a href="#insights"><span>Insights</span><span class="idx">03</span></a>
+      <a href="#framework"><span>Packaging Framework</span><span class="idx">04</span></a>
+
+      <div class="group">Catalogue</div>
+      <a href="#videos"><span>Videos</span><span class="idx">05</span></a>
+      <a href="#clients"><span>Clients</span><span class="idx">06</span></a>
+
+      <div class="group">Operations</div>
+      <a href="#pipeline"><span>Pipeline</span><span class="idx">07</span></a>
+      <a href="#sources"><span>Sources</span><span class="idx">08</span></a>
+    </nav>
+
+    <div class="appear">
+      <div class="appear-title">Appearance</div>
+      <div class="row">
+        <label>Theme</label>
+        <div class="seg" data-control="theme">
+          <button data-value="dark" aria-pressed="true">Dark</button>
+          <button data-value="light">Light</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>Density</label>
+        <div class="seg" data-control="density">
+          <button data-value="comfortable" aria-pressed="true">Roomy</button>
+          <button data-value="compact">Compact</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>Type</label>
+        <div class="seg" data-control="font">
+          <button data-value="sans" aria-pressed="true">Sans</button>
+          <button data-value="serif">Serif</button>
+          <button data-value="mono">Mono</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>Size</label>
+        <input type="range" min="13" max="17" step="1" value="15" data-control="size" />
+      </div>
+      <div class="row">
+        <label>Accent</label>
+        <input type="range" min="0" max="360" step="1" value="12" data-control="hue" />
+      </div>
+    </div>
+  </aside>
+
+  <div class="mobile-bar">
+    <div class="brand">
+      <div class="brand-mark">D</div>
+      <strong style="font-size: 14px;">Showrunner Wiki</strong>
+    </div>
+    <button id="menu-btn">Menu</button>
+  </div>
+
+  <main class="main">
+    <!-- ========== 1. OVERVIEW ========== -->
+    <section id="overview">
+      <div class="kicker">01 — Channel</div>
+      <h1>Design Lovers, in one page.</h1>
+      <p class="lead">A documentary YouTube channel about interface design — Apple, Google, and the small details that quietly shape how billions of people use their devices. This is the showrunner&rsquo;s wiki: every metric, framework, deal, and active project, in one navigable surface.</p>
+
+      <div class="grid cols-4" style="margin-top: 28px;">
+        <div class="card stat">
+          <div class="num">3.07M</div>
+          <div class="label">Lifetime views</div>
+          <div class="delta">+208K in 9 days</div>
+        </div>
+        <div class="card stat">
+          <div class="num">190K</div>
+          <div class="label">Watch hours</div>
+          <div class="delta">21.7 years of viewing</div>
+        </div>
+        <div class="card stat">
+          <div class="num">+54.4K</div>
+          <div class="label">Net subscribers</div>
+          <div class="delta">62.5K gained, 8.1K lost</div>
+        </div>
+        <div class="card stat">
+          <div class="num">5.10%</div>
+          <div class="label">Channel CTR</div>
+          <div class="delta">YouTube norm: 2&ndash;5%</div>
+        </div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top: 18px;">
+        <div class="card">
+          <h4>What this channel is</h4>
+          <p style="margin: 8px 0 0; color: var(--text-dim); font-size: 14px;">Long-form video essays about interface design. Apple is the spine — products, decisions, history. The audience is designers, engineers, and tech-literate viewers. 100% organic traffic. 90%+ from YouTube&rsquo;s recommendation surface.</p>
+        </div>
+        <div class="card">
+          <h4>How this wiki works</h4>
+          <p style="margin: 8px 0 0; color: var(--text-dim); font-size: 14px;">Every section here is generated from a structured wiki of source files (raw analytics, comms, contracts, research). Numbers reflect the latest YouTube Studio export. Adjust the appearance panel on the left to taste.</p>
+        </div>
+      </div>
+
+      <div class="quote">
+        <strong style="color: var(--text); font-style: normal;">Reference point:</strong> March 25, 2025 — episode #89 (&ldquo;Welcome back, Skeumorphism&rdquo;). The channel&rsquo;s growth phase begins here. All benchmarks below are computed only from videos published after this date.
+      </div>
+    </section>
+
+    <!-- ========== 2. PERFORMANCE ========== -->
+    <section id="performance">
+      <div class="kicker">02 — Performance</div>
+      <h2>Benchmarks &amp; distribution</h2>
+      <p class="muted" style="font-size: 14px; max-width: 64ch;">Computed on the post-#89 long-form sample (n=44, duration ≥ 60s). Shorts excluded by policy — see <a href="#sources">Sources</a>.</p>
+
+      <div class="grid cols-4" style="margin-top: 22px;">
+        <div class="card stat">
+          <div class="num">23.5K</div>
+          <div class="label">Median views</div>
+          <div class="delta">Mean: 62.4K (right-skewed)</div>
+        </div>
+        <div class="card stat">
+          <div class="num">4.96%</div>
+          <div class="label">Median CTR</div>
+          <div class="delta">Strong: 5–10%</div>
+        </div>
+        <div class="card stat">
+          <div class="num">43.2%</div>
+          <div class="label">Median retention</div>
+          <div class="delta">Healthy for 8–12 min</div>
+        </div>
+        <div class="card stat">
+          <div class="num">10–15K</div>
+          <div class="label">Core audience</div>
+          <div class="delta">Watches most uploads</div>
+        </div>
+      </div>
+
+      <div class="divider-label">Top 10 videos by lifetime views</div>
+      <div class="card">
+        <div id="chart-top10"></div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top: 18px;">
+        <div class="card">
+          <h3>The Apple multiplier</h3>
+          <p class="muted" style="font-size: 13px; margin: 4px 0 14px;">Videos with &ldquo;Apple&rdquo; in the title earn ×4.1 the median of the rest. Stable across three consecutive analytics exports. Retention is essentially identical (1.5pp difference).</p>
+          <div id="chart-apple"></div>
+        </div>
+        <div class="card">
+          <h3>Duration sweet spot</h3>
+          <p class="muted" style="font-size: 13px; margin: 4px 0 14px;">600–900 seconds is the views peak. 300–600s is the best balance of views and retention. Anything past 900s drops sharply on retention (30.7%).</p>
+          <div id="chart-duration"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 18px;">
+        <h3>Topic categories — median views</h3>
+        <p class="muted" style="font-size: 13px; margin: 4px 0 14px;">From the latest topic model rebuild (n=43, 2026-04-20). Two clear champions, two clear killers.</p>
+        <div id="chart-categories"></div>
+      </div>
+    </section>
+
+    <!-- ========== 3. INSIGHTS ========== -->
+    <section id="insights">
+      <div class="kicker">03 — Insights</div>
+      <h2>What works, what doesn&rsquo;t</h2>
+      <p class="muted" style="font-size: 14px; max-width: 64ch;">Patterns observed across 44 long-form videos in the growth period. Each is a tendency, not a law — sample sizes are small, classification is partly subjective.</p>
+
+      <div class="two-col" style="margin-top: 22px;">
+        <div class="card">
+          <h3 style="color: #4ade80;">Confirmed patterns</h3>
+          <ul class="tick">
+            <li><strong>Apple = backbone.</strong> 60.9K median vs 14.7K without. The single cleanest signal in the dataset.</li>
+            <li><strong>Concrete artefact &gt; abstraction.</strong> &ldquo;0.5mm&rdquo;, &ldquo;Twenty Pixels&rdquo;, &ldquo;Leopard Dock&rdquo;, &ldquo;Door Latch&rdquo; — concrete nouns create the curiosity gap.</li>
+            <li><strong>Nostalgia triggers.</strong> Hidden Cost of Clean Design (501K, Winamp), Windows XP (23K), First iPhone (13K).</li>
+            <li><strong>Negative framing on Apple.</strong> &ldquo;Admits Defeat&rdquo;, &ldquo;Death of Premium&rdquo;, &ldquo;Stopped Listening&rdquo; — critique of Apple consistently pulls.</li>
+            <li><strong>Title testing works.</strong> #107 grew from 4.6K → 11.8K (+158%) after a title swap nine days post-publish.</li>
+            <li><strong>Single-portrait beats triptych.</strong> Confirmed on #108 and #109 thumbnail A/B tests.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color: #f87171;">What doesn&rsquo;t</h3>
+          <ul class="tick">
+            <li><strong>Videos over 15 minutes.</strong> Median retention 30.7%, median views 23K. The format has a clear ceiling at 900s.</li>
+            <li><strong>Videos without a clear niche.</strong> &ldquo;Straighten The Cursor&rdquo; (23K), &ldquo;Why Does It Look So Good&rdquo; (7K) — outside the Apple/design-systems orbit, no boost from the existing audience.</li>
+            <li><strong>UI-element + History genre.</strong> 4 of 4 failed: &ldquo;Why Links Are Blue&rdquo;, &ldquo;Door Latch&rdquo;, &ldquo;Like Button is 200K Years Old&rdquo;, &ldquo;Interface We Lost for 2000 Years&rdquo;.</li>
+            <li><strong>Concept as the main object.</strong> &ldquo;Reality Distortion&rdquo;, &ldquo;Aesthetics&rdquo;, &ldquo;Post-PC&rdquo; — abstractions without a physical anchor underperform 4× out of 5.</li>
+            <li><strong>Object thumbnails.</strong> Scroll, car, eyes, charts-as-objects — 7 of 8 failed. The harshest negative signal in the dataset.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 18px; border-color: var(--accent-edge); background: var(--accent-soft);">
+        <h3>The current problem</h3>
+        <p class="muted" style="font-size: 14px; line-height: 1.6; color: var(--text);">CTR median (4.96%) sits in the lower half of YouTube&rsquo;s &ldquo;strong&rdquo; band. Five of the last six long-form releases were 🟡 or 🔴 against the new thresholds. Format consistency has slipped. Priorities: apply the packaging framework systematically, return to a stable release cadence, lift CTR toward 5.5–7% on non-obvious topics. Early sign of a reversal: #109 (Apr 21) hit 41K in 24 hours with 7.8% CTR — the first 🟢 breakout in two months.</p>
+      </div>
+    </section>
+
+    <!-- ========== 4. FRAMEWORK ========== -->
+    <section id="framework">
+      <div class="kicker">04 — Combined Packaging Framework v1.3</div>
+      <h2>The model that decides what gets made</h2>
+      <p class="muted" style="font-size: 14px; max-width: 64ch;">Every idea, title, and thumbnail goes through this. Built from 38 post-growth videos (title rules updated on n=44, April 2026). Multipliers below = how much the median moves when the feature is present.</p>
+
+      <div class="grid cols-2" style="margin-top: 22px;">
+        <div class="card">
+          <h4 style="color: #4ade80;">Pull up</h4>
+          <div class="formula-line"><span class="name">Apple anchor in title</span><span class="mult">×4.1</span><span class="conf">10/10</span></div>
+          <div class="formula-line"><span class="name">Text as composition on thumbnail</span><span class="mult">×3.2</span><span class="conf">9/10</span></div>
+          <div class="formula-line"><span class="name">Light-graphics thumbnail background</span><span class="mult">×2.7</span><span class="conf">7/10</span></div>
+          <div class="formula-line"><span class="name">Concrete artefact noun in title</span><span class="mult">×2.6</span><span class="conf">8/10</span></div>
+          <div class="formula-line"><span class="name">Apple-prefix series title</span><span class="mult">×2.6</span><span class="conf">5/10</span></div>
+          <div class="formula-line"><span class="name">Gadget as main thumbnail object</span><span class="mult">×2.6</span><span class="conf">5/10</span></div>
+        </div>
+        <div class="card">
+          <h4 style="color: #f87171;">Drag down</h4>
+          <div class="formula-line"><span class="name">Object category on thumbnail (no UI)</span><span class="mult">÷6.7</span><span class="conf">9/10</span></div>
+          <div class="formula-line"><span class="name">UI topic told as History (not Story)</span><span class="mult">÷9</span><span class="conf">8/10</span></div>
+          <div class="formula-line"><span class="name">Question-opener title without Apple anchor</span><span class="mult">÷2.6</span><span class="conf">7/10</span></div>
+          <div class="formula-line"><span class="name">Concept (abstract) as the main object</span><span class="mult">÷2.0</span><span class="conf">7/10</span></div>
+          <div class="formula-line"><span class="name">Persona (close-up face) on thumbnail</span><span class="mult">÷2.0</span><span class="conf">4/10</span></div>
+          <div class="formula-line"><span class="name">Number digit in title</span><span class="mult">÷2.4</span><span class="conf">4/10</span></div>
+        </div>
+      </div>
+
+      <div class="divider-label">Five working formulas (recipes that landed)</div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>F1 — Apple + Big paradigm + Author angle</h3>
+          <p class="muted" style="font-size: 13px;">A design system (Liquid Glass, Skeuomorphism, Flat Design) framed by the host&rsquo;s thesis. Median <span class="k">118K</span>, n=4.</p>
+          <div class="pills" style="margin-top: 8px;">
+            <span class="pill">Why we keep coming back · 206K</span>
+            <span class="pill">Reflection / iOS 26 · 146K</span>
+            <span class="pill">Welcome back, Skeu · 91K</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>F2 — Apple + Visual technique + Origin story</h3>
+          <p class="muted" style="font-size: 13px;">A specific Apple technique (radius, gradient, blur) with how it became canon. Median <span class="k">114K</span>, n=4 — all four landed.</p>
+          <div class="pills" style="margin-top: 8px;">
+            <span class="pill">Twenty Pixels · 301K</span>
+            <span class="pill">Leopard Dock · 134K</span>
+            <span class="pill">Decade of Gradients · 95K</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>F3 — Apple + Specific product + Thumbnail text</h3>
+          <p class="muted" style="font-size: 13px;">A concrete iPhone/iPad/Mac with a thesis and a text-led thumbnail. Median <span class="k">95K</span>.</p>
+          <div class="pills" style="margin-top: 8px;">
+            <span class="pill">Death of Premium · 128K</span>
+            <span class="pill">Most Irrational iPhone · 62K</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>F4 — Apple + Physical product detail</h3>
+          <p class="muted" style="font-size: 13px;">Edge radius, bezel gap, key shape. Concrete and pointable. Median <span class="k">65K</span>, n=3 — no fails.</p>
+          <div class="pills" style="margin-top: 8px;">
+            <span class="pill">Flat Edge Dilemma · 89K</span>
+            <span class="pill">Apple&rsquo;s 0.5mm · 60K</span>
+            <span class="pill">Apple Button · 62K</span>
+          </div>
+        </div>
+        <div class="card" style="grid-column: span 2;">
+          <h3>F5 — UI element told as Story, not History</h3>
+          <p class="muted" style="font-size: 13px;">Cursor, dock, notification, badge — only works as &ldquo;here&rsquo;s how it works now&rdquo;. As History (&ldquo;here&rsquo;s where it came from&rdquo;), the same object loses 9× on median. The genre choice is the variable.</p>
+          <div class="pills" style="margin-top: 10px;">
+            <span class="pill" style="color: #4ade80;">Story · One Feature Refuse to Steal · 173K</span>
+            <span class="pill" style="color: #4ade80;">Story · Icon Violates Rule · 99K</span>
+            <span class="pill" style="color: #f87171;">History · Door Latch · 13K</span>
+            <span class="pill" style="color: #f87171;">History · Links Are Blue · 8K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider-label">Pre-publish checklist (hard rules)</div>
+      <div class="card">
+        <ul class="tick">
+          <li>Is there an <strong>Apple anchor</strong> in the topic or title?</li>
+          <li>Is there <strong>text as composition</strong> on the thumbnail (not a small caption)?</li>
+          <li>If the title starts with Why/How/What/Does — is the word <strong>Apple/iPhone/iPad/macOS/Steve Jobs</strong> inside?</li>
+          <li>Is the thumbnail free of <strong>physical-Object</strong> categories (scroll, car, eyes, charts-as-object, box)?</li>
+          <li>If the topic is a UI element, is the genre <strong>Story</strong> rather than History or Debunk?</li>
+          <li>If the topic is an abstract Concept, is there a <strong>concrete anchor</strong> (Gadget, Brand, named artefact)?</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== 5. VIDEOS ========== -->
+    <section id="videos">
+      <div class="kicker">05 — Catalogue</div>
+      <h2>Videos</h2>
+      <p class="muted" style="font-size: 14px; max-width: 64ch;">All long-form videos with structured wiki pages. Sort by clicking column headers; filter by typing.</p>
+
+      <div class="search">
+        <span style="font-family: var(--font-mono); color: var(--text-faint); font-size: 12px;">→</span>
+        <input id="vsearch" placeholder="Filter by title, sponsor, status…" />
+        <span class="count" id="vcount"></span>
+      </div>
+
+      <div class="card" style="padding: 4px 8px; overflow-x: auto;">
+        <table class="dl" id="videos-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th class="num" data-sort="views">Views</th>
+              <th class="num" data-sort="ret">Ret.</th>
+              <th class="num" data-sort="ctr">CTR</th>
+              <th>Tier</th>
+              <th>Sponsor</th>
+              <th data-sort="date">Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========== 6. CLIENTS ========== -->
+    <section id="clients">
+      <div class="kicker">06 — Catalogue</div>
+      <h2>Clients</h2>
+      <p class="muted" style="font-size: 14px; max-width: 64ch;">Sponsors, agents, and prospects. Total realised + booked revenue across 13 relationships.</p>
+
+      <div class="grid cols-3" style="margin: 22px 0 18px;">
+        <div class="card stat">
+          <div class="num" id="rev-realised">$15.8K</div>
+          <div class="label">Realised revenue</div>
+          <div class="delta">From shipped or paid deals</div>
+        </div>
+        <div class="card stat">
+          <div class="num" id="rev-pipeline">$30.4K</div>
+          <div class="label">Booked &amp; in-flight</div>
+          <div class="delta">Includes pending payments &amp; signed series</div>
+        </div>
+        <div class="card stat">
+          <div class="num">7</div>
+          <div class="label">Active relationships</div>
+          <div class="delta">3 prospects in negotiation</div>
+        </div>
+      </div>
+
+      <div id="clients-grid" class="grid cols-2"></div>
+    </section>
+
+    <!-- ========== 7. PIPELINE ========== -->
+    <section id="pipeline">
+      <div class="kicker">07 — Operations</div>
+      <h2>Pipeline (this week)</h2>
+      <p class="muted" style="font-size: 14px; max-width: 64ch;">Snapshot of what&rsquo;s in production, awaiting payment, and being negotiated. Reflects state as of 22 April 2026.</p>
+
+      <div class="grid cols-2" style="margin-top: 22px;">
+        <div class="card">
+          <h3>Recent publications</h3>
+          <table class="dl" style="margin-top: 6px;">
+            <tbody>
+              <tr><td><strong>#109</strong> Apple&rsquo;s New CEO Is an Engineer <span class="badge green">🟢 breakout</span></td><td class="num">41.3K</td><td class="num">7.8%</td></tr>
+              <tr><td><strong>#107</strong> Apple Designed a Lie <span class="badge yellow">🟡</span></td><td class="num">11.8K</td><td class="num">6.82%</td></tr>
+              <tr><td><strong>#103</strong> iPadOS 26 Destroyed Post-PC <span class="badge yellow">🟡</span></td><td class="num">23.5K</td><td class="num">7.22%</td></tr>
+              <tr><td><strong>#105</strong> UI Mistake 25 Years Ago <span class="badge red">🔴</span></td><td class="num">5.6K</td><td class="num">6.38%</td></tr>
+            </tbody>
+          </table>
+          <p class="tiny" style="margin-top: 10px;">CTR shown — first column is 24h or lifetime depending on age</p>
+        </div>
+
+        <div class="card">
+          <h3>In production</h3>
+          <ul class="tick">
+            <li><strong>#102 Robot Vacuum</strong> — Ecovacs, $3.1K. Script stage. Awaiting Nadia&rsquo;s answer on format (dedicated vs. scripted).</li>
+            <li><strong>#108 Ferrari Switch</strong> — Storyblocks integration, $1.4K. Concept ✅ approved 22 Apr. B-roll + integration shoot 23 Apr.</li>
+            <li><strong>#112 Genspark</strong> — series 1/3, $3.5K. Titles + thumbnail approved. Publish proposed Sat 25 Apr.</li>
+            <li><strong>#113</strong> Digital Fatigue — in writing.</li>
+            <li><strong>#115</strong> Phones Feel Same — packaging stage, built on the &ldquo;Why Modern Movies Feel Small&rdquo; reference formula.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Awaiting payment</h3>
+          <table class="dl">
+            <tbody>
+              <tr><td><strong>Framer</strong> · #103 mid-roll</td><td class="num">$1,500</td><td><span class="badge yellow">Net 30 · ~4 May</span></td></tr>
+              <tr><td><strong>Opera</strong> · #105 dedicated</td><td class="num">$3,000</td><td><span class="badge yellow">Net 30 · ~27 Apr</span></td></tr>
+              <tr><td><strong>Storyblocks</strong> · #108 integration</td><td class="num">$1,400</td><td><span class="badge blue">Net 45 from EOM</span></td></tr>
+            </tbody>
+          </table>
+          <p class="tiny" style="margin-top: 10px;">Push notes scheduled for 27 Apr</p>
+        </div>
+
+        <div class="card">
+          <h3>Active negotiations</h3>
+          <ul class="tick">
+            <li><strong>Miro London (June)</strong> — $4K, 2 videos around the conference 2 June. Flights + 1 night hotel covered.</li>
+            <li><strong>UGREEN / Tei</strong> — $1K + Steam Deck dock agreed. Awaiting product shipment to start.</li>
+            <li><strong>Convixa partnership</strong> — full-agency proposal at 15% commission. Bank details draft pending.</li>
+            <li><strong>Prusa series</strong> — 8 videos confirmed via Convixa. Printer shipping.</li>
+            <li><strong>Yandex Search API</strong> — via Yoloco, replied 14 Apr with rate. Awaiting brief.</li>
+            <li><strong>LiberNovo (iFLYTalent)</strong> — two cold inbounds for the same brand. Decision pending.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="divider-label">Open questions</div>
+      <div class="card">
+        <ul class="minor">
+          <li>Strategy for returning to release consistency — five of last six were 🟡 or 🔴 before #109 broke out.</li>
+          <li>What goes in the June UGREEN slot — Retro Tech (#110) or a new pitch.</li>
+          <li>Topics for Genspark videos #2 (May) and #3 (July).</li>
+          <li>Format choice on #102 — Ecovacs has not committed.</li>
+          <li>Apply the packaging framework systematically to the next 5 ideas before greenlighting.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== 8. SOURCES ========== -->
+    <section id="sources">
+      <div class="kicker">08 — Operations</div>
+      <h2>Sources &amp; methodology</h2>
+      <p class="muted" style="font-size: 14px; max-width: 64ch;">This wiki is generated from a structured Obsidian vault that mirrors three zones: <code>raw/</code> (immutable analytics, comms, contracts), <code>wiki/</code> (curated pages), <code>projects/</code> (active scripts).</p>
+
+      <div class="grid cols-2" style="margin-top: 18px;">
+        <div class="card">
+          <h3>Data</h3>
+          <ul class="minor">
+            <li><strong>Analytics:</strong> YouTube Studio Advanced Mode CSV exports. Latest: 2026-04-20 (covers through 2026-04-18).</li>
+            <li><strong>Sample size:</strong> n=44 long-form post-#89 videos for benchmarks; n=38 (model) / n=43 (title revision) for the packaging framework.</li>
+            <li><strong>Cutoff rule:</strong> all benchmarks exclude videos before episode #89 (2025-03-25), the channel&rsquo;s growth inflection.</li>
+            <li><strong>Shorts:</strong> excluded from benchmarks by policy decision (2026-04-17).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Caveats</h3>
+          <ul class="minor">
+            <li><strong>Classification is subjective.</strong> A video can plausibly fit several topic categories. Numbers should be read as tendencies, not laws.</li>
+            <li><strong>Apple is everywhere.</strong> 30 of 38 modelled videos. Pure category effects are entangled with the Apple multiplier until non-Apple n grows.</li>
+            <li><strong>Outliers exist.</strong> &ldquo;Hidden Cost of Clean Design&rdquo; (501K) is unmodelled — the framework predicts 78K. There&rsquo;s a signal beyond the captured five features.</li>
+            <li><strong>Refresh cadence.</strong> Recompute every ~10 new videos.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 18px;">
+        <h3>Authoritative pages (in the source vault)</h3>
+        <div class="pills" style="margin-top: 8px;">
+          <span class="pill">wiki/channel/overview.md</span>
+          <span class="pill">wiki/channel/benchmarks.md</span>
+          <span class="pill">wiki/channel/patterns.md</span>
+          <span class="pill">wiki/channel/topic-model.md</span>
+          <span class="pill">wiki/frameworks/combined-packaging-model.md</span>
+          <span class="pill">wiki/frameworks/thumbnail-model.md</span>
+          <span class="pill">wiki/hot.md</span>
+          <span class="pill">wiki/videos/* (53)</span>
+          <span class="pill">wiki/clients/* (12)</span>
+        </div>
+      </div>
+
+      <p class="tiny" style="margin-top: 32px;">Generated 22 April 2026. Internal demo. Do not distribute.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+// =====================================================
+// DATA
+// =====================================================
+const VIDEOS = [
+  // [title, views, retention%, ctr%, tier (g/y/r), sponsor, dateISO, number]
+  ["The Hidden Cost of \"Clean\" Design", 500608, 44.3, 5.38, "g", "Miro", "2025-12-05", 100],
+  ["Apple Design: The Twenty Pixels That Changed Design Forever", 300562, 41.0, 4.98, "g", "", "2025-09-26", null],
+  ["Apple Design: Why We Keep Coming Back To This?", 206446, 43.3, 4.87, "g", "", "2025-12-15", null],
+  ["The One Feature Apple & Microsoft Refuse to Steal", 173337, 46.2, 6.40, "g", "", "2025-08-20", null],
+  ["Apple Design: The Reflection That Ended an Era (iOS 26)", 145751, 49.0, 5.03, "g", "", "2025-06-15", null],
+  ["What Made the Leopard Dock So Special?", 133889, 44.0, 5.63, "g", "", "2025-06-30", null],
+  ["The Death of 'Premium' Apple Design", 128143, 38.3, 5.09, "y", "", "2025-10-29", null],
+  ["Apple Design: The Icon That Violates Rule", 98606, 27.5, 6.07, "y", "", "2025-11-17", null],
+  ["Apple Design: The Icon That Began a Decade of Gradients", 95060, 33.0, 6.63, "y", "", "2025-08-30", null],
+  ["Apple Design: Welcome back, Skeumorphism", 91229, 46.4, 6.35, "g", "", "2025-03-25", 89],
+  ["The Flat Edge Dilemma", 88500, 45.6, 5.40, "g", "", "2025-12-24", null],
+  ["The Moment Apple Stopped Listening to Users", 75000, 39.1, 5.20, "y", "", "2026-02-19", null],
+  ["We Built Everything Just to Delete It", 70000, 45.8, 5.50, "g", "", "2025-12-02", null],
+  ["The Most Irrational iPhone Ever Made", 62000, 55.0, 5.80, "g", "", "2025-09-11", null],
+  ["Why Windows Can't Copy This Apple Button?", 62000, 44.5, 5.60, "g", "", "2025-12-16", null],
+  ["Apple's 0.5mm: The Detail That Redefined the Smartphone", 57000, 27.7, 5.10, "y", "", "2025-09-24", null],
+  ["Apple Design: The Return of Color", 59000, 39.1, 4.80, "y", "", "2025-04-15", null],
+  ["Apple Design: The Feature That Admits Defeat", 48000, 36.5, 4.90, "y", "", "2025-11-04", null],
+  ["Apple Design: The Post-Ive Era", 41000, 58.9, 5.30, "g", "", "2025-04-20", null],
+  ["The Most Important Application on Your Computer Will Soon Cease to Exist", 32000, 46.5, 5.10, "g", "", "2025-07-15", null],
+  ["Why Apple Doesn't Care About iPhone Design Anymore", 25000, 48.3, 5.40, "g", "", "2025-10-15", null],
+  ["iPadOS 26 Destroyed the Post-PC Dream", 23500, 25.8, 7.22, "y", "Framer", "2026-04-04", 103],
+  ["Skeuomorphism vs. Liquid Glass: What's The Difference?", 23200, 29.0, 5.10, "y", "", "2026-03-24", null],
+  ["iPhone 17e Reveals Apple's Real Fear", 23100, 50.2, 6.40, "y", "", "2026-03-08", null],
+  ["why Windows XP had to look like a toy", 23000, 45.0, 5.20, "g", "", "2025-11-22", null],
+  ["Something Strange Happens When You Straighten The Cursor", 23000, 37.9, 4.80, "y", "", "2026-01-17", null],
+  ["Why Apple is Falling Behind Google", 18951, 44.3, 5.20, "y", "ChatCut", "2026-03-07", 101],
+  ["The 1956 Invention That Defined Modern Web Design", 16000, 50.4, 4.70, "y", "", "2025-07-01", null],
+  ["How to Create AI-Powered Brand Identity in 72 Hours", 15000, 22.8, 4.20, "y", "", "2025-08-01", null],
+  ["Apple Designed a Lie. Now It's on Every Phone.", 11825, 37.2, 6.82, "y", "", "2026-04-11", 107],
+  ["Steve Jobs' Reality Distortion Cost Him Everything", 11000, 41.1, 5.10, "y", "", "2026-03-13", null],
+  ["Why the First iPhone Had to Mimic a Door Latch", 13000, 42.6, 4.60, "y", "", "2025-11-05", null],
+  ["Apple Design: The Interface We Lost for 2000 Years", 13000, 46.8, 4.50, "y", "", "2025-12-11", null],
+  ["Apple Design: Free Hidden School", 9000, 62.3, 5.40, "y", "", "2025-05-10", null],
+  ["The Green Bubble: A Design That Decides Who Belongs", 9000, 42.5, 4.70, "y", "", "2025-08-05", null],
+  ["Apple Design: The Health Data Trap", 9000, 36.6, 4.80, "y", "", "2025-07-20", null],
+  ["Apple Design: The Four Notes That Changed Sound Design Forever", 9000, 47.2, 4.50, "y", "", "2025-10-01", null],
+  ["Why 2026 Will Be the Last Year of the Internet As You Know It", 8300, 38.9, 4.30, "y", "", "2026-01-07", null],
+  ["Why Links Are Blue: It's Not Biology", 8000, 43.2, 4.50, "y", "", "2025-09-15", null],
+  ["Why Does It Look So Good?", 7000, 52.3, 4.30, "y", "", "2025-12-08", null],
+  ["The Like Button is 200,000 Years Old", 7000, 40.0, 4.30, "y", "", "2025-10-20", null],
+  ["Evolutionary Gesture That Changed the Internet Forever", 7000, 27.3, 4.20, "y", "", "2025-11-30", null],
+  ["Is Perplexity's Rebranding a Game-Changer?", 6000, 33.9, 4.10, "y", "", "2025-10-10", null],
+  ["OpenAI's New Logo: Do You See the Difference?", 6000, 38.5, 4.10, "r", "", "2025-09-08", null],
+  ["The UI Mistake We Made 25 Years Ago", 5600, 37.8, 6.38, "r", "Opera", "2026-03-27", 105],
+  ["How DeviantArt is Being Ruined by AI and its own Leaders", 5000, 38.7, 3.80, "r", "", "2025-08-12", null],
+  ["Lovart: What This AI Agent Reveals About the End of Design", 3413, 49.81, 4.20, "r", "Lovart", "2025-07-31", null],
+  ["Apple's New CEO Is an Engineer. That's the End of an Era.", 41300, 41.35, 7.80, "g", "", "2026-04-21", 109],
+];
+
+const CLIENTS = [
+  {
+    name: "Genspark",
+    status: "active",
+    type: "Series · 3 videos",
+    revenue: "$10,500",
+    tone: "in-flight",
+    desc: "AI workspace. Series of three dedicated videos via eezycollab agency. #112 cleared for Saturday 25 April publish. Largest single contract on the channel to date.",
+    meta: ["3 videos · $3.5K each", "Net 7 after publish", "#112 → May → July"],
+  },
+  {
+    name: "Miro",
+    status: "active",
+    type: "Conference (June)",
+    revenue: "$5,200",
+    tone: "in-flight",
+    desc: "Past: #100 Liquid Glass Disaster ($1,200, 491K views — channel #1 hit). New: London conference deal (2 June) — short + long-form for $4,000, flights and one hotel night covered.",
+    meta: ["2 videos · London", "$4K integration", "Flights + hotel"],
+  },
+  {
+    name: "Storyblocks",
+    status: "active",
+    type: "Integration",
+    revenue: "$1,400",
+    tone: "in-flight",
+    desc: "Stock library for creators (Pixly agency). 60–90s integration in #108 Ferrari Switch. Concept approved 22 April. Promo URL storyblocks.com/DesignLovers. Three different launch dates in the brief — clarification pending.",
+    meta: ["Net 45 from EOM", "Approval ✅ 22 Apr", "Live window: 1–22 May"],
+  },
+  {
+    name: "Ecovacs",
+    status: "active",
+    type: "Dedicated",
+    revenue: "$3,100",
+    tone: "in-flight",
+    desc: "Robot vacuum. iFly Talent agency. Production blocked on Nadia's format choice (clean dedicated vs. scripted). Hardware journey: first unit's PSU burned (110V → 220V), brand replaced unit, paid $100 transformer.",
+    meta: ["#102 in production", "Hardware ✅ delivered", "Format TBD"],
+  },
+  {
+    name: "Framer",
+    status: "active",
+    type: "Mid-roll",
+    revenue: "$1,500",
+    tone: "pending-payment",
+    desc: "No-code web builder. Direct relationship with Rachel McDonald. Mid-roll integration in #103 (iPadOS 26). Promo: DESIGNLOVERS1 promo code, framer.link/Designlovers. Net 30 via PayPal — payment in next round.",
+    meta: ["Shipped: 4 Apr", "Net 30 · due ~4 May", "Push: 27 Apr"],
+  },
+  {
+    name: "Opera",
+    status: "active",
+    type: "Dedicated",
+    revenue: "$3,000",
+    tone: "pending-payment",
+    desc: "Browser. Choco Agency (Lithuania). Dedicated #105 \"UI Mistake 25 Years Ago\" — performed 🔴 (5.6K), softening renewal leverage. Two follow-ups already sent.",
+    meta: ["Shipped: 27 Mar", "Net 30 · due ~27 Apr", "Push: 27 Apr"],
+  },
+  {
+    name: "Convixa (Riyan)",
+    status: "active",
+    type: "Agent",
+    revenue: "—",
+    tone: "in-flight",
+    desc: "Agent-partner. Closed Prusa series. Now proposing full agency partnership at 15% commission (industry standard ~25%). Non-exclusive routing model. Bank details draft pending in Gmail.",
+    meta: ["15% commission", "6mo initial term", "Bank draft → send"],
+  },
+  {
+    name: "Prusa 3D",
+    status: "prospect",
+    type: "Series · 8 videos",
+    revenue: "Hardware",
+    tone: "negotiation",
+    desc: "Czech 3D-printer maker. Series of eight videos on 3D-printing, DIY, and ownership culture — printer plus consumables in lieu of cash. Confirmed via Convixa, printer in transit.",
+    meta: ["✅ Confirmed 16 Apr", "5-month timeline", "Conservative: 20K/video"],
+  },
+  {
+    name: "UGREEN",
+    status: "active",
+    type: "Dedicated",
+    revenue: "$1,000",
+    tone: "in-flight",
+    desc: "Hardware accessories. Tei (account manager) agreed terms 22 Apr: $1K + Steam Deck dock add-on. KZ shipping address sent. Real start when product lands. Slot likely Retro Tech (#110) or new pitch.",
+    meta: ["Shipped address ✅", "Awaiting hardware", "June slot candidate"],
+  },
+  {
+    name: "Lovart",
+    status: "inactive",
+    type: "Mid-roll · unaired",
+    revenue: "$1,400",
+    tone: "stalled",
+    desc: "AI image/video/3D platform via eezycollab. #99 paid but unpublished. Earlier dedicated (Jul 2025) earned 3.4K views. Follow-up sent 16 Apr on usage rights — RAW/re-edit declined, paid Ad Code add-on offered.",
+    meta: ["Unaired", "Usage-rights dispute", "Ad-code rates: $195/$325/$650"],
+  },
+  {
+    name: "ChatCut",
+    status: "inactive",
+    type: "Sponsored",
+    revenue: "$1,500",
+    tone: "stalled",
+    desc: "Editing tool. Sponsored #101 \"Why Apple is Falling Behind Google\" (19K, 44% retention). No comms in raw vault — relationship currently dark.",
+    meta: ["1 deal · #101", "🟡 Average", "No active comms"],
+  },
+  {
+    name: "Yandex Search API",
+    status: "prospect",
+    type: "Mid-roll",
+    revenue: "—",
+    tone: "negotiation",
+    desc: "Search API for ML/AI engineers. Yoloco agency (Katie Moroz). Replied 14 April with rate. Politically sensitive brand — format and audience messaging will need care.",
+    meta: ["Yoloco agency", "Rate sent ✅", "Awaiting brief"],
+  },
+  {
+    name: "Skillshare",
+    status: "prospect",
+    type: "—",
+    revenue: "—",
+    tone: "negotiation",
+    desc: "Online learning platform. Registered relationship; no active comms loaded. Common YouTube sponsor — would suit a tutorial-adjacent video angle.",
+    meta: ["No active comms"],
+  },
+];
+
+// =====================================================
+// THEME / APPEARANCE
+// =====================================================
+const settings = {
+  theme: "dark",
+  density: "comfortable",
+  font: "sans",
+  size: 15,
+  hue: 12,
+};
+const STORAGE_KEY = "dl-wiki-prefs";
+
+function applySettings() {
+  const root = document.documentElement;
+  root.dataset.theme = settings.theme;
+  root.dataset.density = settings.density;
+  root.style.setProperty("--base-size", settings.size + "px");
+  root.style.setProperty("--hue", settings.hue);
+  const fontMap = { sans: "var(--font-sans)", serif: "var(--font-serif)", mono: "var(--font-mono)" };
+  root.style.setProperty("--font", fontMap[settings.font]);
+
+  document.querySelectorAll("[data-control]").forEach(el => {
+    const key = el.dataset.control;
+    if (el.tagName === "INPUT") {
+      el.value = settings[key];
+    } else {
+      el.querySelectorAll("button").forEach(b => {
+        b.setAttribute("aria-pressed", String(b.dataset.value === settings[key]));
+      });
+    }
+  });
+}
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) Object.assign(settings, JSON.parse(raw));
+  } catch (e) { /* noop */ }
+}
+
+function saveSettings() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch (e) {}
+}
+
+function bindControls() {
+  document.querySelectorAll(".seg").forEach(seg => {
+    seg.addEventListener("click", e => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      settings[seg.dataset.control] = btn.dataset.value;
+      applySettings();
+      saveSettings();
+    });
+  });
+  document.querySelectorAll("input[type='range']").forEach(input => {
+    input.addEventListener("input", () => {
+      settings[input.dataset.control] = Number(input.value);
+      applySettings();
+      saveSettings();
+    });
+  });
+}
+
+// =====================================================
+// CHARTS
+// =====================================================
+function fmtViews(n) {
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+  if (n >= 1e3) return Math.round(n / 100) / 10 + "K";
+  return String(n);
+}
+
+function barChart(container, items, opts = {}) {
+  const w = opts.width || 720;
+  const rowH = opts.rowH || 26;
+  const labelW = opts.labelW || 280;
+  const padR = 60;
+  const h = items.length * rowH + 8;
+  const max = Math.max(...items.map(d => d.value));
+  const barW = w - labelW - padR;
+
+  let svg = `<svg viewBox="0 0 ${w} ${h}" class="chart" preserveAspectRatio="xMinYMin meet">`;
+  items.forEach((d, i) => {
+    const y = i * rowH + 4;
+    const bw = (d.value / max) * barW;
+    svg += `<text class="label" x="0" y="${y + rowH / 2 + 4}" text-anchor="start">${escapeHtml(d.label)}</text>`;
+    svg += `<rect class="bar" x="${labelW}" y="${y + 4}" width="${bw}" height="${rowH - 12}" rx="2" />`;
+    svg += `<text class="value" x="${labelW + bw + 6}" y="${y + rowH / 2 + 4}" text-anchor="start">${escapeHtml(d.display || fmtViews(d.value))}</text>`;
+  });
+  svg += "</svg>";
+  container.innerHTML = svg;
+}
+
+function pairChart(container, pairs) {
+  const w = 480;
+  const h = 200;
+  const padL = 100, padR = 60, padT = 20, padB = 40;
+  const max = Math.max(...pairs.map(p => p.value));
+  const cw = (w - padL - padR) / pairs.length;
+  let svg = `<svg viewBox="0 0 ${w} ${h}" class="chart">`;
+  pairs.forEach((p, i) => {
+    const bh = (p.value / max) * (h - padT - padB);
+    const x = padL + i * cw + cw / 4;
+    const y = h - padB - bh;
+    const bw = cw / 2;
+    svg += `<rect class="bar" x="${x}" y="${y}" width="${bw}" height="${bh}" rx="3" />`;
+    svg += `<text class="value" x="${x + bw / 2}" y="${y - 6}" text-anchor="middle">${escapeHtml(p.display || fmtViews(p.value))}</text>`;
+    svg += `<text class="label" x="${x + bw / 2}" y="${h - padB + 16}" text-anchor="middle">${escapeHtml(p.label)}</text>`;
+    if (p.subLabel) svg += `<text class="label" style="font-size: 10px;" x="${x + bw / 2}" y="${h - padB + 30}" text-anchor="middle" opacity="0.6">${escapeHtml(p.subLabel)}</text>`;
+  });
+  svg += "</svg>";
+  container.innerHTML = svg;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+function renderCharts() {
+  // Top 10 by views
+  const top10 = [...VIDEOS]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(v => ({
+      label: v[0].length > 44 ? v[0].slice(0, 42) + "…" : v[0],
+      value: v[1],
+    }));
+  barChart(document.getElementById("chart-top10"), top10, { rowH: 28, labelW: 320 });
+
+  // Apple vs Non-Apple
+  pairChart(document.getElementById("chart-apple"), [
+    { label: "Apple in title", subLabel: "n=20", value: 60856, display: "60.9K" },
+    { label: "Without Apple", subLabel: "n=24", value: 14735, display: "14.7K" },
+  ]);
+
+  // Duration buckets
+  pairChart(document.getElementById("chart-duration"), [
+    { label: "<300s", subLabel: "n=4", value: 3702, display: "3.7K" },
+    { label: "300–600s", subLabel: "n=19", value: 31710, display: "31.7K" },
+    { label: "600–900s", subLabel: "n=14", value: 59474, display: "59.5K" },
+    { label: ">900s", subLabel: "n=7", value: 23454, display: "23.5K" },
+  ]);
+
+  // Topic categories (median views)
+  const cats = [
+    { label: "Design System (n=4)", value: 118490 },
+    { label: "Design Effect (n=4)", value: 114474 },
+    { label: "Brand (n=5)", value: 75831 },
+    { label: "Industrial Design (n=4)", value: 60856 },
+    { label: "Person (n=2)", value: 43437 },
+    { label: "Gadget (n=4)", value: 42736 },
+    { label: "Software (n=10)", value: 23568 },
+    { label: "UI (n=11)", value: 13054 },
+    { label: "Concept (n=5)", value: 11043 },
+    { label: "Audio Design (n=1)", value: 9328 },
+    { label: "AI (n=3)", value: 8496 },
+  ];
+  barChart(document.getElementById("chart-categories"), cats, { rowH: 24, labelW: 200 });
+}
+
+// =====================================================
+// VIDEOS TABLE
+// =====================================================
+let sortState = { col: "views", dir: "desc" };
+function renderVideosTableFixed(filter = "") {
+  const tbody = document.querySelector("#videos-table tbody");
+  let rows = VIDEOS.slice();
+  if (filter) {
+    const f = filter.toLowerCase();
+    rows = rows.filter(v =>
+      v[0].toLowerCase().includes(f) ||
+      (v[5] || "").toLowerCase().includes(f)
+    );
+  }
+  const colMap = { views: 1, ret: 2, ctr: 3, date: 6 };
+  rows.sort((a, b) => {
+    const av = a[colMap[sortState.col]];
+    const bv = b[colMap[sortState.col]];
+    if (sortState.col === "date") return sortState.dir === "desc" ? bv.localeCompare(av) : av.localeCompare(bv);
+    return sortState.dir === "desc" ? bv - av : av - bv;
+  });
+
+  tbody.innerHTML = rows.map(v => {
+    const tier = v[4] === "g" ? '<span class="badge green">🟢 Strong</span>'
+              : v[4] === "y" ? '<span class="badge yellow">🟡 Average</span>'
+              : '<span class="badge red">🔴 Weak</span>';
+    const numTag = v[7] ? `<span class="muted" style="font-family: var(--font-mono); font-size: 11px;">#${v[7]}</span> ` : "";
+    return `<tr>
+      <td><div class="title-cell">${numTag}${escapeHtml(v[0])}</div></td>
+      <td class="num">${fmtViews(v[1])}</td>
+      <td class="num">${v[2].toFixed(1)}%</td>
+      <td class="num">${v[3].toFixed(2)}%</td>
+      <td>${tier}</td>
+      <td><span class="muted" style="font-size: 12px;">${v[5] ? escapeHtml(v[5]) : "—"}</span></td>
+      <td><span class="muted" style="font-size: 12px; font-family: var(--font-mono);">${v[6]}</span></td>
+    </tr>`;
+  }).join("");
+  document.getElementById("vcount").textContent = `${rows.length} of ${VIDEOS.length}`;
+}
+
+function bindVideosTable() {
+  document.getElementById("vsearch").addEventListener("input", e => renderVideosTableFixed(e.target.value));
+  document.querySelectorAll("#videos-table th[data-sort]").forEach(th => {
+    th.style.cursor = "pointer";
+    th.addEventListener("click", () => {
+      const col = th.dataset.sort;
+      if (sortState.col === col) sortState.dir = sortState.dir === "desc" ? "asc" : "desc";
+      else { sortState.col = col; sortState.dir = "desc"; }
+      renderVideosTableFixed(document.getElementById("vsearch").value);
+    });
+  });
+}
+
+// =====================================================
+// CLIENTS
+// =====================================================
+function renderClients() {
+  const grid = document.getElementById("clients-grid");
+  const statusBadge = s => {
+    if (s === "active") return '<span class="badge green">Active</span>';
+    if (s === "prospect") return '<span class="badge blue">Prospect</span>';
+    if (s === "inactive") return '<span class="badge">Inactive</span>';
+    return "";
+  };
+  const toneNote = t => {
+    if (t === "pending-payment") return '<span class="badge yellow">Awaiting payment</span>';
+    if (t === "negotiation") return '<span class="badge accent">In negotiation</span>';
+    if (t === "stalled") return '<span class="badge red">Stalled</span>';
+    return "";
+  };
+  grid.innerHTML = CLIENTS.map(c => `
+    <div class="card client">
+      <div class="head">
+        <h3>${escapeHtml(c.name)}</h3>
+        <div style="display: flex; gap: 6px;">${statusBadge(c.status)}${toneNote(c.tone)}</div>
+      </div>
+      <div class="meta">
+        <span>${escapeHtml(c.type)}</span>
+        <span>·</span>
+        <span class="k" style="color: var(--accent); font-family: var(--font-mono); font-size: 12px;">${escapeHtml(c.revenue)}</span>
+      </div>
+      <div class="desc">${escapeHtml(c.desc)}</div>
+      <div class="pills" style="margin-top: 4px;">
+        ${(c.meta || []).map(m => `<span class="pill">${escapeHtml(m)}</span>`).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+// =====================================================
+// NAVIGATION
+// =====================================================
+function bindNav() {
+  const links = document.querySelectorAll("nav.toc a");
+  const sections = [...document.querySelectorAll("section[id]")];
+  const setActive = id => {
+    links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
+  };
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: "-30% 0px -60% 0px" });
+  sections.forEach(s => observer.observe(s));
+
+  // Mobile toggle
+  document.getElementById("menu-btn")?.addEventListener("click", () => {
+    document.getElementById("sidebar").classList.toggle("open");
+  });
+  links.forEach(a => a.addEventListener("click", () => {
+    document.getElementById("sidebar").classList.remove("open");
+  }));
+}
+
+// =====================================================
+// INIT
+// =====================================================
+loadSettings();
+applySettings();
+bindControls();
+bindNav();
+renderCharts();
+renderVideosTableFixed();
+bindVideosTable();
+renderClients();
+</script>
+</body>
+</html>

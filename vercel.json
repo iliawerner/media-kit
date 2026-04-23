@@ -56,6 +56,10 @@
     {
       "source": "/crt/badges",
       "destination": "/crt/badges/index.html"
+    },
+    {
+      "source": "/showrunner-wiki-demo",
+      "destination": "/showrunner-wiki-demo/index.html"
     }
   ]
 }
