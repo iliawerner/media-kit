@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HEALTH_COACH :: TELEMETRY [APR.2026]</title>
+<meta name="description" content="14 дней биохакинга на Мунджаро 10 мг — HRV, сон, шаги, силовые, КБЖУ, рутины и АД в&nbsp;CRT-визуализации.">
+<link rel="canonical" href="https://design-lovers.com/healthcoach">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Health Coach">
+<meta property="og:url" content="https://design-lovers.com/healthcoach">
+<meta property="og:title" content="HEALTH_COACH :: TELEMETRY [APR.2026]">
+<meta property="og:description" content="14 дней биохакинга — HRV, сон, шаги, силовые, КБЖУ, АД.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+
+<style>
+  /* CRT TERMINAL :: AMBER PHOSPHOR — health telemetry edition */
+  :root {
+    --phosphor: #ffb347;
+    --phosphor-bright: #ffd27a;
+    --phosphor-dim: #8a5a1f;
+    --phosphor-faint: #3a2410;
+    --bg-deep: #0a0604;
+    --bg: #110a06;
+    --bg-raised: #1a0e08;
+    --rule: #3a2410;
+    --acid: #c8ff3e;
+    --ok: #9cff6e;
+    --danger: #ff3b1f;
+    --cyan: #4dd6ff;
+    --magenta: #ff5acb;
+    --glow-soft: 0 0 6px rgba(255,179,71,0.45);
+    --glow-med: 0 0 12px rgba(255,179,71,0.55), 0 0 2px rgba(255,179,71,0.9);
+    --glow-strong: 0 0 22px rgba(255,179,71,0.7), 0 0 4px rgba(255,210,122,1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--bg-deep); }
+  body {
+    background: var(--bg);
+    color: var(--phosphor);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    cursor: crosshair;
+    text-shadow: var(--glow-soft);
+  }
+
+  .crt-scanlines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+    background-image: repeating-linear-gradient(to bottom,
+      rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.35) 3px, rgba(0,0,0,0.35) 4px);
+    mix-blend-mode: multiply; opacity: 0.8;
+  }
+  .crt-aperture {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9997;
+    background-image: repeating-linear-gradient(to right,
+      rgba(255,179,71,0.02) 0px, rgba(255,179,71,0.02) 1px,
+      transparent 1px, transparent 3px);
+    opacity: 0.6;
+  }
+  .crt-vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9996;
+    background: radial-gradient(ellipse 120% 90% at center,
+      transparent 55%, rgba(0,0,0,0.55) 90%, rgba(0,0,0,0.9) 100%);
+  }
+  .crt-noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9995;
+    opacity: 0.05; mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 0.7  0 0 0 0 0.28  0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: noise 0.6s steps(4) infinite;
+  }
+  @keyframes noise {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(-3px,2px); }
+    50% { transform: translate(4px,-1px); }
+    75% { transform: translate(-2px,-3px); }
+    100% { transform: translate(0,0); }
+  }
+  .crt-roll {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9994; overflow: hidden;
+  }
+  .crt-roll::before {
+    content: ''; position: absolute; left: 0; right: 0; height: 8px;
+    background: linear-gradient(to bottom,
+      transparent, rgba(255,179,71,0.08) 30%,
+      rgba(255,210,122,0.14) 50%,
+      rgba(255,179,71,0.08) 70%, transparent);
+    animation: roll 11s linear infinite;
+  }
+  @keyframes roll {
+    0%   { top: -20px; opacity: 0; }
+    2%   { opacity: 1; }
+    8%   { top: 100vh; opacity: 1; }
+    9%   { opacity: 0; }
+    100% { top: 100vh; opacity: 0; }
+  }
+  .crt-flicker {
+    position: fixed; inset: 0; pointer-events: none; z-index: 9993;
+    background: var(--phosphor); mix-blend-mode: overlay;
+    opacity: 0; animation: flicker 6s infinite;
+  }
+  @keyframes flicker {
+    0%, 95%, 100% { opacity: 0; }
+    96% { opacity: 0.03; }
+    97% { opacity: 0; }
+    98% { opacity: 0.04; }
+    99% { opacity: 0; }
+  }
+
+  ::selection { background: var(--phosphor); color: var(--bg); text-shadow: none; }
+  a { color: inherit; text-decoration: none; }
+  .display {
+    font-family: 'VT323', 'Courier New', monospace;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    text-shadow: var(--glow-med);
+  }
+
+  .cursor {
+    display: inline-block; width: 0.55em; height: 1em;
+    background: var(--phosphor-bright); vertical-align: -0.1em;
+    margin-left: 3px;
+    box-shadow: 0 0 8px rgba(255,210,122,0.9);
+    animation: caret 1.05s steps(2) infinite;
+  }
+  @keyframes caret { 50% { opacity: 0; } }
+
+  .frame {
+    max-width: 1320px; margin: 28px auto;
+    border: 1px solid var(--phosphor-dim);
+    background: var(--bg); position: relative; z-index: 3;
+    box-shadow:
+      0 0 40px rgba(255,179,71,0.08) inset,
+      0 0 80px rgba(0,0,0,0.6);
+    animation: phosphorBreath 7.3s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+  @keyframes phosphorBreath {
+    0%, 100% {
+      box-shadow:
+        0 0 40px rgba(255,179,71,0.08) inset,
+        0 0 80px rgba(0,0,0,0.6),
+        0 0 0 rgba(255,179,71,0);
+    }
+    50% {
+      box-shadow:
+        0 0 64px rgba(255,179,71,0.14) inset,
+        0 0 100px rgba(0,0,0,0.7),
+        0 0 26px rgba(255,179,71,0.18);
+    }
+  }
+  .frame::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(255,179,71,0.04));
+  }
+
+  .titlebar {
+    border-bottom: 1px solid var(--phosphor-dim);
+    padding: 10px 16px; display: flex;
+    justify-content: space-between; align-items: center; gap: 16px;
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--bg-raised);
+    color: var(--phosphor-bright);
+  }
+  .tb-left, .tb-right {
+    display: flex; align-items: center; gap: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tb-center { font-size: 11px; opacity: 0.9; }
+  .tb-divider {
+    width: 1px; height: 11px; background: var(--phosphor-dim);
+    display: inline-block;
+  }
+  .rec-dot {
+    color: var(--danger);
+    font-size: 12px; line-height: 1;
+    animation: recDotPulse 1.1s ease-in-out infinite;
+  }
+  .rec-label {
+    color: var(--danger);
+    letter-spacing: 0.22em; font-weight: 500;
+    text-shadow: 0 0 6px rgba(255,59,31,0.8);
+    animation: recDotPulse 1.1s ease-in-out infinite;
+  }
+  @keyframes recDotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .tb-ch { letter-spacing: 0.16em; }
+  .tb-signal { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+  .sig-bar {
+    width: 3px; background: var(--phosphor-dim);
+    box-shadow: 0 0 3px rgba(255,179,71,0.4) inset;
+  }
+  .sig-bar:nth-child(1) { height: 3px; }
+  .sig-bar:nth-child(2) { height: 5px; }
+  .sig-bar:nth-child(3) { height: 7px; }
+  .sig-bar:nth-child(4) { height: 9px; }
+  .sig-bar:nth-child(5) { height: 11px; }
+  .sig-bar.lit {
+    background: var(--phosphor-bright);
+    box-shadow: 0 0 6px rgba(255,210,122,0.9);
+  }
+  .tb-signal-label { opacity: 0.7; letter-spacing: 0.12em; }
+
+  .menubar {
+    border-bottom: 1px solid var(--phosphor-dim);
+    padding: 8px 14px; display: flex; gap: 0;
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.06em; flex-wrap: wrap;
+    background: var(--bg);
+  }
+  .menubar a {
+    padding: 5px 14px;
+    border-right: 1px dotted var(--phosphor-dim);
+    transition: all 0.15s;
+  }
+  .menubar a:last-child { border-right: none; }
+  .menubar a:hover {
+    background: var(--phosphor); color: var(--bg); text-shadow: none;
+  }
+  .menubar a.ext::after { content: ' ↗'; opacity: 0.55; }
+
+  .ascii-header {
+    padding: 28px 24px 18px;
+    border-bottom: 1px dashed var(--phosphor-dim);
+    text-align: center;
+    background: linear-gradient(to bottom, var(--bg-raised), var(--bg));
+  }
+  .ascii-art {
+    white-space: pre;
+    font-size: clamp(4px, 0.85vw, 9px);
+    line-height: 1.1;
+    color: var(--phosphor-bright);
+    font-weight: 700;
+    margin: 0 auto 14px;
+    display: inline-block; text-align: left;
+    text-shadow:
+      0 0 3px rgba(255,210,122,0.95),
+      0 0 10px rgba(255,179,71,0.7),
+      0 0 20px rgba(255,179,71,0.4);
+    animation: asciiIn 1.6s 0.3s ease-out both;
+    position: relative;
+  }
+  .ascii-art::after {
+    content: ''; position: absolute; left: 0; right: 0; top: 0; height: 6px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.55), transparent);
+    mix-blend-mode: screen; animation: asciiScan 5.2s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes asciiScan {
+    0%   { top: -6px; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  @keyframes asciiIn {
+    0% { opacity: 0; filter: blur(2px); transform: scaleY(0.1); }
+    20% { opacity: 0.5; filter: blur(1px); transform: scaleY(0.3); }
+    100% { opacity: 1; filter: blur(0); transform: scaleY(1); }
+  }
+  .ascii-header .sub {
+    font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--phosphor);
+    margin-top: 10px;
+    opacity: 0; animation: fadeIn 1s 1.3s forwards;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  .hero {
+    padding: 48px 36px;
+    border-bottom: 1px solid var(--phosphor-dim);
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 44px; position: relative;
+  }
+  .hero h1 {
+    font-family: 'VT323', 'Courier New', monospace;
+    font-weight: 400;
+    font-size: clamp(2rem, 4.4vw, 3.6rem);
+    line-height: 1.02;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--phosphor-bright);
+    text-shadow:
+      0 0 4px rgba(255,210,122,0.95),
+      0 0 14px rgba(255,179,71,0.6),
+      0 0 30px rgba(255,179,71,0.35);
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--phosphor-bright);
+    text-shadow:
+      0 0 6px rgba(255,210,122,1),
+      0 0 18px rgba(255,179,71,0.75);
+  }
+  .hero h1 em::before {
+    content: '['; color: var(--phosphor); margin-right: 2px;
+    text-shadow: var(--glow-soft);
+  }
+  .hero h1 em::after {
+    content: ']'; color: var(--phosphor); margin-left: 2px;
+    text-shadow: var(--glow-soft);
+  }
+  .hero h1 .hl {
+    background: var(--phosphor); color: var(--bg);
+    padding: 0 10px;
+    text-shadow: none;
+    box-shadow: 0 0 18px rgba(255,179,71,0.7);
+  }
+  .hero .right-col { display: flex; flex-direction: column; gap: 14px; }
+  .hero .log {
+    padding: 7px 14px;
+    border: 1px solid var(--phosphor-dim);
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--phosphor);
+    transition: all 0.2s;
+  }
+  .hero .log:hover {
+    border-color: var(--phosphor);
+    box-shadow: 0 0 14px rgba(255,179,71,0.25);
+  }
+  .hero .log::before { content: '> '; color: var(--phosphor-bright); font-weight: 700; }
+  .hero p {
+    font-size: 14px; line-height: 1.65;
+    max-width: 45ch; color: var(--phosphor); margin: 6px 0;
+  }
+  .hero .status {
+    margin-top: auto; padding: 12px 16px;
+    background: var(--phosphor); color: var(--bg);
+    font-family: 'VT323', monospace;
+    font-size: 19px; letter-spacing: 0.02em;
+    text-shadow: none;
+    box-shadow: 0 0 20px rgba(255,179,71,0.5);
+    animation: livePulse 3s ease-in-out infinite;
+  }
+  @keyframes livePulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,179,71,0.5); }
+    50% { box-shadow: 0 0 34px rgba(255,179,71,0.8); }
+  }
+
+  .sec {
+    border-bottom: 1px solid var(--phosphor-dim);
+    padding: 40px 36px;
+  }
+  .sec-label {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 32px;
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.14em; color: var(--phosphor);
+    position: relative;
+  }
+  .sec-label .blk {
+    width: 11px; height: 11px;
+    background: var(--phosphor);
+    box-shadow: 0 0 10px rgba(255,179,71,0.8);
+  }
+  .sec-label .dash {
+    flex: 1; height: 1px;
+    background: repeating-linear-gradient(to right,
+      var(--phosphor-dim) 0 4px, transparent 4px 8px);
+  }
+
+  /* ─── Metrics 6-up ─── */
+  .metrics {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    border: 1px solid var(--phosphor-dim);
+    background: var(--bg-raised);
+  }
+  .m {
+    padding: 24px 18px;
+    border-right: 1px solid var(--phosphor-dim);
+    position: relative; transition: all 0.25s;
+  }
+  .m:last-child { border-right: none; }
+  .m:hover { background: var(--phosphor); color: var(--bg); }
+  .m:hover * { color: var(--bg) !important; text-shadow: none !important; }
+  .m:hover .m-corners span { border-color: var(--bg) !important; }
+
+  .m-num {
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: clamp(2.4rem, 5.2vw, 4rem);
+    line-height: 0.9; letter-spacing: 0;
+    margin-bottom: 14px;
+    color: var(--phosphor-bright);
+    text-shadow:
+      0 0 4px rgba(255,210,122,1),
+      0 0 16px rgba(255,179,71,0.7),
+      0 0 30px rgba(255,179,71,0.4);
+    animation: numFlicker 11s steps(1, end) infinite;
+  }
+  @keyframes numFlicker {
+    0%, 100% { opacity: 1; }
+    49.7%    { opacity: 1; }
+    49.8%    { opacity: 0.55; }
+    49.9%    { opacity: 1; }
+    78.0%    { opacity: 1; }
+    78.1%    { opacity: 0.7; }
+    78.3%    { opacity: 1; }
+  }
+  .m-num em { font-style: normal; color: var(--phosphor-bright); }
+  .m-num .unit {
+    font-size: 0.4em; vertical-align: 0.6em;
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal; opacity: 0.65;
+    letter-spacing: 0.02em;
+    margin-left: 2px;
+  }
+  .m-label {
+    font-size: 12px; margin-bottom: 4px;
+    line-height: 1.4;
+    color: var(--phosphor);
+  }
+  .m-sub {
+    font-size: 10px; color: var(--phosphor-dim);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .m-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+    font-size: 9px; letter-spacing: 0.14em;
+    color: var(--phosphor);
+    padding-bottom: 8px;
+    border-bottom: 1px dotted var(--phosphor-dim);
+  }
+  .m-key { font-weight: 500; color: var(--phosphor-bright); }
+  .m-trend.up {
+    font-size: 9px; color: var(--ok);
+    text-shadow: 0 0 6px rgba(156,255,110,0.55);
+    font-variant-numeric: tabular-nums;
+  }
+  .m-trend.dn {
+    font-size: 9px; color: var(--danger);
+    text-shadow: 0 0 6px rgba(255,59,31,0.55);
+  }
+  .m-corners span {
+    position: absolute; width: 8px; height: 8px;
+    border: 1px solid var(--phosphor);
+    transition: border-color 0.2s;
+  }
+  .m-corners span:nth-child(1) { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+  .m-corners span:nth-child(2) { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+  .m-corners span:nth-child(3) { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+  .m-corners span:nth-child(4) { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+
+  /* ─── Chart panels ─── */
+  .panel {
+    border: 1px solid var(--phosphor-dim);
+    background: var(--bg-raised);
+    padding: 0;
+    margin-top: 14px;
+  }
+  .panel-head {
+    border-bottom: 1px dotted var(--phosphor-dim);
+    padding: 10px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--phosphor-bright);
+    background: var(--bg);
+  }
+  .panel-head .left { display: flex; align-items: center; gap: 10px; }
+  .panel-head .right { color: var(--phosphor); opacity: 0.85; font-variant-numeric: tabular-nums; }
+  .panel-head .blink {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--ok); box-shadow: 0 0 8px rgba(156,255,110,0.85);
+    animation: recDotPulse 1.4s ease-in-out infinite;
+  }
+  .panel-body {
+    padding: 18px 20px 22px;
+  }
+  .panel-foot {
+    border-top: 1px dotted var(--phosphor-dim);
+    padding: 10px 18px;
+    font-size: 11px; line-height: 1.6;
+    color: var(--phosphor); display: flex; gap: 10px; align-items: flex-start;
+    background: var(--bg);
+  }
+  .panel-foot .pf-icon { color: var(--phosphor-bright); flex-shrink: 0; }
+
+  .chart-wrap { position: relative; height: 380px; width: 100%; }
+  .chart-wrap-tall { position: relative; height: 460px; width: 100%; }
+  .chart-wrap-sm { position: relative; height: 220px; width: 100%; }
+
+  /* ─── Two col ─── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .four-col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  /* ─── Heatmap ─── */
+  .heatmap {
+    display: grid; gap: 4px; font-size: 0.7rem;
+  }
+  .heatmap-row {
+    display: grid;
+    grid-template-columns: 9.5rem repeat(14, 1fr);
+    gap: 4px; align-items: center;
+  }
+  .heatmap-row .hm-label {
+    color: var(--phosphor); font-size: 0.78rem;
+    font-weight: 500; padding-right: 0.25rem;
+    white-space: nowrap; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .heatmap-row .hm-label .pre {
+    color: var(--phosphor-bright); margin-right: 0.4rem;
+    font-weight: 700;
+  }
+  .cell {
+    aspect-ratio: 1 / 1;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'VT323', monospace; font-size: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default; min-height: 1.6rem;
+    border: 1px solid var(--phosphor-faint);
+    color: var(--phosphor-bright);
+  }
+  .cell:hover { transform: scale(1.18); z-index: 5;
+    box-shadow: 0 0 14px rgba(255,179,71,0.65);
+    border-color: var(--phosphor-bright);
+  }
+  .cell.done {
+    background: rgba(156,255,110,0.18);
+    border-color: rgba(156,255,110,0.55);
+    color: var(--ok);
+    text-shadow: 0 0 6px rgba(156,255,110,0.7);
+  }
+  .cell.skip {
+    background: rgba(255,59,31,0.18);
+    border-color: rgba(255,59,31,0.55);
+    color: var(--danger);
+    text-shadow: 0 0 6px rgba(255,59,31,0.7);
+  }
+  .cell.unknown {
+    background: var(--bg-raised);
+    border-color: var(--phosphor-faint);
+    color: var(--phosphor-dim);
+  }
+  .cell.workout-a {
+    background: rgba(255,179,71,0.5);
+    border-color: var(--phosphor-bright);
+    color: var(--bg); font-weight: 700;
+    text-shadow: none;
+  }
+  .cell.workout-b {
+    background: rgba(255,90,203,0.4);
+    border-color: var(--magenta);
+    color: var(--phosphor-bright); font-weight: 700;
+    text-shadow: 0 0 6px rgba(255,90,203,0.7);
+  }
+  .cell.workout-rec {
+    background: rgba(77,214,255,0.3);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    text-shadow: 0 0 6px rgba(77,214,255,0.7);
+  }
+  .cell.workout-none {
+    background: var(--bg);
+    border-color: var(--phosphor-faint);
+    color: var(--phosphor-dim);
+  }
+  .cell.alcohol {
+    background: rgba(255,59,31,0.3);
+    border-color: var(--danger);
+    color: var(--phosphor-bright); font-weight: 700;
+    text-shadow: 0 0 6px rgba(255,59,31,0.85);
+  }
+  .heatmap-header {
+    display: grid; grid-template-columns: 9.5rem repeat(14, 1fr); gap: 4px;
+    font-size: 0.62rem; color: var(--phosphor-dim); margin-bottom: 0.5rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .heatmap-header span { text-align: center; line-height: 1.2; }
+  .heatmap-header span:first-child { text-align: left; color: var(--phosphor); }
+  .heatmap-header .dow { color: var(--phosphor-faint); font-size: 0.55rem; display: block; }
+
+  .legend-row {
+    display: flex; flex-wrap: wrap; gap: 0.6rem 1rem;
+    margin-top: 1rem; font-size: 10px; color: var(--phosphor);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .legend-pill { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .legend-swatch {
+    width: 12px; height: 12px; border: 1px solid var(--phosphor-faint);
+  }
+
+  /* ─── BP table ─── */
+  .bp-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+  }
+  .bp-table th, .bp-table td {
+    text-align: left; padding: 10px 12px;
+    border-bottom: 1px dotted var(--phosphor-dim);
+  }
+  .bp-table th {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--phosphor-bright);
+    background: var(--bg);
+  }
+  .bp-table td.num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--phosphor-bright);
+    font-variant-numeric: tabular-nums;
+  }
+  .bp-table tr:last-child td { border-bottom: none; }
+  .tag {
+    display: inline-block; padding: 2px 8px;
+    font-size: 9px; text-transform: uppercase;
+    letter-spacing: 0.12em;
+    border: 1px solid var(--phosphor-dim);
+    background: var(--bg);
+    color: var(--phosphor-bright);
+    text-shadow: none;
+  }
+  .tag.ok { border-color: var(--ok); color: var(--ok); text-shadow: 0 0 6px rgba(156,255,110,0.5); }
+  .tag.warn { border-color: var(--phosphor-bright); color: var(--phosphor-bright); }
+  .tag.alert { border-color: var(--danger); color: var(--danger); text-shadow: 0 0 6px rgba(255,59,31,0.5); }
+
+  /* ─── Insight cards ─── */
+  .insight-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    margin-top: 14px;
+  }
+  .ic {
+    border: 1px solid var(--phosphor-dim);
+    background: var(--bg-raised);
+    padding: 22px 24px;
+    position: relative; overflow: hidden;
+    transition: all 0.25s;
+  }
+  .ic::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--phosphor-bright);
+    box-shadow: 0 0 12px rgba(255,210,122,0.85);
+  }
+  .ic.alert::before { background: var(--danger); box-shadow: 0 0 12px rgba(255,59,31,0.85); }
+  .ic.ok::before { background: var(--ok); box-shadow: 0 0 12px rgba(156,255,110,0.85); }
+  .ic.warn::before { background: var(--phosphor); box-shadow: 0 0 12px rgba(255,179,71,0.85); }
+  .ic-tag {
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--phosphor);
+    margin-bottom: 8px;
+    padding-bottom: 8px; border-bottom: 1px dotted var(--phosphor-dim);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .ic.alert .ic-tag { color: var(--danger); }
+  .ic.ok .ic-tag { color: var(--ok); }
+  .ic-tag .rx { font-weight: 500; }
+  .ic-stat {
+    font-family: 'VT323', monospace;
+    font-size: 4rem; line-height: 1;
+    color: var(--phosphor-bright);
+    text-shadow: var(--glow-strong);
+    margin: 6px 0 14px;
+  }
+  .ic-stat .unit {
+    font-size: 0.32em; font-family: 'JetBrains Mono', monospace;
+    vertical-align: 0.6em; opacity: 0.65; margin-left: 4px;
+  }
+  .ic.alert .ic-stat { color: var(--danger);
+    text-shadow: 0 0 6px rgba(255,59,31,1), 0 0 22px rgba(255,59,31,0.6); }
+  .ic.ok .ic-stat { color: var(--ok);
+    text-shadow: 0 0 6px rgba(156,255,110,1), 0 0 22px rgba(156,255,110,0.6); }
+  .ic-headline {
+    font-family: 'VT323', monospace;
+    font-size: 1.45rem; line-height: 1.15; color: var(--phosphor-bright);
+    text-shadow: var(--glow-med);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .ic-body {
+    font-size: 12.5px; line-height: 1.65;
+    color: var(--phosphor);
+  }
+  .ic-body strong { color: var(--phosphor-bright); text-shadow: 0 0 6px rgba(255,210,122,0.7); }
+
+  /* ─── Foot bar / sources ─── */
+  .footbar {
+    padding: 16px 26px;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--phosphor-dim);
+    display: flex; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    background: var(--bg-raised);
+  }
+  .footbar .left, .footbar .right { display: flex; gap: 14px; flex-wrap: wrap; }
+  .footbar .right { color: var(--phosphor); font-variant-numeric: tabular-nums; }
+
+  .telemetry {
+    border-top: 1px solid var(--phosphor-dim);
+    background: var(--bg-raised);
+    overflow: hidden;
+    padding: 8px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--phosphor-dim);
+    text-transform: uppercase;
+    mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  }
+  .telemetry .tele-track {
+    display: flex; gap: 38px;
+    animation: ticker 42s linear infinite;
+    width: max-content;
+    padding-left: 32px;
+    white-space: nowrap;
+  }
+  .telemetry span.k { color: var(--phosphor-bright); }
+  .telemetry span.v { color: var(--phosphor); margin-left: 6px; }
+  .telemetry span.sep { opacity: 0.5; }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ─── Strength small charts grid ─── */
+  .str-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .str-card {
+    border: 1px solid var(--phosphor-dim);
+    background: var(--bg-raised);
+  }
+  .str-card .str-head {
+    padding: 12px 18px;
+    border-bottom: 1px dotted var(--phosphor-dim);
+    display: flex; justify-content: space-between; align-items: baseline;
+    background: var(--bg);
+  }
+  .str-card .str-title {
+    font-family: 'VT323', monospace;
+    font-size: 1.4rem; color: var(--phosphor-bright);
+    text-shadow: var(--glow-soft);
+    text-transform: uppercase; letter-spacing: 0.02em;
+  }
+  .str-card .str-meta {
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--phosphor); text-transform: uppercase;
+  }
+  .str-card .str-meta .delta { color: var(--ok); margin-left: 6px; }
+  .str-card .str-body {
+    padding: 12px 16px;
+    height: 200px; position: relative;
+  }
+
+  /* responsive */
+  @media (max-width: 1100px) {
+    .metrics { grid-template-columns: repeat(3, 1fr); }
+    .m:nth-child(3n) { border-right: none; }
+    .m:nth-child(n+4) { border-top: 1px solid var(--phosphor-dim); }
+  }
+  @media (max-width: 820px) {
+    .frame { margin: 10px; }
+    .hero { grid-template-columns: 1fr; padding: 36px 22px; gap: 26px; }
+    .sec { padding: 32px 22px; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .m { border-right: 1px solid var(--phosphor-dim) !important; border-bottom: 1px solid var(--phosphor-dim); }
+    .m:nth-child(2n) { border-right: none !important; }
+    .m:nth-last-child(-n+2) { border-bottom: none; }
+    .two-col, .three-col, .four-col, .insight-grid, .str-grid { grid-template-columns: 1fr; }
+    .heatmap-row { grid-template-columns: 6.5rem repeat(14, 1fr); }
+    .heatmap-header { grid-template-columns: 6.5rem repeat(14, 1fr); }
+    .ascii-art { font-size: 4.5px; }
+    .menubar { padding: 6px 8px; }
+    .menubar a { padding: 4px 8px; font-size: 10px; }
+    .titlebar { padding: 8px 12px; font-size: 10px; gap: 8px; }
+    .titlebar .tb-center { display: none; }
+  }
+  @media (max-width: 480px) {
+    .titlebar > div:nth-child(2) { display: none; }
+    .heatmap-row { grid-template-columns: 5.5rem repeat(7, 1fr); }
+    .heatmap-row > *:nth-child(n+9) { display: none; }
+    .heatmap-header { grid-template-columns: 5.5rem repeat(7, 1fr); }
+    .heatmap-header > *:nth-child(n+9) { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crt-noise, .crt-roll::before, .crt-flicker, .frame, .ascii-art::after,
+    .telemetry .tele-track, .m-num, .rec-dot, .rec-label,
+    .panel-head .blink { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="crt-noise"></div>
+<div class="crt-scanlines"></div>
+<div class="crt-aperture"></div>
+<div class="crt-roll"></div>
+<div class="crt-flicker"></div>
+<div class="crt-vignette"></div>
+
+<div class="frame">
+
+  <div class="titlebar">
+    <div class="tb-left">
+      <span class="rec-dot">&#x25CF;</span>
+      <span class="rec-label">REC</span>
+      <span class="tb-divider"></span>
+      <span class="tb-ch">CH.<span id="chNum">037</span></span>
+      <span class="tb-divider"></span>
+      <span class="tb-signal">
+        <span class="sig-bar lit"></span><span class="sig-bar lit"></span>
+        <span class="sig-bar lit"></span><span class="sig-bar lit"></span><span class="sig-bar"></span>
+      </span>
+      <span class="tb-signal-label">SIGNAL</span>
+    </div>
+    <div class="tb-center">design-lovers.com :: /healthcoach</div>
+    <div class="tb-right">
+      <span id="frameCount">F.000000</span>
+      <span class="tb-divider"></span>
+      <span id="clock">--:--:-- UTC</span>
+    </div>
+  </div>
+
+  <div class="menubar">
+    <a href="#top">~/index</a>
+    <a href="#vitals">./vitals</a>
+    <a href="#sleep">./sleep_x_hrv</a>
+    <a href="#activity">./activity</a>
+    <a href="#nutrition">./nutrition</a>
+    <a href="#strength">./strength</a>
+    <a href="#routines">./routines</a>
+    <a href="#bp">./bp</a>
+    <a href="#insights">./insights</a>
+    <a href="/" class="ext">~/main</a>
+  </div>
+
+  <div class="ascii-header" id="top">
+<pre class="ascii-art">██╗  ██╗███████╗ █████╗ ██╗  ████████╗██╗  ██╗     ██████╗ ██████╗  █████╗  ██████╗██╗  ██╗
+██║  ██║██╔════╝██╔══██╗██║  ╚══██╔══╝██║  ██║    ██╔════╝██╔═══██╗██╔══██╗██╔════╝██║  ██║
+███████║█████╗  ███████║██║     ██║   ███████║    ██║     ██║   ██║███████║██║     ███████║
+██╔══██║██╔══╝  ██╔══██║██║     ██║   ██╔══██║    ██║     ██║   ██║██╔══██║██║     ██╔══██║
+██║  ██║███████╗██║  ██║███████╗██║   ██║  ██║    ╚██████╗╚██████╔╝██║  ██║╚██████╗██║  ██║
+╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝  ╚═╝     ╚═════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝</pre>
+    <div class="sub">// telemetry.v1 :: apr_2026 :: 14_days_total<span class="cursor"></span></div>
+  </div>
+
+  <section class="hero">
+    <h1>
+      14 дней<br>
+      биохакинга<br>
+      <span class="hl">в одной картинке.</span>
+    </h1>
+    <div class="right-col">
+      <div class="log">LOG 0x01 :: Subject = Ilya / 95kg / Mounjaro 10mg</div>
+      <p>HRV, сон, шаги, силовые, КБЖУ, рутины и АД — что говорят данные о&nbsp;восстановлении, нагрузке и питании на пиковой дозе тирзепатида. Тренды, провалы, рекорды и неочевидные взаимосвязи.</p>
+      <div class="log">LOG 0x02 :: Devices = Huawei Watch D2 + Apple Watch</div>
+      <div class="log">LOG 0x03 :: Source = health-coach/logs/2026-04.md</div>
+      <div class="status">[STATUS] DATA WINDOW 11.04 — 24.04.2026 :: ~700 POINTS<span class="cursor"></span></div>
+    </div>
+  </section>
+
+  <!-- ─── 01 VITALS ─── -->
+  <section class="sec" id="vitals">
+    <div class="sec-label">
+      <span class="blk"></span>
+      <span>&sect; 01 — VITALS / SUMMARY</span>
+      <div class="dash"></div>
+      <span>14_DAYS · MEDIAN</span>
+    </div>
+    <div class="metrics">
+      <div class="m">
+        <div class="m-corners"><span></span><span></span><span></span><span></span></div>
+        <div class="m-head"><span class="m-key">DAYS.LOG</span><span class="m-trend up">FULL</span></div>
+        <div class="m-num display"><em>14</em></div>
+        <div class="m-label">дней трекинга</div>
+        <div class="m-sub">11–24 APR</div>
+      </div>
+      <div class="m">
+        <div class="m-corners"><span></span><span></span><span></span><span></span></div>
+        <div class="m-head"><span class="m-key">WORKOUTS</span><span class="m-trend up">+1 STREAK</span></div>
+        <div class="m-num display"><em>6</em></div>
+        <div class="m-label">тренировок</div>
+        <div class="m-sub">A · B · SUP · REC</div>
+      </div>
+      <div class="m">
+        <div class="m-corners"><span></span><span></span><span></span><span></span></div>
+        <div class="m-head"><span class="m-key">SLEEP.MED</span><span class="m-trend dn">&minus; AASM</span></div>
+        <div class="m-num display"><em>7.0</em><span class="unit">H</span></div>
+        <div class="m-label">медианный сон</div>
+        <div class="m-sub">RANGE 4.0–8.6</div>
+      </div>
+      <div class="m">
+        <div class="m-corners"><span></span><span></span><span></span><span></span></div>
+        <div class="m-head"><span class="m-key">HRV.MED</span><span class="m-trend up">&gt; POPN</span></div>
+        <div class="m-num display"><em>54</em><span class="unit">MS</span></div>
+        <div class="m-label">медианный HRV</div>
+        <div class="m-sub">PEAK 71 · LOW 33</div>
+      </div>
+      <div class="m">
+        <div class="m-corners"><span></span><span></span><span></span><span></span></div>
+        <div class="m-head"><span class="m-key">STEPS.AVG</span><span class="m-trend up">&gt; 7K</span></div>
+        <div class="m-num display"><em>8.4</em><span class="unit">K</span></div>
+        <div class="m-label">шагов в среднем</div>
+        <div class="m-sub">PEAK 15 778 · LOW 1962</div>
+      </div>
+      <div class="m">
+        <div class="m-corners"><span></span><span></span><span></span><span></span></div>
+        <div class="m-head"><span class="m-key">PROT.G/KG</span><span class="m-trend dn">&lt; TARGET</span></div>
+        <div class="m-num display"><em>1.43</em></div>
+        <div class="m-label">г/кг белка</div>
+        <div class="m-sub">TGT 1.6–2.0</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 02 HRV ─── -->
+  <section class="sec" id="hrv">
+    <div class="sec-label">
+      <span class="blk"></span>
+      <span>&sect; 02 — HRV / RECOVERY CURVE</span>
+      <div class="dash"></div>
+      <span>NIGHTLY_AVG · MS</span>
+    </div>
+    <p style="font-size: 13px; max-width: 80ch; margin-bottom: 14px; color: var(--phosphor); line-height: 1.65;">
+      Вариабельность сердечного ритма — главный маркер восстановления автономной нервной системы. За&nbsp;две недели HRV прошёл путь от&nbsp;провала после 6 банок пива до&nbsp;рекорда 71&nbsp;мс через 6 дней. Каждый всплеск и падение объясняется событиями дня: тренировки, алкоголь, стресс, рефлюкс. Зелёная зона — выше популяционной нормы для мужчин 30+ (49–56&nbsp;мс по WHOOP/Fitbit).
+    </p>
+    <div class="panel">
+      <div class="panel-head">
+        <div class="left"><span class="blink"></span><span>SCOPE :: HRV.NIGHTLY</span></div>
+        <div class="right">RANGE 33 — 71 MS · DELTA +92% RECOVERY</div>
+      </div>
+      <div class="panel-body"><div class="chart-wrap-tall"><canvas id="chartHRV"></canvas></div></div>
+      <div class="panel-foot">
+        <span class="pf-icon">[!]</span>
+        <span><strong style="color: var(--phosphor-bright);">RECOVERY.6D :: </strong>после провала 13.04 (37&nbsp;мс — следствие 6 банок пива накануне) HRV восстановился до&nbsp;рекорда 71&nbsp;мс к&nbsp;18.04. <span style="color: var(--ok); text-shadow: 0 0 6px rgba(156,255,110,0.6);">+92% за&nbsp;неделю</span> — признак здоровой парасимпатической системы. С&nbsp;23.04 — переход на&nbsp;Huawei D2 (другой алгоритм, 5-минутные окна вместо ночного RMSSD), новая база.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 03 SLEEP × HRV ─── -->
+  <section class="sec" id="sleep">
+    <div class="sec-label">
+      <span class="blk"></span>
+      <span>&sect; 03 — SLEEP &times; HRV / CORRELATION</span>
+      <div class="dash"></div>
+      <span>DUAL_AXIS · 14D</span>
+    </div>
+    <p style="font-size: 13px; max-width: 80ch; margin-bottom: 14px; color: var(--phosphor); line-height: 1.65;">
+      Связь между длительностью сна и HRV — не линейная. День 20.04 (4&nbsp;ч сна, рефлюкс) дал HRV&nbsp;58 — диссоциация субъективного состояния и&nbsp;HRV. 23.04 после тяжёлого&nbsp;B с DOMS — сон 8.08&nbsp;ч, но&nbsp;HRV рухнул до&nbsp;33 (новая база Huawei). Прагматичный порог: HRV&nbsp;&lt;45 — делоад, 45–55 — стандарт, &gt;55 — можно прогрессировать.
+    </p>
+    <div class="panel">
+      <div class="panel-head">
+        <div class="left"><span class="blink"></span><span>SCOPE :: SLEEP.H + HRV.MS</span></div>
+        <div class="right">7× DAYS &lt; 7H · 8× DAYS HRV &gt; 50</div>
+      </div>
+      <div class="panel-body"><div class="chart-wrap-tall"><canvas id="chartSleepHRV"></canvas></div></div>
+    </div>
+  </section>
+
+  <!-- ─── 04 ACTIVITY ─── -->
+  <section class="sec" id="activity">
+    <div class="sec-label">
+      <span class="blk"></span>
+      <span>&sect; 04 — ACTIVITY / STEPS &amp; WORKOUTS</span>
+      <div class="dash"></div>
+      <span>STEPS · GOAL 7000</span>
+    </div>
+    <p style="font-size: 13px; max-width: 80ch; margin-bottom: 14px; color: var(--phosphor); line-height: 1.65;">
+      Среднее 8&nbsp;412 шагов выглядит как «близко к&nbsp;оптимуму», но разброс 1962→15&nbsp;778 показывает другую историю. По Paluch et&nbsp;al. (2022) и&nbsp;Lancet Public Health (2025) — стабильные 7&nbsp;000+ снижают смертность сильнее, чем чередование 13к/2.5к. Цветом отмечены тренировочные дни: A&nbsp;(сила, верх+ноги), B&nbsp;(сила, фокус ноги), и recovery.
+    </p>
+    <div class="panel">
+      <div class="panel-head">
+        <div class="left"><span class="blink"></span><span>SCOPE :: ACTIVITY.DAILY</span></div>
+        <div class="right">SUM 117 882 · MEAN 8 420 · MEDIAN 8 023</div>
+      </div>
+      <div class="panel-body"><div class="chart-wrap-tall"><canvas id="chartSteps"></canvas></div></div>
+      <div class="panel-foot">
+        <div class="legend-row" style="margin: 0;">
+          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(255,179,71,0.55); border-color: var(--phosphor-bright);"></span> WORKOUT.A</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(255,90,203,0.45); border-color: var(--magenta);"></span> WORKOUT.B</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(77,214,255,0.35); border-color: var(--cyan);"></span> RECOVERY/SUP</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: var(--bg-raised); border-color: var(--phosphor-dim);"></span> REST.DAY</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: transparent; border: 1px dashed var(--ok);"></span> GOAL.7K</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 05 PROTEIN + MACROS ─── -->
+  <section class="sec" id="nutrition">
+    <div class="sec-label">
+      <span class="blk"></span>
+      <span>&sect; 05 — NUTRITION / PROTEIN GAP &amp; MACROS</span>
+      <div class="dash"></div>
+      <span>KCAL · BJU · 14D</span>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="left"><span class="blink"></span><span>SCOPE :: PROTEIN.G/DAY</span></div>
+          <div class="right">7× IN ZONE · 4× &lt; 1.3</div>
+        </div>
+        <div class="panel-body"><div class="chart-wrap"><canvas id="chartProtein"></canvas></div></div>
+        <div class="panel-foot">
+          <span class="pf-icon">[!]</span>
+          <span><strong style="color: var(--phosphor-bright);">TARGET ZONE :: </strong>1.6–2.0 г/кг (Morton 2018, ASMBS&nbsp;2024). Среднее 1.43&nbsp;г/кг — недобор ~15% от&nbsp;оптимума. Распределение по приёмам тоже неравномерное — половина дневного белка часто приходится на вечерний коктейль (Witard 2024: 4 приёма по 0.4&nbsp;г/кг работают лучше).</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="left"><span class="blink"></span><span>SCOPE :: KCAL FROM B/J/U</span></div>
+          <div class="right">TDEE ~2700 · DEFICIT ~800/D</div>
+        </div>
+        <div class="panel-body"><div class="chart-wrap"><canvas id="chartMacros"></canvas></div></div>
+        <div class="panel-foot">
+          <span class="pf-icon">[!]</span>
+          <span><strong style="color: var(--phosphor-bright);">DEFICIT.HOLDS :: </strong>среднее 1&nbsp;896&nbsp;ккал/день, дефицит ~800. Углеводы хронически ниже AMDR&nbsp;45–65% — типичная картина на GLP-1, аппетит первым давит сладкие перекусы. Темп 0.77&nbsp;кг/нед — в&nbsp;диапазоне guidelines.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 06 STRENGTH ─── -->
+  <section class="sec" id="strength">
+    <div class="sec-label">
+      <span class="blk"></span>
+      <span>&sect; 06 — STRENGTH / PROGRESSION</span>
+      <div class="dash"></div>
+      <span>16.02 — 24.04 · 67D</span>
+    </div>
+    <p style="font-size: 13px; max-width: 80ch; margin-bottom: 14px; color: var(--phosphor); line-height: 1.65;">
+      Четыре ключевых упражнения, четыре истории прогрессии. Отжимания с колен — <span style="color: var(--ok); text-shadow: 0 0 6px rgba(156,255,110,0.6);">+325%</span> максимального подхода за два месяца. Болгарские сплит-приседания — +110% за 9 дней (классические «новичковые гейны»). Incline Press — плато на 16&nbsp;кг&nbsp;×&nbsp;7 четыре тренировки подряд, и прорыв 24.04: <span style="color: var(--phosphor-bright);">16&nbsp;кг&nbsp;×&nbsp;9</span> после смены порядка (priority-принцип, Schoenfeld&nbsp;2017). Lateral Raise — осознанный откат веса ради амплитуды.
+    </p>
+    <div class="str-grid">
+      <div class="str-card">
+        <div class="str-head">
+          <div class="str-title">PUSH-UP / KNEELING</div>
+          <div class="str-meta">16.02 → 17.04 <span class="delta">+325%</span></div>
+        </div>
+        <div class="str-body"><canvas id="chartPushups"></canvas></div>
+      </div>
+      <div class="str-card">
+        <div class="str-head">
+          <div class="str-title">SPLIT.SQUAT / BULG</div>
+          <div class="str-meta">BW → 16KG <span class="delta">+ LOAD</span></div>
+        </div>
+        <div class="str-body"><canvas id="chartSquats"></canvas></div>
+      </div>
+      <div class="str-card">
+        <div class="str-head">
+          <div class="str-title">INCLINE PRESS / 16KG</div>
+          <div class="str-meta">PLATEAU → BREAK <span class="delta">+29%</span></div>
+        </div>
+        <div class="str-body"><canvas id="chartPress"></canvas></div>
+      </div>
+      <div class="str-card">
+        <div class="str-head">
+          <div class="str-title">LAT.RAISE / W &times; REPS</div>
+          <div class="str-meta">5.5 → 4.5 → 5.5 <span class="delta" style="color: var(--phosphor-bright);">~ROM</span></div>
+        </div>
+        <div class="str-body"><canvas id="chartLateral"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 07 ROUTINES HEATMAP ─── -->
+  <section class="sec" id="routines">
+    <div class="sec-label">
+      <span class="blk"></span>
+      <span>&sect; 07 — ROUTINES / ADHERENCE MAP</span>
+      <div class="dash"></div>
+      <span>~89% RATE · 14D</span>
+    </div>
+    <p style="font-size: 13px; max-width: 80ch; margin-bottom: 14px; color: var(--phosphor); line-height: 1.65;">
+      Каждая ячейка — день. Зелёный — выполнено, красный — пропуск, серый — нет данных. Заметно: пятница 17.04 — пропуск миноксидила&nbsp;am (микронидлинг), субботы — плановый пропуск миноксидила. Воскресенье 12.04 — провал всех вечерних рутин (алкогольный эпизод, 6 банок пива). 13.04 — день восстановления без тренировки.
+    </p>
+    <div class="panel">
+      <div class="panel-head">
+        <div class="left"><span class="blink"></span><span>SCOPE :: ROUTINES.MATRIX</span></div>
+        <div class="right">14 DAYS &times; 8 ROUTINES</div>
+      </div>
+      <div class="panel-body" style="overflow-x: auto;">
+        <div id="heatmapBox" style="min-width: 720px;"></div>
+        <div class="legend-row">
+          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(156,255,110,0.18); border-color: rgba(156,255,110,0.55);"></span> DONE</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(255,59,31,0.18); border-color: rgba(255,59,31,0.55);"></span> SKIP</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: var(--bg-raised);"></span> NO_DATA</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(255,179,71,0.5); border-color: var(--phosphor-bright);"></span> WORKOUT.A</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(255,90,203,0.4); border-color: var(--magenta);"></span> WORKOUT.B</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(77,214,255,0.3); border-color: var(--cyan);"></span> RECOVERY</span>
+          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(255,59,31,0.3); border-color: var(--danger);"></span> ALCOHOL</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 08 BLOOD PRESSURE ─── -->
+  <section class="sec" id="bp">
+    <div class="sec-label">
+      <span class="blk"></span>
+      <span>&sect; 08 — BP / HUAWEI WATCH D2 ABPM</span>
+      <div class="dash"></div>
+      <span>96 READINGS · 3D</span>
+    </div>
+    <p style="font-size: 13px; max-width: 80ch; margin-bottom: 14px; color: var(--phosphor); line-height: 1.65;">
+      С&nbsp;22.04 — Huawei Watch D2 с медицинским манжетным замером АД. За 3 дня — 96 замеров + 24-часовой ABPM 23–24.04. Картина: elevated-фон (AHA: 120–129&nbsp;sys, среднее 126/82). Главное наблюдение — <span style="color: var(--danger); text-shadow: 0 0 6px rgba(255,59,31,0.5);">систолический non-dipper 7%</span> (норма падения ночью 10–20%), что согласуется с аномальным max&nbsp;HR&nbsp;95 во&nbsp;сне ночью ABPM. Одно измерение не диагноз — повторить через 3–4 недели.
+    </p>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="left"><span class="blink"></span><span>SCOPE :: BP.DAILY_AVG</span></div>
+          <div class="right">SYS · DIA · PULSE</div>
+        </div>
+        <div class="panel-body"><div class="chart-wrap"><canvas id="chartBP"></canvas></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="left"><span class="blink"></span><span>SCOPE :: ABPM.24H · 23–24.04</span></div>
+          <div class="right">VALIDITY 90% · 53/59</div>
+        </div>
+        <div class="panel-body" style="padding: 0;">
+          <table class="bp-table">
+            <thead>
+              <tr><th>PERIOD</th><th>SYS/DIA</th><th>PULSE</th><th>STATUS</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>24-hour avg</td>
+                <td class="num">123 / 80</td>
+                <td class="num">75</td>
+                <td><span class="tag ok">NORM &lt;130/80</span></td>
+              </tr>
+              <tr>
+                <td>Day 07–22:44</td>
+                <td class="num">126 / 83</td>
+                <td class="num">86</td>
+                <td><span class="tag ok">NORM &lt;135/85</span></td>
+              </tr>
+              <tr>
+                <td>Night 22:44–06:33</td>
+                <td class="num">117 / 72</td>
+                <td class="num">63</td>
+                <td><span class="tag warn">DIA +2</span></td>
+              </tr>
+              <tr>
+                <td>Dipping SYS</td>
+                <td class="num">7 %</td>
+                <td class="num">—</td>
+                <td><span class="tag alert">NON-DIPPER</span></td>
+              </tr>
+              <tr>
+                <td>Dipping DIA</td>
+                <td class="num">13 %</td>
+                <td class="num">—</td>
+                <td><span class="tag ok">DIPPER · NORM</span></td>
+              </tr>
+              <tr>
+                <td>PWV stiffness</td>
+                <td class="num">7.0 м/с</td>
+                <td class="num">22→24</td>
+                <td><span class="tag ok">NORM &lt;8</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-foot">
+          <span class="pf-icon">[!]</span>
+          <span><strong style="color: var(--danger); text-shadow: 0 0 6px rgba(255,59,31,0.4);">NON-DIPPER 7% :: </strong>ночное падение АД ниже нормы 10–20% — маркер симпатической активации. Подтверждается max&nbsp;HR&nbsp;95 во&nbsp;сне ночью ABPM (норма 70–78). Не катастрофа, но&nbsp;точка наблюдения. Повторить ABPM через 3–4 недели.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 09 INSIGHTS ─── -->
+  <section class="sec" id="insights">
+    <div class="sec-label">
+      <span class="blk"></span>
+      <span>&sect; 09 — INSIGHTS / FOUR STORIES</span>
+      <div class="dash"></div>
+      <span>DERIVED / 14D</span>
+    </div>
+
+    <div class="insight-grid">
+      <div class="ic alert">
+        <div class="ic-tag"><span>&gt;&gt; STORY 01 :: ALCOHOL CASCADE</span><span class="rx">RX</span></div>
+        <div class="ic-stat">&minus;4<span class="unit">D</span></div>
+        <div class="ic-headline">6 БАНОК ПИВА → 4 ДНЯ ВЫПАВШЕГО ТРЕНИНГА</div>
+        <div class="ic-body">
+          Воскресенье 12.04 — 6 банок пива (план был 3). Понедельник 13.04 — рвота, HRV провал до&nbsp;<strong>37&nbsp;мс</strong> (минимум за период), все вечерние рутины пропущены, тренировка отменена. Шаги&nbsp;3&nbsp;900. Восстановление до нормального HRV заняло <strong>5 дней</strong>. Это <strong>не случайность, а&nbsp;воспроизводимая логика</strong>: алкоголь&nbsp;+&nbsp;ранний отбой&nbsp;+&nbsp;Мунджаро (замедленная эвакуация желудка) — каскад на&nbsp;несколько дней.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag alert">−87% HRV</span>
+            <span class="tag alert">3× SKIPS</span>
+            <span class="tag alert">−54% STEPS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic ok">
+        <div class="ic-tag"><span>&gt;&gt; STORY 02 :: STRENGTH BREAKTHROUGH</span><span class="rx">OK</span></div>
+        <div class="ic-stat">&plus;29<span class="unit">%</span></div>
+        <div class="ic-headline">INCLINE PRESS :: 16KG &times; 7 → 16KG &times; 9</div>
+        <div class="ic-body">
+          Четыре тренировки подряд — плато на 16&nbsp;кг&nbsp;×&nbsp;7 (04.04, 08.04, 14.04). Тренировка 24.04: смена порядка упражнений + неделя без груди = <strong>16&nbsp;кг&nbsp;×&nbsp;9</strong> первым подходом до отказа. Чистый priority-принцип (Schoenfeld 2017): свежая ЦНС&nbsp;+&nbsp;первое упражнение&nbsp;+&nbsp;супер-компенсация после паузы = снятие плато без роста объёма.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag ok">+2 REPS</span>
+            <span class="tag ok">−1 WEEK</span>
+            <span class="tag ok">PRIORITY</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic alert">
+        <div class="ic-tag"><span>&gt;&gt; STORY 03 :: NON-DIPPER PATTERN</span><span class="rx">RX</span></div>
+        <div class="ic-stat">7<span class="unit">%</span></div>
+        <div class="ic-headline">SYS DIPPING НИЖЕ НОРМЫ 10–20%</div>
+        <div class="ic-body">
+          Первый 24-часовой ABPM (23–24.04) показал систолический non-dipping <strong>7%</strong> вместо нормы 10–20%. Подтверждается max&nbsp;HR&nbsp;<strong>95</strong> во сне в ту же ночь (стандарт 70–78). Диастолический дип 13% — норма. Валидность 90% (53/59 замеров) — выше клинического порога. <strong>Не диагноз с одного измерения</strong>, но точка наблюдения. PWV артериальной жёсткости 7.0&nbsp;м/с — Normal для ~39 лет.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag alert">NON-DIPPER</span>
+            <span class="tag alert">PWV 7.0</span>
+            <span class="tag alert">90% VALID</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic warn">
+        <div class="ic-tag"><span>&gt;&gt; STORY 04 :: PROTEIN GAP</span><span class="rx">RX</span></div>
+        <div class="ic-stat">1.43</div>
+        <div class="ic-headline">Г/КГ — НИЖЕ ОПТИМУМА НА МУНДЖАРО</div>
+        <div class="ic-body">
+          Цель 1.6–2.0&nbsp;г/кг (Morton 2018, ASMBS&nbsp;2024) для защиты мышц на дефиците + GLP-1. Среднее за период — <strong>1.43&nbsp;г/кг</strong>, разброс 1.0–1.85. Четыре дня ниже критического порога 1.3. Распределение тоже неравномерное — <strong>вечер-тяжёлое</strong>: половина дневного белка — один поздний коктейль. Witard&nbsp;2024: 4 приёма&nbsp;×&nbsp;38&nbsp;г работают лучше, чем 2&nbsp;×&nbsp;76&nbsp;г при той же сумме.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag warn">−10–15% POT.</span>
+            <span class="tag warn">4× &lt; 1.3</span>
+            <span class="tag warn">MEDIAN 1.50</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footbar">
+    <div class="left">
+      <span>SRC :: health-coach/logs/2026-04.md</span>
+      <span>·</span>
+      <span>DEVICES :: HUAWEI WATCH D2 + APPLE WATCH</span>
+    </div>
+    <div class="right">
+      <span id="footFrame">F.000000</span>
+      <span>·</span>
+      <span id="footClock">--:--:--</span>
+    </div>
+  </div>
+
+  <div class="telemetry">
+    <div class="tele-track">
+      <span><span class="k">HRV.PEAK</span><span class="v">71MS</span></span><span class="sep">·</span>
+      <span><span class="k">HRV.LOW</span><span class="v">33MS</span></span><span class="sep">·</span>
+      <span><span class="k">SLEEP.MED</span><span class="v">7.0H</span></span><span class="sep">·</span>
+      <span><span class="k">STEPS.SUM</span><span class="v">117 882</span></span><span class="sep">·</span>
+      <span><span class="k">STEPS.PEAK</span><span class="v">15 778</span></span><span class="sep">·</span>
+      <span><span class="k">PROT.AVG</span><span class="v">1.43G/KG</span></span><span class="sep">·</span>
+      <span><span class="k">KCAL.AVG</span><span class="v">1 896</span></span><span class="sep">·</span>
+      <span><span class="k">DEFICIT</span><span class="v">~800/D</span></span><span class="sep">·</span>
+      <span><span class="k">WORKOUTS</span><span class="v">6</span></span><span class="sep">·</span>
+      <span><span class="k">PRESS.16KG</span><span class="v">7 → 9 REPS</span></span><span class="sep">·</span>
+      <span><span class="k">PUSHUP.MAX</span><span class="v">4 → 17</span></span><span class="sep">·</span>
+      <span><span class="k">BP.AVG</span><span class="v">123/80</span></span><span class="sep">·</span>
+      <span><span class="k">DIPPING.SYS</span><span class="v">7%</span></span><span class="sep">·</span>
+      <span><span class="k">PWV</span><span class="v">7.0 M/S</span></span><span class="sep">·</span>
+      <span><span class="k">ADHERENCE</span><span class="v">~89%</span></span><span class="sep">·</span>
+      <!-- duplicate for seamless loop -->
+      <span><span class="k">HRV.PEAK</span><span class="v">71MS</span></span><span class="sep">·</span>
+      <span><span class="k">HRV.LOW</span><span class="v">33MS</span></span><span class="sep">·</span>
+      <span><span class="k">SLEEP.MED</span><span class="v">7.0H</span></span><span class="sep">·</span>
+      <span><span class="k">STEPS.SUM</span><span class="v">117 882</span></span><span class="sep">·</span>
+      <span><span class="k">STEPS.PEAK</span><span class="v">15 778</span></span><span class="sep">·</span>
+      <span><span class="k">PROT.AVG</span><span class="v">1.43G/KG</span></span><span class="sep">·</span>
+      <span><span class="k">KCAL.AVG</span><span class="v">1 896</span></span><span class="sep">·</span>
+      <span><span class="k">DEFICIT</span><span class="v">~800/D</span></span><span class="sep">·</span>
+      <span><span class="k">WORKOUTS</span><span class="v">6</span></span><span class="sep">·</span>
+      <span><span class="k">PRESS.16KG</span><span class="v">7 → 9 REPS</span></span><span class="sep">·</span>
+      <span><span class="k">PUSHUP.MAX</span><span class="v">4 → 17</span></span><span class="sep">·</span>
+      <span><span class="k">BP.AVG</span><span class="v">123/80</span></span><span class="sep">·</span>
+      <span><span class="k">DIPPING.SYS</span><span class="v">7%</span></span><span class="sep">·</span>
+      <span><span class="k">PWV</span><span class="v">7.0 M/S</span></span><span class="sep">·</span>
+      <span><span class="k">ADHERENCE</span><span class="v">~89%</span></span><span class="sep">·</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── Live clock + frame counter ──────────────────────────
+  let frame = 0;
+  function tick() {
+    frame++;
+    const f = String(frame).padStart(6, '0');
+    const fc = document.getElementById('frameCount'); if (fc) fc.textContent = 'F.' + f;
+    const ff = document.getElementById('footFrame'); if (ff) ff.textContent = 'F.' + f;
+    const now = new Date();
+    const h = String(now.getUTCHours()).padStart(2, '0');
+    const m = String(now.getUTCMinutes()).padStart(2, '0');
+    const s = String(now.getUTCSeconds()).padStart(2, '0');
+    const cl = document.getElementById('clock'); if (cl) cl.textContent = `${h}:${m}:${s} UTC`;
+    const fcl = document.getElementById('footClock'); if (fcl) fcl.textContent = `${h}:${m}:${s} UTC`;
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // ─── DATA ─────────────────────────────────────────────
+  const days = [
+    { d: '11.04', dow: 'fri', sleep: 8.6,  hrv: 73, steps: 1962,  kcal: 1649, p: 177, f: 47,  c: 78,  fiber: 7,  workout: 'super', alcohol: 0 },
+    { d: '12.04', dow: 'sun', sleep: 5.9,  hrv: 44, steps: 9065,  kcal: 2536, p: 94,  f: 39,  c: 247, fiber: 6,  workout: null,    alcohol: 6 },
+    { d: '13.04', dow: 'mon', sleep: null, hrv: 37, steps: 3900,  kcal: 1965, p: 99,  f: 97,  c: 167, fiber: 11, workout: null,    alcohol: 0, note: 'hangover' },
+    { d: '14.04', dow: 'tue', sleep: 6.0,  hrv: 46, steps: 11958, kcal: 2130, p: 116, f: 82,  c: 198, fiber: 4,  workout: 'B',     alcohol: 0 },
+    { d: '15.04', dow: 'wed', sleep: 7.65, hrv: 56, steps: 13197, kcal: 2350, p: 162, f: 106, c: 221, fiber: 20, workout: null,    alcohol: 0 },
+    { d: '16.04', dow: 'thu', sleep: 6.5,  hrv: 54, steps: 2500,  kcal: 2080, p: 133, f: 52,  c: 239, fiber: 6,  workout: null,    alcohol: 0 },
+    { d: '17.04', dow: 'fri', sleep: 7.0,  hrv: 58, steps: 6637,  kcal: 1743, p: 160, f: 55,  c: 150, fiber: 10, workout: 'A',     alcohol: 0 },
+    { d: '18.04', dow: 'sat', sleep: 7.0,  hrv: 71, steps: 6980,  kcal: 1850, p: 163, f: 56,  c: 94,  fiber: 10, workout: 'super', alcohol: 3 },
+    { d: '19.04', dow: 'sun', sleep: 7.5,  hrv: 51, steps: 9788,  kcal: 1710, p: 101, f: 70,  c: 109, fiber: 19, workout: null,    alcohol: 3 },
+    { d: '20.04', dow: 'mon', sleep: 4.0,  hrv: 58, steps: 2100,  kcal: 1165, p: 113, f: 62,  c: 19,  fiber: 0,  workout: null,    alcohol: 0, note: 'reflux' },
+    { d: '21.04', dow: 'tue', sleep: 7.0,  hrv: 57, steps: 11105, kcal: 1615, p: 145, f: 72,  c: 91,  fiber: 5,  workout: null,    alcohol: 0 },
+    { d: '22.04', dow: 'wed', sleep: 7.0,  hrv: 47, steps: 11819, kcal: 1675, p: 161, f: 42,  c: 158, fiber: 22, workout: 'B',     alcohol: 0 },
+    { d: '23.04', dow: 'thu', sleep: 8.08, hrv: 33, steps: 14680, kcal: 2067, p: 176, f: 37,  c: 229, fiber: 30, workout: 'rec',   alcohol: 0, note: 'huawei base' },
+    { d: '24.04', dow: 'fri', sleep: 8.32, hrv: 47, steps: 15778, kcal: 2100, p: 150, f: 60,  c: 200, fiber: 25, workout: 'A',     alcohol: 0 },
+  ];
+  const labels = days.map(d => d.d);
+  const labelsLong = days.map(d => `${d.d} (${d.dow})`);
+
+  // ─── CHART DEFAULTS ──────────────────────────────────
+  Chart.register(window['chartjs-plugin-annotation']);
+  const PHOSPHOR = '#ffb347';
+  const PHOSPHOR_BRIGHT = '#ffd27a';
+  const PHOSPHOR_DIM = '#8a5a1f';
+  const PHOSPHOR_FAINT = '#3a2410';
+  const OK = '#9cff6e';
+  const DANGER = '#ff3b1f';
+  const CYAN = '#4dd6ff';
+  const MAGENTA = '#ff5acb';
+
+  Chart.defaults.color = PHOSPHOR;
+  Chart.defaults.font.family = "'JetBrains Mono', monospace";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.borderColor = PHOSPHOR_FAINT;
+  Chart.defaults.plugins.tooltip.backgroundColor = '#0a0604';
+  Chart.defaults.plugins.tooltip.titleColor = PHOSPHOR_BRIGHT;
+  Chart.defaults.plugins.tooltip.bodyColor = PHOSPHOR;
+  Chart.defaults.plugins.tooltip.borderColor = PHOSPHOR_DIM;
+  Chart.defaults.plugins.tooltip.borderWidth = 1;
+  Chart.defaults.plugins.tooltip.padding = 10;
+  Chart.defaults.plugins.tooltip.cornerRadius = 0;
+  Chart.defaults.plugins.tooltip.titleFont = { weight: 700, family: "'JetBrains Mono', monospace" };
+  Chart.defaults.plugins.tooltip.bodyFont = { family: "'JetBrains Mono', monospace" };
+
+  // CRT-style grid: dotted phosphor
+  const gridStyle = {
+    color: PHOSPHOR_FAINT,
+    drawTicks: false,
+    lineWidth: 1,
+  };
+  const gridDotted = {
+    color: ctx => ctx.tick && ctx.tick.major ? PHOSPHOR_DIM : PHOSPHOR_FAINT,
+    drawTicks: false,
+    lineWidth: 1,
+  };
+  const tickStyle = {
+    color: PHOSPHOR_DIM,
+    font: { size: 10, family: "'JetBrains Mono', monospace" }
+  };
+  const tickStyleBright = {
+    color: PHOSPHOR,
+    font: { size: 10, family: "'JetBrains Mono', monospace" }
+  };
+
+  // ─── 1. HRV ──────────────────────────────────────────
+  (function () {
+    const ctx = document.getElementById('chartHRV').getContext('2d');
+    const data = days.map(d => d.hrv);
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labelsLong,
+        datasets: [{
+          label: 'HRV',
+          data,
+          borderWidth: 2.5,
+          borderColor: PHOSPHOR_BRIGHT,
+          tension: 0.3,
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          pointBorderWidth: 2,
+          pointBackgroundColor: ctx => {
+            const v = data[ctx.dataIndex]; if (v == null) return PHOSPHOR_DIM;
+            if (v >= 60) return OK;
+            if (v >= 45) return PHOSPHOR_BRIGHT;
+            if (v >= 35) return PHOSPHOR;
+            return DANGER;
+          },
+          pointBorderColor: '#000',
+          backgroundColor: ctx => {
+            const a = ctx.chart.chartArea; if (!a) return 'rgba(255,179,71,0.1)';
+            const g = ctx.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom);
+            g.addColorStop(0, 'rgba(255,210,122,0.35)');
+            g.addColorStop(1, 'rgba(255,179,71,0.0)');
+            return g;
+          },
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const v = ctx.parsed.y;
+                let zone = '';
+                if (v >= 60) zone = '[OK] HIGH';
+                else if (v >= 45) zone = '[--] NORM';
+                else if (v >= 35) zone = '[!!] EDGE';
+                else zone = '[XX] DELOAD';
+                return `HRV ${v}MS · ${zone}`;
+              },
+              afterLabel: ctx => {
+                const day = days[ctx.dataIndex];
+                return day.note ? `> ${day.note.toUpperCase()}` : null;
+              }
+            }
+          },
+          annotation: {
+            annotations: {
+              zoneTop: {
+                type: 'box', yMin: 50, yMax: 70,
+                backgroundColor: 'rgba(156,255,110,0.05)',
+                borderColor: 'rgba(156,255,110,0.15)',
+                borderWidth: 1, borderDash: [3, 3],
+              },
+              baseLine: {
+                type: 'line', yMin: 49, yMax: 49,
+                borderColor: 'rgba(156,255,110,0.55)',
+                borderWidth: 1, borderDash: [4, 4],
+                label: {
+                  display: true, content: 'POPULATION 49MS+', position: 'start',
+                  backgroundColor: 'rgba(156,255,110,0.1)', color: OK,
+                  font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                  padding: 4, yAdjust: -8,
+                  borderRadius: 0,
+                  borderColor: 'rgba(156,255,110,0.5)', borderWidth: 1,
+                }
+              },
+              alcEvt: {
+                type: 'line', xMin: '12.04 (sun)', xMax: '12.04 (sun)',
+                borderColor: DANGER,
+                borderWidth: 1.5, borderDash: [3, 3],
+                label: {
+                  display: true, content: 'ALC.6×', position: 'start',
+                  backgroundColor: 'rgba(255,59,31,0.15)',
+                  color: DANGER, font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                  padding: 5, yAdjust: -2,
+                  borderRadius: 0, borderColor: DANGER, borderWidth: 1,
+                }
+              },
+              hangover: {
+                type: 'point', xValue: '13.04 (mon)', yValue: 37,
+                backgroundColor: DANGER, borderColor: PHOSPHOR_BRIGHT,
+                borderWidth: 2, radius: 8,
+              },
+              peakLabel: {
+                type: 'label', xValue: '18.04 (sat)', yValue: 71,
+                content: ['PEAK 71'], color: OK,
+                backgroundColor: 'rgba(156,255,110,0.1)',
+                font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                padding: 5, yAdjust: -22, borderRadius: 0,
+                borderColor: OK, borderWidth: 1,
+              },
+              baseShift: {
+                type: 'line', xMin: '23.04 (thu)', xMax: '23.04 (thu)',
+                borderColor: CYAN, borderWidth: 1.5, borderDash: [3, 3],
+                label: {
+                  display: true, content: 'HUAWEI.BASE', position: 'start',
+                  backgroundColor: 'rgba(77,214,255,0.12)',
+                  color: CYAN, font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                  padding: 5, yAdjust: -2, borderRadius: 0,
+                  borderColor: CYAN, borderWidth: 1,
+                }
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: gridStyle, ticks: tickStyle, border: { color: PHOSPHOR_DIM } },
+          y: {
+            grid: gridStyle, ticks: tickStyle, min: 25, max: 80,
+            border: { color: PHOSPHOR_DIM },
+            title: { display: true, text: 'HRV / MS', color: PHOSPHOR, font: { size: 10, weight: 700, family: "'JetBrains Mono', monospace" } }
+          }
+        }
+      }
+    });
+  })();
+
+  // ─── 2. SLEEP × HRV ──────────────────────────────────
+  (function () {
+    const ctx = document.getElementById('chartSleepHRV').getContext('2d');
+    new Chart(ctx, {
+      data: {
+        labels: labelsLong,
+        datasets: [
+          {
+            type: 'bar', label: 'SLEEP.H', data: days.map(d => d.sleep),
+            yAxisID: 'y1', borderSkipped: false,
+            backgroundColor: 'rgba(77,214,255,0.35)',
+            borderColor: CYAN, borderWidth: 1,
+          },
+          {
+            type: 'line', label: 'HRV.MS', data: days.map(d => d.hrv),
+            yAxisID: 'y2', borderColor: PHOSPHOR_BRIGHT, borderWidth: 2.5,
+            tension: 0.3, pointRadius: 5, pointHoverRadius: 7,
+            pointBackgroundColor: PHOSPHOR_BRIGHT, pointBorderColor: '#000', pointBorderWidth: 2,
+            backgroundColor: 'rgba(255,210,122,0.06)',
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: { display: true, position: 'top', align: 'end',
+            labels: { boxWidth: 12, boxHeight: 12, padding: 12, color: PHOSPHOR,
+              font: { size: 10, family: "'JetBrains Mono', monospace" } } },
+          tooltip: {
+            callbacks: {
+              afterLabel: ctx => {
+                if (ctx.datasetIndex === 0) {
+                  const v = ctx.parsed.y;
+                  if (v == null) return '> NO_DATA';
+                  if (v < 6) return '> SUB AASM';
+                  if (v < 7) return '> EDGE';
+                  return '> NORM';
+                }
+                return null;
+              }
+            }
+          },
+          annotation: {
+            annotations: {
+              sleepNorm: {
+                type: 'line', yMin: 7, yMax: 7, yScaleID: 'y1',
+                borderColor: 'rgba(77,214,255,0.45)', borderWidth: 1, borderDash: [4, 4],
+                label: { display: true, content: 'AASM 7H+', position: 'start',
+                  backgroundColor: 'rgba(77,214,255,0.12)', color: CYAN,
+                  font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                  padding: 4, borderRadius: 0, borderColor: CYAN, borderWidth: 1 }
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: gridStyle, ticks: tickStyle, border: { color: PHOSPHOR_DIM } },
+          y1: { type: 'linear', position: 'left', grid: gridStyle, ticks: tickStyle, min: 0, max: 10,
+            border: { color: PHOSPHOR_DIM },
+            title: { display: true, text: 'SLEEP / H', color: CYAN, font: { size: 10, weight: 700, family: "'JetBrains Mono', monospace" } } },
+          y2: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, ticks: tickStyle, min: 25, max: 80,
+            border: { color: PHOSPHOR_DIM },
+            title: { display: true, text: 'HRV / MS', color: PHOSPHOR_BRIGHT, font: { size: 10, weight: 700, family: "'JetBrains Mono', monospace" } } }
+        }
+      }
+    });
+  })();
+
+  // ─── 3. STEPS ─────────────────────────────────────────
+  (function () {
+    const ctx = document.getElementById('chartSteps').getContext('2d');
+    const colMap = {
+      'A':     [PHOSPHOR_BRIGHT, 'rgba(255,210,122,0.55)'],
+      'B':     [MAGENTA,         'rgba(255,90,203,0.45)'],
+      'super': [CYAN,             'rgba(77,214,255,0.35)'],
+      'rec':   [CYAN,             'rgba(77,214,255,0.35)'],
+    };
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labelsLong,
+        datasets: [{
+          label: 'STEPS',
+          data: days.map(d => d.steps),
+          borderSkipped: false,
+          backgroundColor: ctx => {
+            const w = days[ctx.dataIndex].workout;
+            return colMap[w] ? colMap[w][1] : 'rgba(58,36,16,0.55)';
+          },
+          borderColor: ctx => {
+            const w = days[ctx.dataIndex].workout;
+            return colMap[w] ? colMap[w][0] : PHOSPHOR_DIM;
+          },
+          borderWidth: 1.5,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.parsed.y.toLocaleString('en-US')} STEPS`,
+              afterLabel: ctx => {
+                const w = days[ctx.dataIndex].workout;
+                if (!w) return '> REST.DAY';
+                if (w === 'A') return '> WORKOUT.A · UPPER+LEGS';
+                if (w === 'B') return '> WORKOUT.B · LEG.FOCUS';
+                if (w === 'super') return '> SUPERSET / MAKEUP';
+                if (w === 'rec') return '> ACTIVE.RECOVERY';
+                return null;
+              }
+            }
+          },
+          annotation: {
+            annotations: {
+              goal: {
+                type: 'line', yMin: 7000, yMax: 7000,
+                borderColor: OK, borderWidth: 1.5, borderDash: [5, 4],
+                label: { display: true, content: 'GOAL 7K', position: 'start',
+                  backgroundColor: 'rgba(156,255,110,0.12)', color: OK,
+                  font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                  padding: 4, borderRadius: 0, borderColor: OK, borderWidth: 1 }
+              },
+              goal2: {
+                type: 'line', yMin: 10000, yMax: 10000,
+                borderColor: 'rgba(255,179,71,0.18)', borderWidth: 1, borderDash: [3, 3],
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: gridStyle, ticks: tickStyle, border: { color: PHOSPHOR_DIM } },
+          y: { grid: gridStyle,
+               ticks: { ...tickStyle, callback: v => (v >= 1000 ? (v/1000).toFixed(0) + 'K' : v) },
+               border: { color: PHOSPHOR_DIM },
+               title: { display: true, text: 'STEPS', color: PHOSPHOR, font: { size: 10, weight: 700, family: "'JetBrains Mono', monospace" } } }
+        }
+      }
+    });
+  })();
+
+  // ─── 4. PROTEIN ──────────────────────────────────────
+  (function () {
+    const ctx = document.getElementById('chartProtein').getContext('2d');
+    const proteinData = days.map(d => d.p);
+    const targetMin = 152, targetMax = 190;
+    const critical = 124;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labelsLong,
+        datasets: [{
+          label: 'PROT.G',
+          data: proteinData,
+          borderSkipped: false,
+          backgroundColor: ctx => {
+            const v = proteinData[ctx.dataIndex];
+            if (v < critical) return 'rgba(255,59,31,0.45)';
+            if (v >= targetMax) return 'rgba(156,255,110,0.4)';
+            if (v >= targetMin) return 'rgba(255,210,122,0.5)';
+            return 'rgba(255,179,71,0.3)';
+          },
+          borderColor: ctx => {
+            const v = proteinData[ctx.dataIndex];
+            if (v < critical) return DANGER;
+            if (v >= targetMax) return OK;
+            if (v >= targetMin) return PHOSPHOR_BRIGHT;
+            return PHOSPHOR;
+          },
+          borderWidth: 1.5,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const v = ctx.parsed.y;
+                const gpkg = (v/95).toFixed(2);
+                return `${v}G · ${gpkg} G/KG`;
+              },
+              afterLabel: ctx => {
+                const v = ctx.parsed.y;
+                if (v < critical) return '> [!!] BELOW 1.3';
+                if (v >= targetMax) return '> [OK] ABOVE TGT';
+                if (v >= targetMin) return '> [OK] IN ZONE';
+                return '> [--] SUB.OPT';
+              }
+            }
+          },
+          annotation: {
+            annotations: {
+              zone: {
+                type: 'box', yMin: targetMin, yMax: targetMax,
+                backgroundColor: 'rgba(156,255,110,0.07)',
+                borderColor: 'rgba(156,255,110,0.15)',
+                borderWidth: 1, borderDash: [3, 3],
+              },
+              goalLine: {
+                type: 'line', yMin: targetMin, yMax: targetMin,
+                borderColor: OK, borderWidth: 1, borderDash: [4, 4],
+                label: { display: true, content: 'TGT 1.6 G/KG', position: 'end',
+                  backgroundColor: 'rgba(156,255,110,0.1)', color: OK,
+                  font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                  padding: 4, borderRadius: 0, borderColor: OK, borderWidth: 1 }
+              },
+              critical: {
+                type: 'line', yMin: critical, yMax: critical,
+                borderColor: DANGER, borderWidth: 1, borderDash: [4, 4],
+                label: { display: true, content: 'CRIT 1.3', position: 'end',
+                  backgroundColor: 'rgba(255,59,31,0.12)', color: DANGER,
+                  font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                  padding: 4, borderRadius: 0, borderColor: DANGER, borderWidth: 1 }
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: gridStyle, ticks: { ...tickStyle, font: { size: 9, family: "'JetBrains Mono', monospace" } }, border: { color: PHOSPHOR_DIM } },
+          y: { grid: gridStyle, ticks: tickStyle, min: 0, max: 220,
+               border: { color: PHOSPHOR_DIM },
+               title: { display: true, text: 'PROT / G', color: PHOSPHOR, font: { size: 10, weight: 700, family: "'JetBrains Mono', monospace" } } }
+        }
+      }
+    });
+  })();
+
+  // ─── 5. MACROS ───────────────────────────────────────
+  (function () {
+    const ctx = document.getElementById('chartMacros').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labelsLong,
+        datasets: [
+          {
+            label: 'PROT', data: days.map(d => d.p * 4),
+            backgroundColor: 'rgba(255,90,203,0.55)', borderColor: MAGENTA, borderWidth: 1,
+            borderSkipped: false, stack: 'm'
+          },
+          {
+            label: 'FAT', data: days.map(d => d.f * 9),
+            backgroundColor: 'rgba(255,210,122,0.6)', borderColor: PHOSPHOR_BRIGHT, borderWidth: 1,
+            borderSkipped: false, stack: 'm'
+          },
+          {
+            label: 'CARB', data: days.map(d => d.c * 4),
+            backgroundColor: 'rgba(77,214,255,0.55)', borderColor: CYAN, borderWidth: 1,
+            borderSkipped: false, stack: 'm'
+          },
+          {
+            label: 'KCAL.LINE', data: days.map(d => d.kcal),
+            type: 'line', yAxisID: 'y2',
+            borderColor: PHOSPHOR_BRIGHT, borderWidth: 2, borderDash: [4, 3],
+            pointRadius: 3, pointHoverRadius: 5,
+            pointBackgroundColor: PHOSPHOR_BRIGHT, pointBorderColor: '#000', pointBorderWidth: 2,
+            tension: 0.3, fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: { display: true, position: 'top', align: 'end',
+            labels: { boxWidth: 12, boxHeight: 12, padding: 10, color: PHOSPHOR,
+              font: { size: 10, family: "'JetBrains Mono', monospace" }, usePointStyle: true } },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const dsi = ctx.datasetIndex;
+                if (dsi === 3) return `KCAL ${ctx.parsed.y.toLocaleString('en-US')}`;
+                const day = days[ctx.dataIndex];
+                const grams = dsi === 0 ? day.p : dsi === 1 ? day.f : day.c;
+                const name = dsi === 0 ? 'PROT' : dsi === 1 ? 'FAT' : 'CARB';
+                return `${name} ${grams}G · ${ctx.parsed.y}KCAL`;
+              }
+            }
+          },
+          annotation: {
+            annotations: {
+              tdee: {
+                type: 'line', yMin: 2700, yMax: 2700, yScaleID: 'y2',
+                borderColor: 'rgba(255,179,71,0.5)', borderWidth: 1, borderDash: [4, 4],
+                label: { display: true, content: 'TDEE 2700', position: 'end',
+                  backgroundColor: 'rgba(255,179,71,0.1)', color: PHOSPHOR,
+                  font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                  padding: 4, borderRadius: 0, borderColor: PHOSPHOR, borderWidth: 1 }
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: gridStyle, ticks: { ...tickStyle, font: { size: 9, family: "'JetBrains Mono', monospace" } }, stacked: true, border: { color: PHOSPHOR_DIM } },
+          y: { grid: gridStyle, ticks: tickStyle, stacked: true, max: 3300,
+               border: { color: PHOSPHOR_DIM },
+               title: { display: true, text: 'KCAL / B+J+U', color: PHOSPHOR, font: { size: 10, weight: 700, family: "'JetBrains Mono', monospace" } } },
+          y2: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, ticks: tickStyle, min: 0, max: 3300, display: false }
+        }
+      }
+    });
+  })();
+
+  // ─── 6. STRENGTH ─────────────────────────────────────
+  const strengthBase = (yMax) => ({
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: { label: ctx => `${ctx.parsed.y} REPS` }
+      }
+    },
+    scales: {
+      x: { grid: gridStyle, ticks: { ...tickStyle, maxRotation: 0, autoSkipPadding: 12 }, border: { color: PHOSPHOR_DIM } },
+      y: { grid: gridStyle, ticks: tickStyle, min: 0, max: yMax, border: { color: PHOSPHOR_DIM } }
+    }
+  });
+
+  (function () {
+    const ctx = document.getElementById('chartPushups').getContext('2d');
+    const data = [
+      { l: '16.02', v: 4 }, { l: '23.02', v: 7 }, { l: '28.02', v: 12 },
+      { l: '04.03', v: 14 }, { l: '23.03', v: 12 }, { l: '06.04', v: 12 }, { l: '17.04', v: 17 }
+    ];
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.l),
+        datasets: [{
+          data: data.map(d => d.v),
+          borderColor: OK, borderWidth: 2.5, tension: 0.3,
+          pointRadius: 4, pointHoverRadius: 7,
+          pointBackgroundColor: OK, pointBorderColor: '#000', pointBorderWidth: 2,
+          backgroundColor: ctx => {
+            const a = ctx.chart.chartArea; if (!a) return 'rgba(156,255,110,0.1)';
+            const g = ctx.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom);
+            g.addColorStop(0, 'rgba(156,255,110,0.25)');
+            g.addColorStop(1, 'rgba(156,255,110,0)');
+            return g;
+          },
+          fill: true,
+        }]
+      },
+      options: strengthBase(20)
+    });
+  })();
+
+  (function () {
+    const ctx = document.getElementById('chartSquats').getContext('2d');
+    const data = [
+      { l: '08.04', v: 10, load: 'BW' },
+      { l: '11.04', v: 14, load: 'BW' },
+      { l: '14.04', v: 13, load: 'BW' },
+      { l: '17.04', v: 21, load: 'BW' },
+      { l: '22.04', v: 7, load: '13.5KG' },
+      { l: '24.04', v: 8, load: '16KG' },
+    ];
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.l),
+        datasets: [{
+          data: data.map(d => d.v),
+          borderColor: PHOSPHOR_BRIGHT, borderWidth: 2.5, tension: 0.25,
+          pointRadius: 5, pointHoverRadius: 8,
+          pointBackgroundColor: ctx => data[ctx.dataIndex].load === 'BW' ? PHOSPHOR_BRIGHT : DANGER,
+          pointBorderColor: '#000', pointBorderWidth: 2,
+          backgroundColor: ctx => {
+            const a = ctx.chart.chartArea; if (!a) return 'rgba(255,210,122,0.1)';
+            const g = ctx.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom);
+            g.addColorStop(0, 'rgba(255,210,122,0.25)');
+            g.addColorStop(1, 'rgba(255,210,122,0)');
+            return g;
+          },
+          fill: true,
+        }]
+      },
+      options: {
+        ...strengthBase(25),
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: { label: ctx => `${ctx.parsed.y} REPS · ${data[ctx.dataIndex].load}` }
+          }
+        }
+      }
+    });
+  })();
+
+  (function () {
+    const ctx = document.getElementById('chartPress').getContext('2d');
+    const data = [
+      { l: '04.04', v: 6 }, { l: '08.04', v: 7 }, { l: '14.04', v: 7 }, { l: '24.04', v: 9 }
+    ];
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.l),
+        datasets: [{
+          data: data.map(d => d.v),
+          borderColor: PHOSPHOR, borderWidth: 2.5, tension: 0.15,
+          pointRadius: 5, pointHoverRadius: 8,
+          pointBackgroundColor: ctx => ctx.dataIndex === 3 ? OK : PHOSPHOR_BRIGHT,
+          pointBorderColor: '#000', pointBorderWidth: 2,
+          backgroundColor: ctx => {
+            const a = ctx.chart.chartArea; if (!a) return 'rgba(255,179,71,0.1)';
+            const g = ctx.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom);
+            g.addColorStop(0, 'rgba(255,179,71,0.25)');
+            g.addColorStop(1, 'rgba(255,179,71,0)');
+            return g;
+          },
+          fill: true,
+        }]
+      },
+      options: {
+        ...strengthBase(12),
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.parsed.y} REPS · 16KG`,
+              afterLabel: ctx => ctx.dataIndex === 3 ? '> [OK] PRIORITY ORDER · BREAK' : null
+            }
+          },
+          annotation: {
+            annotations: {
+              plateau: {
+                type: 'box', xMin: -0.4, xMax: 2.4, yMin: 6.5, yMax: 7.5,
+                backgroundColor: 'rgba(255,179,71,0.07)', borderColor: PHOSPHOR_DIM,
+                borderWidth: 1, borderDash: [3, 3],
+              },
+              plateauLabel: {
+                type: 'label', xValue: 1, yValue: 8.5,
+                content: ['PLATEAU'], color: PHOSPHOR_DIM,
+                font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" }
+              }
+            }
+          }
+        }
+      }
+    });
+  })();
+
+  (function () {
+    const ctx = document.getElementById('chartLateral').getContext('2d');
+    const data = [
+      { l: '04.04', v: 8,  load: 5.5 },
+      { l: '08.04', v: 14, load: 4.5 },
+      { l: '14.04', v: 14, load: 4.5 },
+      { l: '18.04', v: 14, load: 5.5 },
+      { l: '24.04', v: 10, load: 5.5 },
+    ];
+    new Chart(ctx, {
+      data: {
+        labels: data.map(d => d.l),
+        datasets: [
+          {
+            type: 'bar', label: 'REPS', data: data.map(d => d.v), yAxisID: 'y1',
+            borderSkipped: false,
+            backgroundColor: 'rgba(255,90,203,0.4)',
+            borderColor: MAGENTA, borderWidth: 1,
+          },
+          {
+            type: 'line', label: 'KG', data: data.map(d => d.load), yAxisID: 'y2',
+            borderColor: PHOSPHOR_BRIGHT, borderWidth: 2, tension: 0.15,
+            pointRadius: 4, pointBackgroundColor: PHOSPHOR_BRIGHT,
+            pointBorderColor: '#000', pointBorderWidth: 2,
+            backgroundColor: 'transparent', fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true, position: 'top', align: 'end',
+            labels: { boxWidth: 10, boxHeight: 10, padding: 8, color: PHOSPHOR,
+              font: { size: 9, family: "'JetBrains Mono', monospace" } } },
+          tooltip: {
+            callbacks: { label: ctx => ctx.datasetIndex === 0 ? `${ctx.parsed.y} REPS` : `${ctx.parsed.y} KG` }
+          }
+        },
+        scales: {
+          x: { grid: gridStyle, ticks: tickStyle, border: { color: PHOSPHOR_DIM } },
+          y1: { type: 'linear', position: 'left', grid: gridStyle, ticks: tickStyle, min: 0, max: 18,
+                border: { color: MAGENTA },
+                title: { display: true, text: 'REPS', color: MAGENTA, font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" } } },
+          y2: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, ticks: tickStyle, min: 4, max: 7,
+                border: { color: PHOSPHOR_BRIGHT },
+                title: { display: true, text: 'KG', color: PHOSPHOR_BRIGHT, font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" } } }
+        }
+      }
+    });
+  })();
+
+  // ─── 7. ROUTINES HEATMAP ─────────────────────────────
+  (function () {
+    const rows = [
+      { key: 'workout',      label: '> WORKOUT',      type: 'workout' },
+      { key: 'minoxidil_am', label: '> MINOX.AM',     type: 'bool' },
+      { key: 'minoxidil_pm', label: '> MINOX.PM',     type: 'bool' },
+      { key: 'retinal',      label: '> RETINAL',      type: 'bool' },
+      { key: 'teeth',        label: '> TEETH',        type: 'bool' },
+      { key: 'mounjaro',     label: '> MOUNJARO',     type: 'weekly' },
+      { key: 'creatine',     label: '> CREATINE',     type: 'bool' },
+      { key: 'alcohol',      label: '> ALCOHOL',      type: 'alcohol' },
+    ];
+    const routines = {
+      '11.04': { minoxidil_am: true,  minoxidil_pm: false, retinal: true,  teeth: true,  mounjaro: true,  creatine: true },
+      '12.04': { minoxidil_am: true,  minoxidil_pm: false, retinal: false, teeth: false, mounjaro: false, creatine: true },
+      '13.04': { minoxidil_am: true,  minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: false },
+      '14.04': { minoxidil_am: true,  minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: true },
+      '15.04': { minoxidil_am: true,  minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: true },
+      '16.04': { minoxidil_am: true,  minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: true },
+      '17.04': { minoxidil_am: false, minoxidil_pm: false, retinal: false, teeth: true,  mounjaro: true,  creatine: true },
+      '18.04': { minoxidil_am: false, minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: true },
+      '19.04': { minoxidil_am: true,  minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: true },
+      '20.04': { minoxidil_am: true,  minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: false },
+      '21.04': { minoxidil_am: null,  minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: true },
+      '22.04': { minoxidil_am: true,  minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: true },
+      '23.04': { minoxidil_am: true,  minoxidil_pm: true,  retinal: true,  teeth: true,  mounjaro: false, creatine: true },
+      '24.04': { minoxidil_am: true,  minoxidil_pm: null,  retinal: null,  teeth: null,  mounjaro: true,  creatine: true },
+    };
+    const target = document.getElementById('heatmapBox');
+    let html = '<div class="heatmap-header"><span></span>';
+    days.forEach(d => html += `<span>${d.d.split('.')[0]}<span class="dow">${d.dow.toUpperCase()}</span></span>`);
+    html += '</div>';
+    html += '<div class="heatmap">';
+    rows.forEach(row => {
+      html += `<div class="heatmap-row"><span class="hm-label">${row.label}</span>`;
+      days.forEach(day => {
+        const dk = day.d;
+        const r = routines[dk] || {};
+        let cls = 'cell unknown', text = '·';
+        if (row.type === 'workout') {
+          const w = day.workout;
+          if (w === 'A') { cls = 'cell workout-a'; text = 'A'; }
+          else if (w === 'B') { cls = 'cell workout-b'; text = 'B'; }
+          else if (w === 'super') { cls = 'cell workout-rec'; text = 'S'; }
+          else if (w === 'rec') { cls = 'cell workout-rec'; text = 'R'; }
+          else { cls = 'cell workout-none'; text = '—'; }
+        } else if (row.type === 'alcohol') {
+          if (day.alcohol >= 5) { cls = 'cell alcohol'; text = '!'; }
+          else if (day.alcohol > 0) { cls = 'cell alcohol'; text = day.alcohol; }
+          else { cls = 'cell unknown'; text = ''; }
+        } else if (row.type === 'weekly') {
+          if (r.mounjaro === true) { cls = 'cell done'; text = '✓'; }
+          else { cls = 'cell unknown'; text = ''; }
+        } else {
+          const v = r[row.key];
+          if (v === true) { cls = 'cell done'; text = '✓'; }
+          else if (v === false) { cls = 'cell skip'; text = '×'; }
+          else { cls = 'cell unknown'; text = '?'; }
+        }
+        const titleParts = [`${day.d.toUpperCase()} ${day.dow.toUpperCase()}`, row.label.replace('> ','')];
+        html += `<div class="${cls}" title="${titleParts.join(' · ')}">${text}</div>`;
+      });
+      html += '</div>';
+    });
+    html += '</div>';
+    target.innerHTML = html;
+  })();
+
+  // ─── 8. BLOOD PRESSURE ───────────────────────────────
+  (function () {
+    const ctx = document.getElementById('chartBP').getContext('2d');
+    const bpDays = ['22.04 WED', '23.04 THU', '24.04 FRI 24H'];
+    new Chart(ctx, {
+      data: {
+        labels: bpDays,
+        datasets: [
+          {
+            type: 'line', label: 'SYS', data: [126, 126, 123],
+            borderColor: DANGER, borderWidth: 2.5, tension: 0.3,
+            pointRadius: 5, pointBackgroundColor: DANGER, pointBorderColor: '#000', pointBorderWidth: 2,
+            fill: true, backgroundColor: 'rgba(255,59,31,0.1)',
+          },
+          {
+            type: 'line', label: 'DIA', data: [82, 84, 80],
+            borderColor: PHOSPHOR_BRIGHT, borderWidth: 2.5, tension: 0.3,
+            pointRadius: 5, pointBackgroundColor: PHOSPHOR_BRIGHT, pointBorderColor: '#000', pointBorderWidth: 2,
+            fill: true, backgroundColor: 'rgba(255,210,122,0.06)',
+          },
+          {
+            type: 'line', label: 'PULSE', data: [76, 88, 75],
+            borderColor: CYAN, borderWidth: 2, borderDash: [4, 3], tension: 0.3,
+            pointRadius: 4, pointBackgroundColor: CYAN, pointBorderColor: '#000', pointBorderWidth: 2,
+            fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true, position: 'top', align: 'end',
+            labels: { boxWidth: 10, boxHeight: 10, padding: 8, color: PHOSPHOR,
+              font: { size: 10, family: "'JetBrains Mono', monospace" }, usePointStyle: true } },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const v = ctx.parsed.y; const l = ctx.dataset.label;
+                if (l === 'PULSE') return `${l} ${v} BPM`;
+                return `${l} ${v} MMHG`;
+              }
+            }
+          },
+          annotation: {
+            annotations: {
+              ahaSys: {
+                type: 'line', yMin: 130, yMax: 130,
+                borderColor: 'rgba(255,179,71,0.45)', borderWidth: 1, borderDash: [4, 4],
+                label: { display: true, content: 'AHA ELEV 130', position: 'end',
+                  backgroundColor: 'rgba(255,179,71,0.1)', color: PHOSPHOR,
+                  font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
+                  padding: 4, borderRadius: 0, borderColor: PHOSPHOR, borderWidth: 1 }
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: gridStyle, ticks: tickStyle, border: { color: PHOSPHOR_DIM } },
+          y: { grid: gridStyle, ticks: tickStyle, min: 60, max: 145,
+               border: { color: PHOSPHOR_DIM },
+               title: { display: true, text: 'MMHG · BPM', color: PHOSPHOR, font: { size: 10, weight: 700, family: "'JetBrains Mono', monospace" } } }
+        }
+      }
+    });
+  })();
+
+  // ─── Random signal jitter on titlebar bars ───────────
+  (function () {
+    const bars = document.querySelectorAll('.tb-signal .sig-bar');
+    setInterval(() => {
+      bars.forEach((b, i) => {
+        const lit = Math.random() < (i < 3 ? 0.95 : i < 4 ? 0.7 : 0.3);
+        b.classList.toggle('lit', lit);
+      });
+    }, 1100);
+  })();
+
+  // ─── Channel number jitter ────────────────────────────
+  (function () {
+    const el = document.getElementById('chNum'); if (!el) return;
+    setInterval(() => {
+      if (Math.random() < 0.08) {
+        el.textContent = String(30 + Math.floor(Math.random() * 12)).padStart(3, '0');
+        setTimeout(() => el.textContent = '037', 280);
+      }
+    }, 2400);
+  })();
+</script>
+
+</body>
+</html>

@@ -60,6 +60,10 @@
     {
       "source": "/showrunner-wiki-demo",
       "destination": "/showrunner-wiki-demo/index.html"
+    },
+    {
+      "source": "/healthcoach",
+      "destination": "/healthcoach/index.html"
     }
   ]
 }
