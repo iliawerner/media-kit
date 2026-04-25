@@ -568,12 +568,6 @@
     border-color: var(--phosphor-faint);
     color: var(--phosphor-dim);
   }
-  .cell.alcohol {
-    background: rgba(255,59,31,0.3);
-    border-color: var(--danger);
-    color: var(--phosphor-bright); font-weight: 700;
-    text-shadow: 0 0 6px rgba(255,59,31,0.85);
-  }
   .heatmap-header {
     display: grid; grid-template-columns: 9.5rem repeat(14, 1fr); gap: 4px;
     font-size: 0.62rem; color: var(--phosphor-dim); margin-bottom: 0.5rem;
@@ -921,7 +915,7 @@
       <span>NIGHTLY_AVG · MS</span>
     </div>
     <p style="font-size: 13px; max-width: 80ch; margin-bottom: 14px; color: var(--phosphor); line-height: 1.65;">
-      Вариабельность сердечного ритма — главный маркер восстановления автономной нервной системы. За&nbsp;две недели HRV прошёл путь от&nbsp;провала после 6 банок пива до&nbsp;рекорда 71&nbsp;мс через 6 дней. Каждый всплеск и падение объясняется событиями дня: тренировки, алкоголь, стресс, рефлюкс. Зелёная зона — выше популяционной нормы для мужчин 30+ (49–56&nbsp;мс по WHOOP/Fitbit).
+      Вариабельность сердечного ритма — главный маркер восстановления автономной нервной системы. За две недели HRV прошёл путь от провала 37&nbsp;мс (13.04) до рекорда 71&nbsp;мс (18.04) — рост +92% за&nbsp;6 дней. Каждый всплеск и&nbsp;падение объясняется событиями дня: тренировки, стресс, рефлюкс, недосып. Зелёная зона — выше популяционной нормы для&nbsp;мужчин 30+ (49–56&nbsp;мс по&nbsp;WHOOP/Fitbit).
     </p>
     <div class="panel">
       <div class="panel-head">
@@ -931,7 +925,7 @@
       <div class="panel-body"><div class="chart-wrap-tall"><canvas id="chartHRV"></canvas></div></div>
       <div class="panel-foot">
         <span class="pf-icon">[!]</span>
-        <span><strong style="color: var(--phosphor-bright);">RECOVERY.6D :: </strong>после провала 13.04 (37&nbsp;мс — следствие 6 банок пива накануне) HRV восстановился до&nbsp;рекорда 71&nbsp;мс к&nbsp;18.04. <span style="color: var(--ok); text-shadow: 0 0 6px rgba(156,255,110,0.6);">+92% за&nbsp;неделю</span> — признак здоровой парасимпатической системы. С&nbsp;23.04 — переход на&nbsp;Huawei D2 (другой алгоритм, 5-минутные окна вместо ночного RMSSD), новая база.</span>
+        <span><strong style="color: var(--phosphor-bright);">RECOVERY.6D :: </strong>после минимума 13.04 (37&nbsp;мс) HRV восстановился до&nbsp;рекорда 71&nbsp;мс к&nbsp;18.04. <span style="color: var(--ok); text-shadow: 0 0 6px rgba(156,255,110,0.6);">+92% за&nbsp;неделю</span> — признак здоровой парасимпатической системы. С&nbsp;23.04 — переход на&nbsp;Huawei D2 (другой алгоритм, 5-минутные окна вместо ночного RMSSD), новая база.</span>
       </div>
     </div>
   </section>
@@ -1073,7 +1067,7 @@
       <span>~89% RATE · 14D</span>
     </div>
     <p style="font-size: 13px; max-width: 80ch; margin-bottom: 14px; color: var(--phosphor); line-height: 1.65;">
-      Каждая ячейка — день. Зелёный — выполнено, красный — пропуск, серый — нет данных. Заметно: пятница 17.04 — пропуск миноксидила&nbsp;am (микронидлинг), субботы — плановый пропуск миноксидила. Воскресенье 12.04 — провал всех вечерних рутин (алкогольный эпизод, 6 банок пива). 13.04 — день восстановления без тренировки.
+      Каждая ячейка — день. Зелёный — выполнено, красный — пропуск, серый — нет данных. Заметно: пятница 17.04 — пропуск миноксидила&nbsp;am (микронидлинг), субботы — плановый пропуск миноксидила. Воскресенье 12.04 — провал всех вечерних рутин из-за позднего отбоя. 13.04 — день восстановления без тренировки. 17.04 — пятничный микронидлинг (полный лоб + межбровье + орбиты + щёки) ⇒ пропуск ретиналя.
     </p>
     <div class="panel">
       <div class="panel-head">
@@ -1089,7 +1083,6 @@
           <span class="legend-pill"><span class="legend-swatch" style="background: rgba(255,179,71,0.5); border-color: var(--phosphor-bright);"></span> WORKOUT.A</span>
           <span class="legend-pill"><span class="legend-swatch" style="background: rgba(255,90,203,0.4); border-color: var(--magenta);"></span> WORKOUT.B</span>
           <span class="legend-pill"><span class="legend-swatch" style="background: rgba(77,214,255,0.3); border-color: var(--cyan);"></span> RECOVERY</span>
-          <span class="legend-pill"><span class="legend-swatch" style="background: rgba(255,59,31,0.3); border-color: var(--danger);"></span> ALCOHOL</span>
         </div>
       </div>
     </div>
@@ -1176,60 +1169,65 @@
   <section class="sec" id="insights">
     <div class="sec-label">
       <span class="blk"></span>
-      <span>&sect; 09 — INSIGHTS / FOUR STORIES</span>
+      <span>&sect; 09 — INSIGHTS / TEN THESES</span>
       <div class="dash"></div>
-      <span>DERIVED / 14D</span>
+      <span>DERIVED / 14D + HISTORICAL</span>
     </div>
 
+    <p style="font-size: 13px; max-width: 80ch; margin-bottom: 24px; color: var(--phosphor); line-height: 1.65;">
+      Десять выводов, привязанных к&nbsp;конкретным числам. Зелёные — то, что работает: переходы плато, прогрессия, приверженность. Красные — точки наблюдения: автономный регуляторный сигнал, недобор макро. Жёлтые — корректировки и&nbsp;неочевидные паттерны.
+    </p>
+
     <div class="insight-grid">
-      <div class="ic alert">
-        <div class="ic-tag"><span>&gt;&gt; STORY 01 :: ALCOHOL CASCADE</span><span class="rx">RX</span></div>
-        <div class="ic-stat">&minus;4<span class="unit">D</span></div>
-        <div class="ic-headline">6 БАНОК ПИВА → 4 ДНЯ ВЫПАВШЕГО ТРЕНИНГА</div>
+
+      <div class="ic ok">
+        <div class="ic-tag"><span>&gt;&gt; THESIS 01 :: STRENGTH BREAKTHROUGH</span><span class="rx">OK</span></div>
+        <div class="ic-stat">&plus;29<span class="unit">%</span></div>
+        <div class="ic-headline">INCLINE PRESS 16KG &times; 7 → 16KG &times; 9</div>
         <div class="ic-body">
-          Воскресенье 12.04 — 6 банок пива (план был 3). Понедельник 13.04 — рвота, HRV провал до&nbsp;<strong>37&nbsp;мс</strong> (минимум за период), все вечерние рутины пропущены, тренировка отменена. Шаги&nbsp;3&nbsp;900. Восстановление до нормального HRV заняло <strong>5 дней</strong>. Это <strong>не случайность, а&nbsp;воспроизводимая логика</strong>: алкоголь&nbsp;+&nbsp;ранний отбой&nbsp;+&nbsp;Мунджаро (замедленная эвакуация желудка) — каскад на&nbsp;несколько дней.
+          Четыре тренировки подряд — плато на 16&nbsp;кг&nbsp;×&nbsp;7 (04.04, 08.04, 14.04). Тренировка 24.04: смена порядка упражнений + неделя без груди = <strong>16&nbsp;кг&nbsp;×&nbsp;9</strong> первым подходом до отказа. Чистый priority-принцип (Schoenfeld 2017): свежая ЦНС + первое упражнение + супер-компенсация = снятие плато <strong>без роста объёма</strong>.
           <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
-            <span class="tag alert">−87% HRV</span>
-            <span class="tag alert">3× SKIPS</span>
-            <span class="tag alert">−54% STEPS</span>
+            <span class="tag ok">+2 REPS</span>
+            <span class="tag ok">PRIORITY</span>
+            <span class="tag ok">NO VOL ↑</span>
           </div>
         </div>
       </div>
 
       <div class="ic ok">
-        <div class="ic-tag"><span>&gt;&gt; STORY 02 :: STRENGTH BREAKTHROUGH</span><span class="rx">OK</span></div>
-        <div class="ic-stat">&plus;29<span class="unit">%</span></div>
-        <div class="ic-headline">INCLINE PRESS :: 16KG &times; 7 → 16KG &times; 9</div>
+        <div class="ic-tag"><span>&gt;&gt; THESIS 02 :: PUSH-UP ARC</span><span class="rx">OK</span></div>
+        <div class="ic-stat">&plus;325<span class="unit">%</span></div>
+        <div class="ic-headline">4 → 17 ОТЖИМАНИЙ ЗА 60 ДНЕЙ</div>
         <div class="ic-body">
-          Четыре тренировки подряд — плато на 16&nbsp;кг&nbsp;×&nbsp;7 (04.04, 08.04, 14.04). Тренировка 24.04: смена порядка упражнений + неделя без груди = <strong>16&nbsp;кг&nbsp;×&nbsp;9</strong> первым подходом до отказа. Чистый priority-принцип (Schoenfeld 2017): свежая ЦНС&nbsp;+&nbsp;первое упражнение&nbsp;+&nbsp;супер-компенсация после паузы = снятие плато без роста объёма.
+          16.02 — 4 повтора с колен до отказа. 17.04 — <strong>17</strong> повторов первым подходом. Классическая траектория «новичковых гейнов»: с 1.6× больше прироста силы у нетренированных в первые 21 неделю (мета-анализ). 17 с&nbsp;колен ≈ 10–12 классическим — <strong>нижняя граница ACSM Fair</strong> для возраста 35–39. Пора менять упражнение.
           <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
-            <span class="tag ok">+2 REPS</span>
-            <span class="tag ok">−1 WEEK</span>
-            <span class="tag ok">PRIORITY</span>
+            <span class="tag ok">NEWBIE GAINS</span>
+            <span class="tag ok">→ CLASSIC</span>
+            <span class="tag ok">ACSM FAIR</span>
           </div>
         </div>
       </div>
 
       <div class="ic alert">
-        <div class="ic-tag"><span>&gt;&gt; STORY 03 :: NON-DIPPER PATTERN</span><span class="rx">RX</span></div>
+        <div class="ic-tag"><span>&gt;&gt; THESIS 03 :: NON-DIPPER PATTERN</span><span class="rx">RX</span></div>
         <div class="ic-stat">7<span class="unit">%</span></div>
         <div class="ic-headline">SYS DIPPING НИЖЕ НОРМЫ 10–20%</div>
         <div class="ic-body">
-          Первый 24-часовой ABPM (23–24.04) показал систолический non-dipping <strong>7%</strong> вместо нормы 10–20%. Подтверждается max&nbsp;HR&nbsp;<strong>95</strong> во сне в ту же ночь (стандарт 70–78). Диастолический дип 13% — норма. Валидность 90% (53/59 замеров) — выше клинического порога. <strong>Не диагноз с одного измерения</strong>, но точка наблюдения. PWV артериальной жёсткости 7.0&nbsp;м/с — Normal для ~39 лет.
+          Первый 24-часовой ABPM (23–24.04): систолический non-dipping <strong>7%</strong> вместо нормы 10–20%. Подтверждается max&nbsp;HR&nbsp;<strong>95</strong> во сне в&nbsp;ту&nbsp;же ночь (стандарт 70–78). Диастолический дип 13% — норма. Валидность 90% (53/59) — выше клинического порога. <strong>Не диагноз с одного измерения</strong>, но точка наблюдения. PWV 7.0&nbsp;м/с — Normal для ~39&nbsp;лет.
           <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
             <span class="tag alert">NON-DIPPER</span>
             <span class="tag alert">PWV 7.0</span>
-            <span class="tag alert">90% VALID</span>
+            <span class="tag alert">↻ 3–4 ВН</span>
           </div>
         </div>
       </div>
 
       <div class="ic warn">
-        <div class="ic-tag"><span>&gt;&gt; STORY 04 :: PROTEIN GAP</span><span class="rx">RX</span></div>
+        <div class="ic-tag"><span>&gt;&gt; THESIS 04 :: PROTEIN GAP</span><span class="rx">RX</span></div>
         <div class="ic-stat">1.43</div>
-        <div class="ic-headline">Г/КГ — НИЖЕ ОПТИМУМА НА МУНДЖАРО</div>
+        <div class="ic-headline">Г/КГ — НИЖЕ ОПТИМУМА НА GLP-1</div>
         <div class="ic-body">
-          Цель 1.6–2.0&nbsp;г/кг (Morton 2018, ASMBS&nbsp;2024) для защиты мышц на дефиците + GLP-1. Среднее за период — <strong>1.43&nbsp;г/кг</strong>, разброс 1.0–1.85. Четыре дня ниже критического порога 1.3. Распределение тоже неравномерное — <strong>вечер-тяжёлое</strong>: половина дневного белка — один поздний коктейль. Witard&nbsp;2024: 4 приёма&nbsp;×&nbsp;38&nbsp;г работают лучше, чем 2&nbsp;×&nbsp;76&nbsp;г при той же сумме.
+          Цель 1.6–2.0&nbsp;г/кг (Morton 2018, ASMBS&nbsp;2024) для защиты мышц на дефиците&nbsp;+&nbsp;Мунджаро. Среднее за период — <strong>1.43&nbsp;г/кг</strong>, разброс 1.0–1.85. Четыре дня ниже критического порога 1.3. Распределение тоже неравномерное — <strong>вечер-тяжёлое</strong>: половина дневного белка часто приходится на поздний коктейль. Witard&nbsp;2024: 4 приёма&nbsp;×&nbsp;38&nbsp;г работают лучше, чем 2&nbsp;×&nbsp;76&nbsp;г при той же сумме.
           <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
             <span class="tag warn">−10–15% POT.</span>
             <span class="tag warn">4× &lt; 1.3</span>
@@ -1237,6 +1235,91 @@
           </div>
         </div>
       </div>
+
+      <div class="ic alert">
+        <div class="ic-tag"><span>&gt;&gt; THESIS 05 :: FIBER GAP</span><span class="rx">RX</span></div>
+        <div class="ic-stat">10<span class="unit">Г</span></div>
+        <div class="ic-headline">26% ОТ НОРМЫ USDA — РИСК НА GLP-1</div>
+        <div class="ic-body">
+          Среднее <strong>~10&nbsp;г/день</strong> при норме мужчин до&nbsp;50 лет 38&nbsp;г (IOM/USDA) или 25–29&nbsp;г (Fu&nbsp;2024, мета-анализ смертности). 4 дня ниже 5&nbsp;г, один день — 0. <strong>Особый риск на Мунджаро</strong>: тирзепатид замедляет моторику ЖКТ, низкая клетчатка усиливает запоры и&nbsp;ухудшает микробиоту. Самый яркий пробел в&nbsp;питании.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag alert">26% NORM</span>
+            <span class="tag alert">GLP-1 RISK</span>
+            <span class="tag alert">+ ПСИЛЛИУМ</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic warn">
+        <div class="ic-tag"><span>&gt;&gt; THESIS 06 :: SLEEP × HRV DECOUPLE</span><span class="rx">RX</span></div>
+        <div class="ic-stat">58 <span style="font-size:0.5em;">/</span> 4Ч</div>
+        <div class="ic-headline">HRV 58 ПОСЛЕ 4 ЧАСОВ СНА</div>
+        <div class="ic-body">
+          20.04: ~4&nbsp;часа реального сна, рефлюкс — но <strong>HRV 58&nbsp;мс</strong> (зелёная зона). 23.04: 8.08&nbsp;ч сна с DOMS-фоном — HRV рухнул до&nbsp;33 (Huawei base). <strong>Субъективное состояние ≠ автономный сигнал</strong>: max&nbsp;HR&nbsp;90 ночью 20.04 — более чувствительный маркер ночного стресса. Принцип: смотреть max HR + дыхание, не только HRV.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag warn">DECOUPLE</span>
+            <span class="tag warn">MAX HR &gt; HRV</span>
+            <span class="tag warn">N=14</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic ok">
+        <div class="ic-tag"><span>&gt;&gt; THESIS 07 :: ROUTINES ADHERENCE</span><span class="rx">OK</span></div>
+        <div class="ic-stat">~89<span class="unit">%</span></div>
+        <div class="ic-headline">ВЫШЕ КЛИНИЧЕСКОГО БЕНЧМАРКА</div>
+        <div class="ic-body">
+          Миноксидил am/pm, ретиналь, чистка зубов — приверженность <strong>~89%</strong> на 14 дней (с учётом плановых пропусков по&nbsp;пятницам/субботам после микронидлинга). Для сравнения: типичная adherence rate в&nbsp;клинических исследованиях формирования привычек — <strong>70–80%</strong>. Слабое звено — зубы, было одно нарушение. Креатин и&nbsp;Мунджаро (еженедельная инъекция по пятницам) — 100%.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag ok">&gt; 70–80%</span>
+            <span class="tag ok">MJ 100%</span>
+            <span class="tag ok">CREATINE 100%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic ok">
+        <div class="ic-tag"><span>&gt;&gt; THESIS 08 :: WEIGHT LOSS PACE</span><span class="rx">OK</span></div>
+        <div class="ic-stat">0.77<span class="unit">КГ/НД</span></div>
+        <div class="ic-headline">15 КГ ЗА 4.5 МЕСЯЦА — В ОПТИМУМЕ</div>
+        <div class="ic-body">
+          Старт ~110 кг (ноябрь&nbsp;2025) → ~95 кг (апрель&nbsp;2026). Темп <strong>0.77&nbsp;кг/неделю</strong> — в&nbsp;диапазоне guidelines 0.5–1.0&nbsp;кг/нед, ближе к&nbsp;верхней границе. Garthe&nbsp;2011: 0.5&nbsp;кг/нед лучше сохраняет lean mass, чем&nbsp;1.0. На&nbsp;Мунджаро 10&nbsp;мг (с&nbsp;10.04 — плато дозы) ожидается замедление до&nbsp;~1.5–2&nbsp;кг/мес — это норма, не сигнал к&nbsp;повышению дозы.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag ok">IN RANGE</span>
+            <span class="tag ok">MJ PLATEAU 10MG</span>
+            <span class="tag ok">−21% / 72ВН</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic warn">
+        <div class="ic-tag"><span>&gt;&gt; THESIS 09 :: STEP VOLATILITY</span><span class="rx">RX</span></div>
+        <div class="ic-stat">8<span class="unit">×</span></div>
+        <div class="ic-headline">ШАГИ 1962 → 15 778 — РАЗБРОС</div>
+        <div class="ic-body">
+          Среднее 8&nbsp;420 шагов выглядит <strong>«близко к оптимуму»</strong>, но разброс восьмикратный. Lancet Public Health (2025): стабильные 7&nbsp;000+ снижают смертность сильнее, чем чередование 13к/2.5к. <strong>Регулярность ≫ среднего</strong>. Дни без прогулки — 1962, 2100, 2500 (стресс/ливень/недосып) — каждый из них тянет за собой следующие. План «минимум 5к в плохую погоду» закрывает дыру.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag warn">CV ~70%</span>
+            <span class="tag warn">5× &lt; 7K</span>
+            <span class="tag warn">MIN.5K BACKUP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic warn">
+        <div class="ic-tag"><span>&gt;&gt; THESIS 10 :: BW CEILING / SQUAT</span><span class="rx">RX</span></div>
+        <div class="ic-stat">21 → 7</div>
+        <div class="ic-headline">BODYWEIGHT ИСЧЕРПАН — НА ЖЕЛЕЗО</div>
+        <div class="ic-body">
+          Болгарские сплит-приседы 17.04: <strong>21 повтор</strong> с собственным весом до отказа — выше целевого диапазона гипертрофии 6–12 (Schoenfeld). 22.04 — переход на&nbsp;13.5&nbsp;кг&nbsp;×&nbsp;7. 24.04 — 16&nbsp;кг&nbsp;×&nbsp;8 + новая точка боли (правое колено). Сигнал: <strong>прыжок 13.5→16 + до&nbsp;отказа</strong> слишком агрессивен при плановом RPE&nbsp;7–8. Откат на&nbsp;13.5&nbsp;кг.
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span class="tag warn">BW DONE</span>
+            <span class="tag warn">⚠ KNEE</span>
+            <span class="tag warn">RPE 7–8</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -1310,20 +1393,20 @@
 
   // ─── DATA ─────────────────────────────────────────────
   const days = [
-    { d: '11.04', dow: 'fri', sleep: 8.6,  hrv: 73, steps: 1962,  kcal: 1649, p: 177, f: 47,  c: 78,  fiber: 7,  workout: 'super', alcohol: 0 },
-    { d: '12.04', dow: 'sun', sleep: 5.9,  hrv: 44, steps: 9065,  kcal: 2536, p: 94,  f: 39,  c: 247, fiber: 6,  workout: null,    alcohol: 6 },
-    { d: '13.04', dow: 'mon', sleep: null, hrv: 37, steps: 3900,  kcal: 1965, p: 99,  f: 97,  c: 167, fiber: 11, workout: null,    alcohol: 0, note: 'hangover' },
-    { d: '14.04', dow: 'tue', sleep: 6.0,  hrv: 46, steps: 11958, kcal: 2130, p: 116, f: 82,  c: 198, fiber: 4,  workout: 'B',     alcohol: 0 },
-    { d: '15.04', dow: 'wed', sleep: 7.65, hrv: 56, steps: 13197, kcal: 2350, p: 162, f: 106, c: 221, fiber: 20, workout: null,    alcohol: 0 },
-    { d: '16.04', dow: 'thu', sleep: 6.5,  hrv: 54, steps: 2500,  kcal: 2080, p: 133, f: 52,  c: 239, fiber: 6,  workout: null,    alcohol: 0 },
-    { d: '17.04', dow: 'fri', sleep: 7.0,  hrv: 58, steps: 6637,  kcal: 1743, p: 160, f: 55,  c: 150, fiber: 10, workout: 'A',     alcohol: 0 },
-    { d: '18.04', dow: 'sat', sleep: 7.0,  hrv: 71, steps: 6980,  kcal: 1850, p: 163, f: 56,  c: 94,  fiber: 10, workout: 'super', alcohol: 3 },
-    { d: '19.04', dow: 'sun', sleep: 7.5,  hrv: 51, steps: 9788,  kcal: 1710, p: 101, f: 70,  c: 109, fiber: 19, workout: null,    alcohol: 3 },
-    { d: '20.04', dow: 'mon', sleep: 4.0,  hrv: 58, steps: 2100,  kcal: 1165, p: 113, f: 62,  c: 19,  fiber: 0,  workout: null,    alcohol: 0, note: 'reflux' },
-    { d: '21.04', dow: 'tue', sleep: 7.0,  hrv: 57, steps: 11105, kcal: 1615, p: 145, f: 72,  c: 91,  fiber: 5,  workout: null,    alcohol: 0 },
-    { d: '22.04', dow: 'wed', sleep: 7.0,  hrv: 47, steps: 11819, kcal: 1675, p: 161, f: 42,  c: 158, fiber: 22, workout: 'B',     alcohol: 0 },
-    { d: '23.04', dow: 'thu', sleep: 8.08, hrv: 33, steps: 14680, kcal: 2067, p: 176, f: 37,  c: 229, fiber: 30, workout: 'rec',   alcohol: 0, note: 'huawei base' },
-    { d: '24.04', dow: 'fri', sleep: 8.32, hrv: 47, steps: 15778, kcal: 2100, p: 150, f: 60,  c: 200, fiber: 25, workout: 'A',     alcohol: 0 },
+    { d: '11.04', dow: 'fri', sleep: 8.6,  hrv: 73, steps: 1962,  kcal: 1649, p: 177, f: 47,  c: 78,  fiber: 7,  workout: 'super' },
+    { d: '12.04', dow: 'sun', sleep: 5.9,  hrv: 44, steps: 9065,  kcal: 2536, p: 94,  f: 39,  c: 247, fiber: 6,  workout: null    },
+    { d: '13.04', dow: 'mon', sleep: null, hrv: 37, steps: 3900,  kcal: 1965, p: 99,  f: 97,  c: 167, fiber: 11, workout: null,    note: 'recovery' },
+    { d: '14.04', dow: 'tue', sleep: 6.0,  hrv: 46, steps: 11958, kcal: 2130, p: 116, f: 82,  c: 198, fiber: 4,  workout: 'B'     },
+    { d: '15.04', dow: 'wed', sleep: 7.65, hrv: 56, steps: 13197, kcal: 2350, p: 162, f: 106, c: 221, fiber: 20, workout: null    },
+    { d: '16.04', dow: 'thu', sleep: 6.5,  hrv: 54, steps: 2500,  kcal: 2080, p: 133, f: 52,  c: 239, fiber: 6,  workout: null    },
+    { d: '17.04', dow: 'fri', sleep: 7.0,  hrv: 58, steps: 6637,  kcal: 1743, p: 160, f: 55,  c: 150, fiber: 10, workout: 'A'     },
+    { d: '18.04', dow: 'sat', sleep: 7.0,  hrv: 71, steps: 6980,  kcal: 1850, p: 163, f: 56,  c: 94,  fiber: 10, workout: 'super' },
+    { d: '19.04', dow: 'sun', sleep: 7.5,  hrv: 51, steps: 9788,  kcal: 1710, p: 101, f: 70,  c: 109, fiber: 19, workout: null    },
+    { d: '20.04', dow: 'mon', sleep: 4.0,  hrv: 58, steps: 2100,  kcal: 1165, p: 113, f: 62,  c: 19,  fiber: 0,  workout: null,    note: 'reflux' },
+    { d: '21.04', dow: 'tue', sleep: 7.0,  hrv: 57, steps: 11105, kcal: 1615, p: 145, f: 72,  c: 91,  fiber: 5,  workout: null    },
+    { d: '22.04', dow: 'wed', sleep: 7.0,  hrv: 47, steps: 11819, kcal: 1675, p: 161, f: 42,  c: 158, fiber: 22, workout: 'B'     },
+    { d: '23.04', dow: 'thu', sleep: 8.08, hrv: 33, steps: 14680, kcal: 2067, p: 176, f: 37,  c: 229, fiber: 30, workout: 'rec',   note: 'huawei base' },
+    { d: '24.04', dow: 'fri', sleep: 8.32, hrv: 47, steps: 15778, kcal: 2100, p: 150, f: 60,  c: 200, fiber: 25, workout: 'A'     },
   ];
   const labels = days.map(d => d.d);
   const labelsLong = days.map(d => `${d.d} (${d.dow})`);
@@ -1451,12 +1534,12 @@
                   borderColor: 'rgba(156,255,110,0.5)', borderWidth: 1,
                 }
               },
-              alcEvt: {
-                type: 'line', xMin: '12.04 (sun)', xMax: '12.04 (sun)',
+              lowEvt: {
+                type: 'line', xMin: '13.04 (mon)', xMax: '13.04 (mon)',
                 borderColor: DANGER,
                 borderWidth: 1.5, borderDash: [3, 3],
                 label: {
-                  display: true, content: 'ALC.6×', position: 'start',
+                  display: true, content: 'LOW 37', position: 'start',
                   backgroundColor: 'rgba(255,59,31,0.15)',
                   color: DANGER, font: { size: 9, weight: 700, family: "'JetBrains Mono', monospace" },
                   padding: 5, yAdjust: -2,
@@ -2010,7 +2093,6 @@
       { key: 'teeth',        label: '> TEETH',        type: 'bool' },
       { key: 'mounjaro',     label: '> MOUNJARO',     type: 'weekly' },
       { key: 'creatine',     label: '> CREATINE',     type: 'bool' },
-      { key: 'alcohol',      label: '> ALCOHOL',      type: 'alcohol' },
     ];
     const routines = {
       '11.04': { minoxidil_am: true,  minoxidil_pm: false, retinal: true,  teeth: true,  mounjaro: true,  creatine: true },
@@ -2046,10 +2128,6 @@
           else if (w === 'super') { cls = 'cell workout-rec'; text = 'S'; }
           else if (w === 'rec') { cls = 'cell workout-rec'; text = 'R'; }
           else { cls = 'cell workout-none'; text = '—'; }
-        } else if (row.type === 'alcohol') {
-          if (day.alcohol >= 5) { cls = 'cell alcohol'; text = '!'; }
-          else if (day.alcohol > 0) { cls = 'cell alcohol'; text = day.alcohol; }
-          else { cls = 'cell unknown'; text = ''; }
         } else if (row.type === 'weekly') {
           if (r.mounjaro === true) { cls = 'cell done'; text = '✓'; }
           else { cls = 'cell unknown'; text = ''; }
