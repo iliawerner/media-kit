@@ -156,8 +156,8 @@
 
     #prompter-text {
       transform: scaleY(-1);
-      padding: 60px 40px 120px;
-      font-size: 180px; line-height: 1.35;
+      padding: 60px 15vw 120px;
+      font-size: 144px; line-height: 1.35;
       font-weight: 700; letter-spacing: -0.02em;
       color: var(--yellow); white-space: pre-wrap;
       word-break: break-word; min-height: 100vh;
@@ -285,7 +285,7 @@
 <!-- Floating controls in prompter mode -->
 <div id="prompter-controls">
   <button class="p-ctrl-btn" id="p-size-up">+</button>
-  <span class="p-size-label" id="p-size-val">180</span>
+  <span class="p-size-label" id="p-size-val">144</span>
   <button class="p-ctrl-btn" id="p-size-down">−</button>
 </div>
 
@@ -302,7 +302,7 @@
 
 <script>
   const MIN_SIZE = 24, MAX_SIZE = 240, SIZE_STEP = 8;
-  let fontSize = 180;
+  let fontSize = 144;
 
   const prompterView   = document.getElementById('prompter-view');
   const prompterLoad   = document.getElementById('prompter-loading');
