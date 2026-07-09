@@ -108,9 +108,12 @@ input[type=color]{width:38px;height:26px;border:1px solid var(--line-strong);bor
   padding:10px;font:inherit;font-weight:600;cursor:pointer;transition:background .12s}
 #dl:hover{background:#fff}
 
-#supOpen{width:100%;margin-top:8px;background:none;border:1px solid var(--line-strong);color:var(--txt);
-  border-radius:8px;padding:9px;font:inherit;cursor:pointer;transition:border-color .12s,color .12s}
-#supOpen:hover{border-color:#4b4f57;color:var(--txt-bright)}
+#supFab{position:fixed;z-index:40;right:332px;bottom:22px;display:flex;align-items:center;gap:7px;
+  background:var(--thumb);color:#121316;border:0;border-radius:22px;padding:11px 17px;
+  font:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  box-shadow:0 6px 26px rgba(0,0,0,.5);transition:transform .12s,background .12s}
+#supFab:hover{background:#fff;transform:translateY(-1px)}
+#supFab .h{color:#e0574b;font-size:13px;line-height:1}
 #supOverlay{position:fixed;inset:0;background:rgba(5,6,8,.72);display:none;align-items:center;
   justify-content:center;z-index:50;padding:20px;backdrop-filter:blur(6px)}
 #supOverlay.open{display:flex}
@@ -155,11 +158,13 @@ footer b{color:var(--txt);font-weight:600}
   #view{flex:none;height:52vh;padding:16px}
   #meta{left:16px;bottom:6px}
   #panel{width:100%;flex:1;border-left:0;border-top:1px solid var(--line)}
+  #supFab{right:16px;bottom:16px}
 }
 </style>
 </head>
 <body>
 <div id="view"><canvas id="c"></canvas><div id="meta"></div><div id="err"></div></div>
+<button id="supFab" title="Support Design Lovers"><span class="h">♥</span> Support</button>
 <div id="panel">
   <header>
     <h1>CHEESY WALLPAPERS</h1>
@@ -247,7 +252,6 @@ footer b{color:var(--txt);font-weight:600}
   </details>
   <details class="group" open><summary>Export</summary>
     <button id="dl">Download PNG</button>
-    <button id="supOpen">♥ Support this project</button>
   </details>
 
   <footer>
@@ -269,9 +273,9 @@ footer b{color:var(--txt);font-weight:600}
       <b>YouTube membership</b>
       <small>Join the channel and get member perks</small>
     </a>
-    <a class="supBtn" href="https://designlovers.gumroad.com" target="_blank" rel="noopener">
-      <b>Wallpaper packs on Gumroad</b>
-      <small>Premium packs — or just leave a tip</small>
+    <a class="supBtn" href="https://designlovers.gumroad.com/coffee" target="_blank" rel="noopener">
+      <b>Buy me a coffee</b>
+      <small>Leave a tip on Gumroad - any amount helps</small>
     </a>
     <div class="supDivider">or send USDT</div>
     <div id="supAddrs"></div>
@@ -1472,7 +1476,7 @@ const supOverlay = document.getElementById("supOverlay");
     box.append(row);
   }
 }
-document.getElementById("supOpen").addEventListener("click", () => supOverlay.classList.add("open"));
+document.getElementById("supFab").addEventListener("click", () => supOverlay.classList.add("open"));
 document.getElementById("supClose").addEventListener("click", () => supOverlay.classList.remove("open"));
 supOverlay.addEventListener("click", e => { if(e.target === supOverlay) supOverlay.classList.remove("open"); });
 window.addEventListener("keydown", e => { if(e.key === "Escape") supOverlay.classList.remove("open"); });
