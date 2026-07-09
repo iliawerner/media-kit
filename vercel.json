@@ -10,6 +10,10 @@
       "destination": "/tools/kinetic-title/index.html"
     },
     {
+      "source": "/tools/cheesy-wallpapers",
+      "destination": "/tools/cheesy-wallpapers/index.html"
+    },
+    {
       "source": "/v2",
       "destination": "/v2/index.html"
     },

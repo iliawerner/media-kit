@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cheesy Wallpapers — parametric wallpaper studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%80%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0c0d0f;
+  --panel:#151619;
+  --line:#24262b;
+  --line-strong:#33363c;
+  --txt:#9ba0a8;
+  --txt-dim:#5d6169;
+  --txt-bright:#eceef1;
+  --chip:#1d1f24;
+  --thumb:#e2e4e8;
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{display:flex;background:var(--bg);color:var(--txt);
+  font:12px/1.45 -apple-system,"SF Pro Text",Inter,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+
+/* ---------- viewport ---------- */
+#view{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;padding:28px;position:relative}
+#c{display:block;cursor:crosshair;box-shadow:0 12px 48px rgba(0,0,0,.55);border-radius:2px}
+#meta{position:absolute;left:28px;bottom:12px;color:var(--txt-dim);font-size:10.5px;
+  letter-spacing:.02em;user-select:none;pointer-events:none}
+#err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;color:#c66;padding:40px;text-align:center}
+
+/* ---------- panel ---------- */
+#panel{width:312px;background:var(--panel);border-left:1px solid var(--line);
+  padding:20px 18px 30px;overflow-y:auto;flex-shrink:0;scrollbar-width:thin;scrollbar-color:#2c2f35 transparent}
+#panel::-webkit-scrollbar{width:8px}
+#panel::-webkit-scrollbar-thumb{background:#2c2f35;border-radius:4px}
+#panel::-webkit-scrollbar-track{background:transparent}
+
+header h1{font-size:13px;letter-spacing:.16em;color:var(--txt-bright);font-weight:600}
+header .sub{font-size:11px;color:var(--txt-dim);margin-top:3px}
+header .sub a{color:var(--txt);text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:1px;transition:color .12s,border-color .12s}
+header .sub a:hover{color:var(--txt-bright);border-color:var(--txt-dim)}
+
+/* ---------- groups ---------- */
+details.group{margin-top:18px;border-top:1px solid var(--line);padding-top:4px}
+details.group:first-of-type{border-top:0}
+details.group>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;
+  padding:7px 0 6px;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--txt-dim);font-weight:600;user-select:none}
+details.group>summary::-webkit-details-marker{display:none}
+details.group>summary::after{content:"";width:6px;height:6px;border-right:1.4px solid var(--txt-dim);
+  border-bottom:1.4px solid var(--txt-dim);transform:rotate(-45deg);margin-left:auto;transition:transform .15s}
+details.group[open]>summary::after{transform:rotate(45deg)}
+details.group>summary:hover{color:var(--txt)}
+
+.row{display:grid;grid-template-columns:92px 1fr 42px;gap:8px;align-items:center;margin:7px 0}
+.row label{color:var(--txt)}
+.row output{text-align:right;color:#c9ccd1;font-variant-numeric:tabular-nums;font-size:11px}
+
+input[type=range]{-webkit-appearance:none;appearance:none;height:2px;background:var(--line-strong);
+  border-radius:1px;width:100%;outline-offset:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;
+  border-radius:50%;background:var(--thumb);cursor:pointer;border:none;transition:transform .1s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--thumb);cursor:pointer;border:none}
+
+.check{display:flex;align-items:center;gap:8px;margin:9px 0;color:var(--txt);cursor:pointer}
+.check input{accent-color:var(--thumb);cursor:pointer}
+
+.seg{display:flex;background:var(--chip);border-radius:8px;padding:2px}
+.seg button{flex:1;border:0;background:none;color:var(--txt);padding:6px 0;border-radius:6px;
+  font:inherit;cursor:pointer;transition:color .12s}
+.seg button:hover{color:var(--txt-bright)}
+.seg button.on{background:#34373e;color:var(--txt-bright)}
+#tabSeg{margin-top:16px}
+#tabSeg button.on{background:#3e424a;color:#fff}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1px solid var(--line-strong);background:none;color:var(--txt);border-radius:20px;
+  padding:4px 11px;font:inherit;font-size:11px;cursor:pointer;transition:border-color .12s,color .12s}
+.chips button:hover{border-color:#4b4f57;color:#d8dbdf}
+.chips button.on{border-color:#8b8f96;color:var(--txt-bright)}
+.chips button .x{margin-left:6px;color:var(--txt-dim)}
+.chips button .x:hover{color:#e07a6a}
+
+.saverow{display:flex;gap:6px;margin-top:10px}
+.saverow input{flex:1;background:var(--chip);border:1px solid var(--line-strong);color:#c9ccd1;
+  border-radius:6px;padding:5px 8px;font:inherit;min-width:0}
+.saverow input::placeholder{color:var(--txt-dim)}
+.saverow button{border:1px solid var(--line-strong);background:none;color:var(--txt);border-radius:6px;
+  padding:5px 12px;font:inherit;cursor:pointer}
+.saverow button:hover{border-color:#4b4f57;color:#d8dbdf}
+.note{margin-top:8px;color:var(--txt-dim);font-size:10.5px;line-height:1.5}
+
+.colors{display:flex;gap:16px;margin-top:4px}
+.colors label{display:flex;align-items:center;gap:7px;cursor:pointer}
+input[type=color]{width:38px;height:26px;border:1px solid var(--line-strong);border-radius:6px;
+  background:none;padding:1px;cursor:pointer}
+
+.dim{opacity:.32;pointer-events:none}
+
+.wh{display:flex;gap:8px;align-items:center;margin-top:10px}
+.wh input{width:76px;background:var(--chip);border:1px solid var(--line-strong);color:#c9ccd1;
+  border-radius:6px;padding:5px 8px;font:inherit}
+
+#dl{width:100%;margin-top:12px;background:var(--thumb);color:#121316;border:0;border-radius:8px;
+  padding:10px;font:inherit;font-weight:600;cursor:pointer;transition:background .12s}
+#dl:hover{background:#fff}
+
+#supOpen{width:100%;margin-top:8px;background:none;border:1px solid var(--line-strong);color:var(--txt);
+  border-radius:8px;padding:9px;font:inherit;cursor:pointer;transition:border-color .12s,color .12s}
+#supOpen:hover{border-color:#4b4f57;color:var(--txt-bright)}
+#supOverlay{position:fixed;inset:0;background:rgba(5,6,8,.72);display:none;align-items:center;
+  justify-content:center;z-index:50;padding:20px;backdrop-filter:blur(6px)}
+#supOverlay.open{display:flex}
+#supCard{width:400px;max-width:100%;background:var(--panel);border:1px solid var(--line-strong);
+  border-radius:14px;padding:24px;position:relative;max-height:90vh;overflow:auto;
+  box-shadow:0 24px 80px rgba(0,0,0,.6)}
+#supClose{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--txt-dim);
+  font-size:20px;line-height:1;cursor:pointer;padding:4px}
+#supClose:hover{color:var(--txt-bright)}
+#supCard h2{font-size:13px;letter-spacing:.12em;color:var(--txt-bright);margin-bottom:8px;font-weight:600}
+.supText{color:var(--txt);font-size:12px;line-height:1.55;margin-bottom:16px}
+.supBtn{display:block;border:1px solid var(--line-strong);border-radius:10px;padding:12px 14px;
+  margin-bottom:8px;text-decoration:none;color:var(--txt);transition:border-color .12s}
+.supBtn:hover{border-color:#565b64}
+.supBtn b{display:block;color:var(--txt-bright);font-size:12.5px;margin-bottom:2px;font-weight:600}
+.supBtn small{color:var(--txt-dim);font-size:11px;line-height:1.4}
+.supDivider{display:flex;align-items:center;gap:10px;color:var(--txt-dim);font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;margin:16px 0 10px}
+.supDivider::before,.supDivider::after{content:"";flex:1;height:1px;background:var(--line)}
+.addr{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;
+  padding:8px 10px;margin-bottom:6px}
+.addr .net{font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--txt);background:var(--chip);
+  border-radius:5px;padding:3px 6px;flex-shrink:0;min-width:52px;text-align:center}
+.addr code{flex:1;font:11px ui-monospace,SFMono-Regular,Menlo,monospace;color:#c9ccd1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.addr button{border:1px solid var(--line-strong);background:none;color:var(--txt);border-radius:6px;
+  padding:4px 9px;font:inherit;font-size:10.5px;cursor:pointer;flex-shrink:0;transition:color .12s,border-color .12s}
+.addr button:hover{color:var(--txt-bright);border-color:#4b4f57}
+
+.resetrow{display:flex;justify-content:flex-end;margin-top:10px}
+.resetrow button{border:0;background:none;color:var(--txt-dim);font:inherit;font-size:11px;
+  cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.resetrow button:hover{color:var(--txt)}
+
+footer{margin-top:26px;border-top:1px solid var(--line);padding-top:14px;color:var(--txt-dim);
+  font-size:10.5px;line-height:1.6}
+footer b{color:var(--txt);font-weight:600}
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px){
+  body{flex-direction:column}
+  #view{flex:none;height:52vh;padding:16px}
+  #meta{left:16px;bottom:6px}
+  #panel{width:100%;flex:1;border-left:0;border-top:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+<div id="view"><canvas id="c"></canvas><div id="meta"></div><div id="err"></div></div>
+<div id="panel">
+  <header>
+    <h1>CHEESY WALLPAPERS</h1>
+    <div class="sub">by <a href="https://www.youtube.com/@design_lovers" target="_blank" rel="noopener">Design Lovers</a></div>
+  </header>
+
+  <div class="seg" id="tabSeg">
+    <button data-tab="1" class="on">Perforation</button>
+    <button data-tab="2">Lab</button>
+  </div>
+
+  <!-- ============ TAB 1 ============ -->
+  <div id="tab1">
+    <details class="group" open><summary>Style</summary>
+      <div class="seg" id="modeSeg1">
+        <button data-mode="0">Flat</button>
+        <button data-mode="1" class="on">Volume</button>
+      </div>
+    </details>
+    <details class="group" open><summary>Presets</summary>
+      <div class="chips" id="presets1"></div>
+      <div class="chips" id="userPresets1" style="margin-top:6px"></div>
+      <div class="saverow">
+        <input id="pname1" placeholder="Name your preset…" maxlength="24">
+        <button id="psave1">Save</button>
+      </div>
+      <div class="note" id="pnote1">Your presets live in this browser’s local storage — they never leave your device, and clearing browser data deletes them.</div>
+    </details>
+    <details class="group" open id="g-pattern"><summary>Pattern</summary></details>
+    <details class="group" id="g-cutout"><summary>Clock cutout</summary></details>
+    <details class="group" open id="g-volume"><summary>Surface</summary></details>
+    <details class="group" open id="g-light"><summary>Light</summary></details>
+    <details class="group" open><summary>Colors</summary>
+      <div class="colors">
+        <label>Plate <input type="color" id="colTop1"></label>
+        <label>Holes <input type="color" id="colHole1"></label>
+      </div>
+    </details>
+    <div class="resetrow"><button id="reset1">Reset to defaults</button></div>
+  </div>
+
+  <!-- ============ TAB 2 ============ -->
+  <div id="tab2" style="display:none">
+    <details class="group" open><summary>Style</summary>
+      <div class="seg" id="modeSeg2">
+        <button data-mode="0">Flat</button>
+        <button data-mode="1" class="on">Volume</button>
+      </div>
+    </details>
+    <details class="group" open><summary>Shape</summary>
+      <div class="chips" id="shapeChips"></div>
+    </details>
+    <details class="group" open><summary>Presets</summary>
+      <div class="chips" id="presets2"></div>
+      <div class="chips" id="userPresets2" style="margin-top:6px"></div>
+      <div class="saverow">
+        <input id="pname2" placeholder="Name your preset…" maxlength="24">
+        <button id="psave2">Save</button>
+      </div>
+      <div class="note" id="pnote2">Your presets live in this browser’s local storage — they never leave your device, and clearing browser data deletes them.</div>
+    </details>
+    <details class="group" open id="g2-pattern"><summary>Pattern</summary></details>
+    <details class="group" id="g2-cutout"><summary>Clock cutout</summary></details>
+    <details class="group" open id="g2-surface"><summary>Surface</summary></details>
+    <details class="group" open id="g2-layers"><summary>Back layer</summary></details>
+    <details class="group" open id="g2-material"><summary>Material</summary></details>
+    <details class="group" open id="g2-light"><summary>Light</summary></details>
+    <details class="group" open id="g2-post"><summary>Post</summary></details>
+    <details class="group" open><summary>Colors</summary>
+      <div class="colors">
+        <label>Plate <input type="color" id="colTop2"></label>
+        <label>Holes <input type="color" id="colHole2"></label>
+      </div>
+    </details>
+    <div class="resetrow"><button id="reset2">Reset to defaults</button></div>
+  </div>
+
+  <!-- ============ shared ============ -->
+  <details class="group" open id="g-canvas"><summary>Canvas</summary>
+    <div class="chips" id="sizeChips"></div>
+    <div class="wh">
+      <input type="number" id="expW" value="5120" min="16" max="12000"> ×
+      <input type="number" id="expH" value="2880" min="16" max="12000"> px
+    </div>
+  </details>
+  <details class="group" open><summary>Export</summary>
+    <button id="dl">Download PNG</button>
+    <button id="supOpen">♥ Support this project</button>
+  </details>
+
+  <footer>
+    <b>Tips.</b> Drag on the canvas to move the light. Canvas size drives both the preview and the exported PNG.
+    “Whole holes only” ends the perforation cleanly inside the edge margin — nothing gets clipped.
+    Clock cutout reserves a hole-free zone sized for the iPhone lock-screen clock.
+    Slot length = 0 turns slots into dots.<br><br>
+    Made with WebGL2 · <a href="https://www.youtube.com/@design_lovers" target="_blank" rel="noopener" style="color:var(--txt);text-decoration:none;border-bottom:1px solid var(--line-strong)"><b>Design Lovers</b></a>
+  </footer>
+</div>
+
+<!-- ============ support modal ============ -->
+<div id="supOverlay">
+  <div id="supCard">
+    <button id="supClose" title="Close">×</button>
+    <h2>SUPPORT DESIGN LOVERS</h2>
+    <p class="supText">Cheesy Wallpapers is free. If it earned a spot on your screen — here are three ways to support the channel.</p>
+    <a class="supBtn" href="https://www.youtube.com/@design_lovers/membership" target="_blank" rel="noopener">
+      <b>YouTube membership</b>
+      <small>Join the channel and get member perks</small>
+    </a>
+    <a class="supBtn" href="https://designlovers.gumroad.com" target="_blank" rel="noopener">
+      <b>Wallpaper packs on Gumroad</b>
+      <small>Premium packs — or just leave a tip</small>
+    </a>
+    <div class="supDivider">or send USDT</div>
+    <div id="supAddrs"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ================================================================
+   VERTEX (shared)
+   ================================================================ */
+
+const VERT = `#version 300 es
+void main(){
+  float x = float((gl_VertexID << 1) & 2);
+  float y = float(gl_VertexID & 2);
+  gl_Position = vec4(x * 2.0 - 1.0, y * 2.0 - 1.0, 0.0, 1.0);
+}`;
+
+/* ================================================================
+   TAB 1 FRAGMENT — frozen v03 engine (do not touch)
+   ================================================================ */
+
+const FRAG1 = `#version 300 es
+precision highp float;
+precision highp int;
+out vec4 O;
+
+uniform vec2  uRes;
+uniform int   uMode, uTrim;
+uniform float uZoom, uPitchX, uPitchY, uStagger, uLen, uRad, uRot, uMargin;
+uniform float uCutW, uCutH, uCutY;   /* clock cutout: % of canvas, Y = % up from center */
+uniform float uBevel, uProfile, uDepth;
+uniform float uAz, uElev, uKey, uAmb, uRough, uGrain, uGrad;
+uniform vec3  uColTop, uColHole;
+
+float hash(vec2 q){ return fract(sin(dot(q, vec2(127.1, 311.7))) * 43758.5453123); }
+
+float vnoise(vec2 q){
+  vec2 i = floor(q), f = fract(q);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x),
+             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+}
+
+float sdStadium(vec2 q, float l, float r){
+  q.x -= clamp(q.x, -l, l);
+  return length(q) - r;
+}
+
+mat2 gM;
+vec2 gShift;
+vec2 gExt;
+vec2 gFieldHalf;
+vec2 gCutHalf;
+float gCutY;
+
+float pattern(vec2 q){
+  float d = 1e9;
+  float cx = floor(q.x / uPitchX);
+  for(int i = -1; i <= 1; i++){
+    float c  = cx + float(i);
+    float oy = 0.5 * uStagger * uPitchY * mod(c, 2.0);
+    float ry = floor((q.y - oy) / uPitchY);
+    for(int j = -1; j <= 1; j++){
+      vec2 ctr = vec2((c + 0.5) * uPitchX, (ry + float(j) + 0.5) * uPitchY + oy);
+      vec2 cs = (ctr - gShift) * gM;
+      if(uTrim == 1 && any(greaterThan(abs(cs) + gExt, gFieldHalf))) continue;
+      if(gCutHalf.x > 0.0 && gCutHalf.y > 0.0
+         && abs(cs.x) < gCutHalf.x + gExt.x
+         && abs(cs.y - gCutY) < gCutHalf.y + gExt.y) continue;
+      d = min(d, sdStadium(q - ctr, uLen, uRad));
+    }
+  }
+  return d;
+}
+
+vec3 shadeSurf(vec3 base, vec3 n, vec3 L, float grad){
+  float dl = dot(n, L);
+  float dw = dl * 0.5 + 0.5;
+  float diff = mix(max(dl, 0.0), dw * dw, 0.45);
+  vec3 R = reflect(vec3(0.0, 0.0, -1.0), n);
+  float s = clamp(dot(R, L) * 0.5 + 0.5, 0.0, 1.0);
+  float sp   = pow(s, mix(90.0, 6.0, uRough)) * mix(1.0, 0.25, uRough);
+  float fill = pow(1.0 - s, 3.0) * 0.10;
+  vec3 spC = mix(vec3(1.0), base, 0.55);
+  return base * (uAmb + uKey * grad * diff) + spC * uKey * grad * (sp + fill);
+}
+
+vec3 pixel(vec2 fc){
+  float scale = 100.0 / (uRes.x * uZoom);
+  vec2 ps = (fc - 0.5 * uRes) * scale;
+  float cr = cos(uRot), sr = sin(uRot);
+  gM = mat2(cr, -sr, sr, cr);
+  gShift = 0.5 * vec2(uPitchX, uPitchY);
+  gExt = vec2(uLen * abs(cr) + uRad, uLen * abs(sr) + uRad);
+  gFieldHalf = vec2(50.0 / uZoom - uMargin,
+                    50.0 * uRes.y / (uRes.x * uZoom) - uMargin);
+  float worldH = 100.0 * uRes.y / (uRes.x * uZoom);
+  gCutHalf = 0.5 * vec2(uCutW * 0.01 * (100.0 / uZoom), uCutH * 0.01 * worldH);
+  gCutY = uCutY * 0.01 * worldH;
+
+  vec2 p = gM * ps + gShift;
+
+  float d  = pattern(p);
+  float aa = scale * 0.75;
+
+  vec3 top = pow(uColTop,  vec3(2.2));
+  vec3 hol = pow(uColHole, vec3(2.2));
+
+  if(uMode == 0)
+    return mix(hol, top, smoothstep(-aa, aa, d));
+
+  float e = max(scale, uBevel * 0.06);
+  vec2 g = vec2(
+    pattern(p + vec2(e, 0.0)) - pattern(p - vec2(e, 0.0)),
+    pattern(p + vec2(0.0, e)) - pattern(p - vec2(0.0, e))
+  ) / (2.0 * e);
+  vec2 gn = length(g) > 1e-5 ? normalize(g) : vec2(0.0);
+
+  vec2 L2s = vec2(cos(uAz), sin(uAz));
+  vec2 L2  = gM * L2s;
+  float se = sin(uElev), ce = cos(uElev);
+  vec3 L = normalize(vec3(L2 * ce, se));
+
+  vec2 suv = (fc - 0.5 * uRes) / uRes.x;
+  float grad = max(1.0 + uGrad * 0.9 * dot(suv, L2s), 0.0);
+
+  float nA = vnoise(p * 6.0)         + 0.5 * vnoise(p * 14.0);
+  float nB = vnoise(p * 6.0 + 31.7)  + 0.5 * vnoise(p * 14.0 + 57.3);
+  vec2 micro = (vec2(nA, nB) - 0.75) * (0.18 * uRough);
+
+  float t = clamp(d / uBevel, 0.0, 1.0);
+  float dzdt = mix(1.0, 1.5707963 * cos(t * 1.5707963), uProfile);
+  dzdt *= smoothstep(1.0, 0.92, t);
+  vec3 n = normalize(vec3(-dzdt * gn + micro, 1.0));
+  float ao = mix(0.55, 1.0, smoothstep(0.0, 1.0, t));
+  vec3 plate = shadeSurf(top, n, L, grad) * ao;
+
+  vec3 col = plate;
+  if(d < aa){
+    float tc = max(-d, 0.0);
+    float wallVis = max(min(uDepth, uRad) * 0.18, 0.02);
+    float wallM = exp(-tc / wallVis);
+    vec3 nWall = normalize(vec3(-gn, 0.35));
+    vec3 wallC = shadeSurf(mix(hol, top, 0.25), nWall, L, grad) * 0.45;
+
+    float w  = 0.5 + 0.5 * dot(gn, L2);
+    float sl = uDepth / max(tan(uElev), 0.15);
+    float soft = 0.6 * sl + aa * 2.0;
+    float lit  = smoothstep(w * sl - soft, w * sl + soft, tc);
+    float cao  = mix(0.6, 1.0, smoothstep(0.0, wallVis * 2.0, tc));
+    vec3 floorC = hol * (uAmb * 0.7 + uKey * grad * se * 0.9 * lit) * cao;
+    floorC *= 1.0 + (vnoise(p * 30.0) - 0.5) * uGrain * 0.4;
+
+    vec3 cav = mix(floorC, wallC, wallM);
+    col = mix(cav, plate, smoothstep(-aa, aa, d));
+  }
+  col += (hash(fc * 0.61) - 0.5) * uGrain * 0.04;
+  return col;
+}
+
+void main(){
+  vec3 c = vec3(0.0);
+  for(int i = 0; i < 2; i++)
+    for(int j = 0; j < 2; j++)
+      c += pixel(gl_FragCoord.xy + vec2(float(i), float(j)) * 0.5 - 0.25);
+  c = clamp(c * 0.25, 0.0, 1.0);
+  O = vec4(pow(c, vec3(1.0 / 2.2)), 1.0);
+}`;
+
+/* ================================================================
+   TAB 2 FRAGMENT — Lab engine
+   ================================================================ */
+
+const FRAG2 = `#version 300 es
+precision highp float;
+precision highp int;
+out vec4 O;
+
+uniform vec2  uRes;
+uniform int   uMode, uTrim, uShape;
+uniform float uZoom, uPitchX, uPitchY, uStagger, uLen, uRad, uRot, uMargin, uCorner;
+uniform float uCutW, uCutH, uCutY;
+uniform float uBevel, uProfile, uDepth;
+uniform float uMetal, uAz, uElev, uKey, uAmb, uRough, uGrain, uGrad;
+uniform float uExposure, uContrast, uSat, uTemp, uVig, uCA;
+uniform float uBackX, uBackY, uBackR;   /* grater back lattice: offset (× pitch) and bore radius */
+uniform float uIrid, uGlow;             /* thin-film iridescence; backlight through holes */
+uniform vec3  uColTop, uColHole;
+
+float hash(vec2 q){ return fract(sin(dot(q, vec2(127.1, 311.7))) * 43758.5453123); }
+
+float vnoise(vec2 q){
+  vec2 i = floor(q), f = fract(q);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x),
+             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+}
+
+/* ---- shape SDFs ---- */
+float sdStadium(vec2 q, float l, float r){
+  q.x -= clamp(q.x, -l, l);
+  return length(q) - r;
+}
+float sdRBox(vec2 q, vec2 b, float r){
+  vec2 d = abs(q) - b + r;
+  return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0) - r;
+}
+float sdHex(vec2 q, float r){
+  const vec3 k = vec3(-0.866025404, 0.5, 0.577350269);
+  q = abs(q);
+  q -= 2.0 * min(dot(k.xy, q), 0.0) * k.xy;
+  q -= vec2(clamp(q.x, -k.z * r, k.z * r), r);
+  return length(q) * sign(q.y);
+}
+float ringW(){ return 0.1 + 0.4 * uLen; }
+
+float holeSDF(vec2 q){
+  if(uShape == 0) return sdStadium(q, uLen, uRad);
+  if(uShape == 1) return sdRBox(q, vec2(uRad + uLen, uRad), uCorner * uRad);
+  if(uShape == 2){
+    float cr2 = uCorner * uRad * 0.5;           /* rounded hexagon */
+    return sdHex(q, uRad - cr2) - cr2;
+  }
+  if(uShape == 3) return abs(length(q) - uRad) - ringW();
+  /* cross: union of two rounded boxes */
+  float a = sdRBox(q, vec2(uRad + uLen, uRad * 0.5), uCorner * uRad * 0.5);
+  float b = sdRBox(q, vec2(uRad * 0.5, uRad + uLen), uCorner * uRad * 0.5);
+  return min(a, b);
+}
+
+/* ---- globals ---- */
+mat2 gM;
+vec2 gShift;
+vec2 gExt;
+vec2 gFieldHalf;
+vec2 gCutHalf;
+float gCutY;
+
+bool skipHole(vec2 ctr){
+  vec2 cs = (ctr - gShift) * gM;
+  if(uTrim == 1 && any(greaterThan(abs(cs) + gExt, gFieldHalf))) return true;
+  if(gCutHalf.x > 0.0 && gCutHalf.y > 0.0
+     && abs(cs.x) < gCutHalf.x + gExt.x
+     && abs(cs.y - gCutY) < gCutHalf.y + gExt.y) return true;
+  return false;
+}
+
+float pattern(vec2 q){
+  float d = 1e9;
+  float cx = floor(q.x / uPitchX);
+  for(int i = -1; i <= 1; i++){
+    float c  = cx + float(i);
+    float oy = 0.5 * uStagger * uPitchY * mod(c, 2.0);
+    float ry = floor((q.y - oy) / uPitchY);
+    for(int j = -1; j <= 1; j++){
+      vec2 ctr = vec2((c + 0.5) * uPitchX, (ry + float(j) + 0.5) * uPitchY + oy);
+      if(skipHole(ctr)) continue;
+      d = min(d, holeSDF(q - ctr));
+    }
+  }
+  return d;
+}
+
+/* nearest lattice bore of radius Rr: returns Rr² - r² of the deepest carve, its center */
+float carveAt(vec2 q, vec2 off, float Rr, out vec2 cbest){
+  float best = -1e9;
+  cbest = vec2(1e9);
+  float cx = floor((q.x - off.x) / uPitchX);
+  for(int i = -1; i <= 1; i++){
+    float c  = cx + float(i);
+    float oy = 0.5 * uStagger * uPitchY * mod(c, 2.0);
+    float ry = floor((q.y - off.y - oy) / uPitchY);
+    for(int j = -1; j <= 1; j++){
+      vec2 ctr = vec2((c + 0.5) * uPitchX + off.x, (ry + float(j) + 0.5) * uPitchY + oy + off.y);
+      if(skipHole(ctr)) continue;
+      float cv = Rr * Rr - dot(q - ctr, q - ctr);
+      if(cv > best){ best = cv; cbest = ctr; }
+    }
+  }
+  return best;
+}
+
+/* smooth-max union of spherical caps */
+float blobH(vec2 q){
+  float k = max(uLen, 0.06) * max(uRad, 0.1);
+  float acc = 0.0;
+  float cx = floor(q.x / uPitchX);
+  for(int i = -1; i <= 1; i++){
+    float c  = cx + float(i);
+    float oy = 0.5 * uStagger * uPitchY * mod(c, 2.0);
+    float ry = floor((q.y - oy) / uPitchY);
+    for(int j = -1; j <= 1; j++){
+      vec2 ctr = vec2((c + 0.5) * uPitchX, (ry + float(j) + 0.5) * uPitchY + oy);
+      if(skipHole(ctr)) continue;
+      float h = sqrt(max(uRad * uRad - dot(q - ctr, q - ctr), 0.0));
+      acc += exp(h / k) - 1.0;
+    }
+  }
+  return k * log(1.0 + acc);
+}
+
+/* softbox shading with metallic control + thin-film iridescence */
+vec3 shadeSurf(vec3 base, vec3 n, vec3 L, float grad){
+  float dl = dot(n, L);
+  float dw = dl * 0.5 + 0.5;
+  float diff = mix(max(dl, 0.0), dw * dw, 0.45) * (1.0 - 0.4 * uMetal);
+  vec3 R = reflect(vec3(0.0, 0.0, -1.0), n);
+  float s = clamp(dot(R, L) * 0.5 + 0.5, 0.0, 1.0);
+  float sp   = pow(s, mix(90.0, 6.0, uRough)) * mix(1.0, 0.25, uRough) * mix(0.75, 1.6, uMetal);
+  float fill = pow(1.0 - s, 3.0) * 0.10;
+  vec3 spC = mix(vec3(1.0), base, 0.35 + 0.55 * uMetal);
+  if(uIrid > 0.001){
+    float facing = clamp(1.0 - n.z, 0.0, 1.0);
+    vec3 irid = 0.5 + 0.5 * cos(6.2831853 * (facing * 1.6 + vec3(0.0, 0.33, 0.67)));
+    spC = mix(spC, spC * (0.35 + 1.5 * irid), uIrid);
+    base = base * mix(vec3(1.0), 0.85 + 0.45 * irid, uIrid * 0.4);
+  }
+  return base * (uAmb + uKey * grad * diff) + spC * uKey * grad * (sp + fill);
+}
+
+/* ---- Mac Pro grater: three layers ---- */
+vec3 grater(vec2 p, float aa, vec3 L, vec2 L2, float grad, vec3 top, vec3 hol, vec2 micro){
+  float T = max(uDepth, 0.2);
+  vec2 cF, cB;
+  gExt = vec2(uRad);
+  float bF = carveAt(p, vec2(0.0), uRad, cF);
+  gExt = vec2(uBackR);
+  vec2 backOff = vec2(uBackX * uPitchX, uBackY * uPitchY);
+  float bB = carveAt(p, backOff, uBackR, cB);
+  float carF = sqrt(max(bF, 0.0));
+  float carB = sqrt(max(bB, 0.0));
+  float zF = T - carF;
+  float zB = carB;
+  float open = zB - zF;
+
+  if(uMode == 0)
+    return mix(top, hol, smoothstep(-aa * 4.0, aa * 4.0, open));
+
+  /* layer 1: front surface */
+  vec3 n = vec3(0.0, 0.0, 1.0);
+  if(bF > 0.0){
+    float s = sqrt(max(uRad * uRad - dot(p - cF, p - cF), 1e-4));
+    n = vec3(-(p - cF) / s, 1.0);
+  }
+  n = normalize(normalize(n) + vec3(micro, 0.0) * 0.7);
+  float ao = mix(1.0, 0.58, clamp(carF / max(uRad, 1e-3), 0.0, 1.0));
+  float thick = max(zF - zB, 0.0);
+  float thinAO = mix(0.55, 1.0, smoothstep(0.0, 0.30 * T, thick));
+  vec3 solid = shadeSurf(top, n, L, grad) * ao * thinAO;
+
+  /* layer 3: inside the opening */
+  vec2 gO = vec2(0.0);
+  if(bF > 0.0) gO -= (p - cF) / max(carF, 1e-3);
+  if(bB > 0.0) gO -= (p - cB) / max(carB, 1e-3);
+  float gl = max(length(gO), 1e-3);
+  float edgeDist = max(open, 0.0) / gl;
+  vec2 gnO = gO / gl;
+  float wallVis = max(min(uRad, uBackR) * 0.22, 0.03);
+  float wallM = exp(-edgeDist / wallVis);
+  vec3 nWall = normalize(vec3(gnO, 0.30));
+  vec3 wallC = shadeSurf(mix(hol, top, 0.30), nWall, L, grad) * 0.5;
+  float tt = clamp(edgeDist / (uBackR * 0.8 + 0.2), 0.0, 1.0);
+  vec3 voidC = hol * (uAmb * 0.5 + uKey * grad * 0.18 * (1.0 - tt));
+  vec3 cav = mix(voidC, wallC, wallM);
+
+  float m = smoothstep(-aa * 3.0, aa * 3.0, open);
+  vec3 col = mix(solid, cav, m);
+
+  if(uGlow > 0.001){
+    vec3 lamp = hol * (1.2 + 1.3 * uGlow);
+    col = mix(col, lamp, m * uGlow);
+    float hd = max(-open, 0.0) / gl;
+    col += lamp * uGlow * 0.45 * exp(-hd / max(uBackR * 0.22, 0.05));
+  }
+  return col;
+}
+
+/* ---- blobs: squashed metaball caps on a backing plane ---- */
+vec3 blobs(vec2 p, float scale, float aa, vec3 L, vec2 L2, float grad, vec3 top, vec3 hol, vec2 micro){
+  float sq = uDepth / max(uRad, 0.1);
+  float e = scale * 1.5;
+  float H0 = blobH(p);
+  float z = H0 * sq;
+
+  if(uMode == 0)
+    return mix(hol, top, smoothstep(aa * 2.0, aa * 6.0 + 0.02, z));
+
+  float Hx = blobH(p + vec2(e, 0.0)) - blobH(p - vec2(e, 0.0));
+  float Hy = blobH(p + vec2(0.0, e)) - blobH(p - vec2(0.0, e));
+  vec3 n = normalize(vec3(-Hx * sq / (2.0 * e), -Hy * sq / (2.0 * e), 1.0));
+  n = normalize(n + vec3(micro, 0.0) * 0.5);
+  vec3 blob = shadeSurf(top, n, L, grad);
+
+  vec2 cn;
+  float b = carveAt(p, vec2(0.0), uRad, cn);
+  float rr = sqrt(max(uRad * uRad - b, 0.0));
+  float dEdge = max(rr - uRad, 0.0);
+  float ao = mix(0.5, 1.0, smoothstep(0.0, 0.7 * uRad, dEdge));
+  float zs = blobH(p + L2 * max(uRad * 0.8, 0.3)) * sq;
+  float shadow = 1.0 - 0.5 * smoothstep(0.1, 0.9 * uDepth + 0.1, zs);
+  float se = sin(uElev);
+  vec3 floorC = hol * (uAmb + uKey * grad * se * 0.9) * ao * shadow;
+  floorC *= 1.0 + (vnoise(p * 30.0) - 0.5) * uGrain * 0.3;
+  if(uGlow > 0.001) floorC = mix(floorC, hol * (1.3 + 1.4 * uGlow), uGlow);
+
+  float mask = smoothstep(aa * 2.0, aa * 6.0 + 0.02, z);
+  return mix(floorC, blob, mask);
+}
+
+vec3 pixel(vec2 fc){
+  float scale = 100.0 / (uRes.x * uZoom);
+  vec2 ps = (fc - 0.5 * uRes) * scale;
+  float cr = cos(uRot), sr = sin(uRot);
+  gM = mat2(cr, -sr, sr, cr);
+  gShift = 0.5 * vec2(uPitchX, uPitchY);
+
+  float ea, eb;
+  if(uShape == 0){ ea = uLen + uRad; eb = uRad; }
+  else if(uShape == 1){ ea = uRad + uLen; eb = uRad; }
+  else if(uShape == 2){ ea = uRad; eb = uRad; }
+  else if(uShape == 3){ ea = uRad + ringW(); eb = ea; }
+  else if(uShape == 4){ ea = uRad + uLen; eb = ea; }
+  else { ea = uRad; eb = uRad; }
+  gExt = vec2(ea * abs(cr) + eb * abs(sr), ea * abs(sr) + eb * abs(cr));
+
+  gFieldHalf = vec2(50.0 / uZoom - uMargin,
+                    50.0 * uRes.y / (uRes.x * uZoom) - uMargin);
+  float worldH = 100.0 * uRes.y / (uRes.x * uZoom);
+  gCutHalf = 0.5 * vec2(uCutW * 0.01 * (100.0 / uZoom), uCutH * 0.01 * worldH);
+  gCutY = uCutY * 0.01 * worldH;
+
+  vec2 p = gM * ps + gShift;
+  float aa = scale * 0.75;
+
+  vec3 top = pow(uColTop,  vec3(2.2));
+  vec3 hol = pow(uColHole, vec3(2.2));
+
+  vec2 L2s = vec2(cos(uAz), sin(uAz));
+  vec2 L2  = gM * L2s;
+  float se = sin(uElev), ce = cos(uElev);
+  vec3 L = normalize(vec3(L2 * ce, se));
+
+  vec2 suv = (fc - 0.5 * uRes) / uRes.x;
+  float grad = max(1.0 + uGrad * 0.9 * dot(suv, L2s), 0.0);
+
+  float nA = vnoise(p * 6.0)        + 0.5 * vnoise(p * 14.0);
+  float nB = vnoise(p * 6.0 + 31.7) + 0.5 * vnoise(p * 14.0 + 57.3);
+  vec2 micro = (vec2(nA, nB) - 0.75) * (0.18 * uRough);
+
+  if(uShape == 5) return grater(p, aa, L, L2, grad, top, hol, micro);
+  if(uShape == 6) return blobs(p, scale, aa, L, L2, grad, top, hol, micro);
+
+  /* perforation path */
+  float d = pattern(p);
+  if(uMode == 0)
+    return mix(hol, top, smoothstep(-aa, aa, d));
+
+  float e = max(scale, uBevel * 0.06);
+  vec2 g = vec2(
+    pattern(p + vec2(e, 0.0)) - pattern(p - vec2(e, 0.0)),
+    pattern(p + vec2(0.0, e)) - pattern(p - vec2(0.0, e))
+  ) / (2.0 * e);
+  vec2 gn = length(g) > 1e-5 ? normalize(g) : vec2(0.0);
+
+  float t = clamp(d / uBevel, 0.0, 1.0);
+  float dzdt = mix(1.0, 1.5707963 * cos(t * 1.5707963), uProfile);
+  dzdt *= smoothstep(1.0, 0.92, t);
+  vec3 n = normalize(vec3(-dzdt * gn + micro, 1.0));
+  float ao = mix(0.55, 1.0, smoothstep(0.0, 1.0, t));
+  vec3 plate = shadeSurf(top, n, L, grad) * ao;
+
+  vec3 col = plate;
+  if(d < aa){
+    float tc = max(-d, 0.0);
+    float wallVis = max(min(uDepth, uRad) * 0.18, 0.02);
+    float wallM = exp(-tc / wallVis);
+    vec3 nWall = normalize(vec3(-gn, 0.35));
+    vec3 wallC = shadeSurf(mix(hol, top, 0.25), nWall, L, grad) * 0.45;
+
+    float w  = 0.5 + 0.5 * dot(gn, L2);
+    float sl = uDepth / max(tan(uElev), 0.15);
+    float soft = 0.6 * sl + aa * 2.0;
+    float lit  = smoothstep(w * sl - soft, w * sl + soft, tc);
+    float cao  = mix(0.6, 1.0, smoothstep(0.0, wallVis * 2.0, tc));
+    vec3 floorC = hol * (uAmb * 0.7 + uKey * grad * se * 0.9 * lit) * cao;
+    floorC *= 1.0 + (vnoise(p * 30.0) - 0.5) * uGrain * 0.4;
+
+    vec3 cav = mix(floorC, wallC, wallM);
+    col = mix(cav, plate, smoothstep(-aa, aa, d));
+  }
+  if(uGlow > 0.001){
+    vec3 lamp = hol * (1.2 + 1.3 * uGlow);
+    float inside = smoothstep(aa, -aa, d);
+    col = mix(col, lamp, inside * uGlow);
+    col += lamp * uGlow * 0.55 * exp(-max(d, 0.0) / max(uRad * 0.6, 0.05));
+  }
+  col += (hash(fc * 0.61) - 0.5) * uGrain * 0.04;
+  return col;
+}
+
+vec3 ssaa(vec2 fc){
+  vec3 c = vec3(0.0);
+  for(int i = 0; i < 2; i++)
+    for(int j = 0; j < 2; j++)
+      c += pixel(fc + vec2(float(i), float(j)) * 0.5 - 0.25);
+  return c * 0.25;
+}
+
+vec3 post(vec3 c, vec2 fc){
+  c *= exp2(uExposure);
+  c = pow(max(c, vec3(0.0)), vec3(1.0 / 2.2));
+  float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  c = mix(vec3(l), c, uSat);
+  c = (c - 0.5) * uContrast + 0.5;
+  c += uTemp * vec3(0.10, 0.02, -0.12);
+  vec2 q = (fc - 0.5 * uRes) / min(uRes.x, uRes.y);
+  c *= 1.0 - uVig * smoothstep(0.35, 0.95, length(q));
+  return clamp(c, 0.0, 1.0);
+}
+
+void main(){
+  vec2 fc = gl_FragCoord.xy;
+  vec3 c = ssaa(fc);
+  if(uCA > 0.001){
+    vec2 dir = (fc - 0.5 * uRes) * uCA * 0.0025;
+    c.r = ssaa(fc + dir).r;
+    c.b = ssaa(fc - dir).b;
+  }
+  O = vec4(post(c, fc), 1.0);
+}`;
+
+/* ================================================================
+   STATE
+   ================================================================ */
+
+/* iPhone lock-screen clock zone, % of canvas */
+const CLOCK_DEFAULT = { cutW: 76, cutH: 12, cutY: 36 };
+
+const state1 = {
+  mode: 1, zoom: 1,
+  pitchX: 7, pitchY: 3.2, stagger: 1, len: 1.7, rad: 0.55, rot: 0,
+  margin: 2.5, trim: 1,
+  cutOn: 0, cutW: CLOCK_DEFAULT.cutW, cutH: CLOCK_DEFAULT.cutH, cutY: CLOCK_DEFAULT.cutY,
+  bevel: 0.22, profile: 0.75, depth: 1.3,
+  az: 125, elev: 55, key: 0.95, amb: 0.42, rough: 0.45, grain: 0.35, grad: 0.35,
+  colTop: "#c6c8cc", colHole: "#141518"
+};
+
+/* defaults = Ilia's hand-tuned Mac Pro pattern (8 July 2026) */
+const state2 = {
+  mode: 1, shape: 5, zoom: 1.59,
+  pitchX: 4.25, pitchY: 5.10, stagger: 1, len: 0.5, rad: 2.11, rot: 90, corner: 0.15,
+  margin: 0.7, trim: 1,
+  cutOn: 0, cutW: CLOCK_DEFAULT.cutW, cutH: CLOCK_DEFAULT.cutH, cutY: CLOCK_DEFAULT.cutY,
+  bevel: 0.58, profile: 0.35, depth: 2.35,
+  backX: 0.34, backY: 0.5, backR: 2.27,
+  metal: 1.0, irid: 0, glow: 0.64,
+  az: 310, elev: 57, key: 1.28, amb: 0.53, rough: 0.46, grain: 0.33, grad: 1.0,
+  exposure: -0.2, contrast: 1.05, sat: 1, temp: 0, vig: 0.55, ca: 1.0,
+  colTop: "#b6b8bd", colHole: "#0a0b0d"
+};
+
+const DEFAULTS = { 1: { ...state1 }, 2: { ...state2 } };
+
+const SLIDERS1 = {
+  "g-pattern": [
+    ["zoom",    "Scale",        0.4, 3,   0.01],
+    ["pitchX",  "Pitch X",      1.2, 30,  0.05],
+    ["pitchY",  "Pitch Y",      1.2, 30,  0.05],
+    ["stagger", "Stagger",      0,   1,   0.01],
+    ["len",     "Slot length",  0,   12,  0.05],
+    ["rad",     "Slot radius",  0.15, 6,  0.01],
+    ["rot",     "Rotation",    -90,  90,  1],
+    ["margin",  "Edge margin",  0,   20,  0.1]
+  ],
+  "g-cutout": [
+    ["cutW",    "Width %",      0,   100, 0.5],
+    ["cutH",    "Height %",     0,   100, 0.5],
+    ["cutY",    "Position",    -50,  50,  0.5]
+  ],
+  "g-volume": [
+    ["bevel",   "Bevel width",  0.03, 1.5, 0.01],
+    ["profile", "Bevel profile",0,    1,   0.01],
+    ["depth",   "Depth",        0.1,  4,   0.05]
+  ],
+  "g-light": [
+    ["az",      "Azimuth",      0,   360, 1],
+    ["elev",    "Elevation",    15,  80,  1],
+    ["key",     "Key",          0,   2,   0.01],
+    ["amb",     "Ambient",      0,   1,   0.01],
+    ["rough",   "Roughness",    0,   1,   0.01],
+    ["grain",   "Grain",        0,   1,   0.01],
+    ["grad",    "Falloff",      0,   1,   0.01]
+  ]
+};
+
+const SLIDERS2 = {
+  "g2-pattern": [
+    ["zoom",    "Scale",        0.4, 3,   0.01],
+    ["pitchX",  "Pitch X",      1.2, 30,  0.05],
+    ["pitchY",  "Pitch Y",      1.2, 30,  0.05],
+    ["stagger", "Stagger",      0,   1,   0.01],
+    ["len",     "Length / soft",0,   12,  0.05],
+    ["rad",     "Size",         0.15, 6,  0.01],
+    ["corner",  "Corner",       0,   1,   0.01],
+    ["rot",     "Rotation",    -90,  90,  1],
+    ["margin",  "Edge margin",  0,   20,  0.1]
+  ],
+  "g2-cutout": [
+    ["cutW",    "Width %",      0,   100, 0.5],
+    ["cutH",    "Height %",     0,   100, 0.5],
+    ["cutY",    "Position",    -50,  50,  0.5]
+  ],
+  "g2-surface": [
+    ["bevel",   "Bevel width",  0.03, 1.5, 0.01],
+    ["profile", "Bevel profile",0,    1,   0.01],
+    ["depth",   "Depth / height",0.1, 4,   0.05]
+  ],
+  "g2-layers": [
+    ["backX",   "Back offset X",0,   1,   0.01],
+    ["backY",   "Back offset Y",0,   1,   0.01],
+    ["backR",   "Back radius",  0.15, 6,  0.01]
+  ],
+  "g2-material": [
+    ["metal",   "Metallic",     0,   1,   0.01],
+    ["rough",   "Roughness",    0,   1,   0.01],
+    ["grain",   "Grain",        0,   1,   0.01],
+    ["irid",    "Iridescence",  0,   1,   0.01],
+    ["glow",    "Backlight",    0,   1,   0.01]
+  ],
+  "g2-light": [
+    ["az",      "Azimuth",      0,   360, 1],
+    ["elev",    "Elevation",    15,  80,  1],
+    ["key",     "Key",          0,   2,   0.01],
+    ["amb",     "Ambient",      0,   1,   0.01],
+    ["grad",    "Falloff",      0,   1,   0.01]
+  ],
+  "g2-post": [
+    ["exposure","Exposure",    -2,   2,   0.01],
+    ["contrast","Contrast",     0.5, 1.6, 0.01],
+    ["sat",     "Saturation",   0,   2,   0.01],
+    ["temp",    "Temperature", -1,   1,   0.01],
+    ["vig",     "Vignette",     0,   1,   0.01],
+    ["ca",      "Chroma shift", 0,   1,   0.01]
+  ]
+};
+
+const SHAPES = ["Stadium", "R-square", "Hexagon", "Ring", "Cross", "Grater 3D", "Blobs"];
+/* which sliders matter per shape (tab 2) */
+const SHAPE_USES = {
+  len:    [0, 1, 3, 4, 6],
+  corner: [1, 2, 4],
+  bevel:  [0, 1, 2, 3, 4],
+  profile:[0, 1, 2, 3, 4]
+};
+
+const PRESETS1 = [
+  ["Graphite slots", { mode:1, zoom:1, pitchX:7, pitchY:3.2, stagger:1, len:1.7, rad:0.55, rot:0,
+    bevel:0.22, profile:0.75, depth:1.3, az:125, elev:55, key:0.95, amb:0.42, rough:0.45,
+    grain:0.35, grad:0.35, colTop:"#c6c8cc", colHole:"#141518" }],
+  ["Crimson mesh", { mode:1, zoom:1.4, pitchX:2.7, pitchY:2.7, stagger:1, len:0, rad:0.85, rot:0,
+    bevel:0.3, profile:0.9, depth:1.4, az:120, elev:48, key:1.15, amb:0.35, rough:0.3,
+    grain:0.35, grad:0.45, colTop:"#b23217", colHole:"#200706" }],
+  ["Porcelain", { mode:1, zoom:1, pitchX:5.2, pitchY:10, stagger:1, len:2.6, rad:0.75, rot:90,
+    bevel:0.35, profile:1, depth:2.2, az:100, elev:60, key:0.9, amb:0.5, rough:0.5,
+    grain:0.25, grad:0.3, colTop:"#ececec", colHole:"#1c1e22" }],
+  ["Cheese grater", { mode:1, zoom:0.9, pitchX:4.6, pitchY:4.0, stagger:1, len:0, rad:1.55, rot:0,
+    bevel:0.55, profile:1, depth:2.8, az:125, elev:50, key:1.0, amb:0.4, rough:0.4,
+    grain:0.35, grad:0.4, colTop:"#b9bbc0", colHole:"#08090b" }],
+  ["Anodized micro", { mode:1, zoom:1, pitchX:1.9, pitchY:1.9, stagger:1, len:0, rad:0.42, rot:0,
+    bevel:0.12, profile:0.8, depth:0.9, az:115, elev:60, key:0.95, amb:0.45, rough:0.35,
+    grain:0.3, grad:0.3, colTop:"#d3d5d9", colHole:"#101215" }],
+  ["Midnight acoustic", { mode:1, zoom:1.1, pitchX:2.6, pitchY:1.7, stagger:1, len:0.8, rad:0.3, rot:34,
+    bevel:0.14, profile:0.7, depth:1.2, az:140, elev:55, key:1.05, amb:0.35, rough:0.55,
+    grain:0.45, grad:0.5, colTop:"#2b2d31", colHole:"#08090a" }],
+  ["Snow facade", { mode:1, zoom:1.1, pitchX:2.8, pitchY:2.8, stagger:0, len:0, rad:0.85, rot:0,
+    bevel:0.3, profile:0.9, depth:1.8, az:110, elev:62, key:0.9, amb:0.5, rough:0.6,
+    grain:0.3, grad:0.25, colTop:"#e9e9e6", colHole:"#2a2c2e" }],
+  ["Butter dots", { mode:1, zoom:1.2, pitchX:3.0, pitchY:2.6, stagger:1, len:0, rad:0.9, rot:0,
+    bevel:0.35, profile:0.9, depth:1.6, az:120, elev:55, key:1.05, amb:0.42, rough:0.4,
+    grain:0.35, grad:0.4, colTop:"#e0b52f", colHole:"#3a2c05" }],
+  ["Terracotta slats", { mode:1, zoom:1, pitchX:8.0, pitchY:3.6, stagger:0.5, len:2.6, rad:0.6, rot:0,
+    bevel:0.4, profile:1, depth:2.0, az:115, elev:52, key:1.0, amb:0.4, rough:0.65,
+    grain:0.5, grad:0.35, colTop:"#b56a4a", colHole:"#2e150c" }],
+  ["Deep navy", { mode:1, zoom:1.2, pitchX:5.5, pitchY:2.2, stagger:1, len:1.6, rad:0.35, rot:90,
+    bevel:0.18, profile:0.8, depth:1.5, az:130, elev:48, key:1.1, amb:0.3, rough:0.45,
+    grain:0.4, grad:0.5, colTop:"#182335", colHole:"#05070c" }],
+  ["Blush anodized", { mode:1, zoom:1.3, pitchX:2.2, pitchY:2.2, stagger:1, len:0, rad:0.62, rot:0,
+    bevel:0.22, profile:0.9, depth:1.3, az:115, elev:58, key:0.95, amb:0.48, rough:0.4,
+    grain:0.35, grad:0.35, colTop:"#d8a49c", colHole:"#331113" }],
+  ["Ink dots (flat)", { mode:0, zoom:1.2, pitchX:2.4, pitchY:2.4, stagger:1, len:0, rad:0.8, rot:0,
+    colTop:"#f4f4f2", colHole:"#101114" }],
+  ["Sage dashes (flat)", { mode:0, zoom:1.1, pitchX:3.0, pitchY:3.0, stagger:0, len:0.9, rad:0.5, rot:0,
+    colTop:"#9fae92", colHole:"#f4f3ec" }],
+  ["Ivory diagonal (flat)", { mode:0, zoom:1, pitchX:4.4, pitchY:2.4, stagger:1, len:1.2, rad:0.5, rot:45,
+    colTop:"#f1efe8", colHole:"#191a1c" }]
+];
+
+const PRESETS2 = [
+  ["Mac Pro grater", { mode:1, shape:5, zoom:1.59, pitchX:4.25, pitchY:5.10, stagger:1, len:0.5, rad:2.11,
+    rot:90, corner:0.15, margin:0.7, bevel:0.58, profile:0.35, depth:2.35, backX:0.34, backY:0.5, backR:2.27,
+    metal:1.0, irid:0, glow:0.64,
+    az:310, elev:57, key:1.28,
+    amb:0.53, rough:0.46, grain:0.33, grad:1.0, exposure:-0.2, contrast:1.05, sat:1, temp:0, vig:0.55, ca:1.0,
+    colTop:"#b6b8bd", colHole:"#0a0b0d" }],
+  ["Hex mesh", { mode:1, shape:2, zoom:1.10, pitchX:2.60, pitchY:3.25, stagger:1, len:0, rad:1.05,
+    rot:0, corner:0.46, margin:0.7, bevel:0.18, profile:0.7, depth:1.2, metal:0.6, irid:0, glow:0,
+    az:130, elev:52, key:1.05,
+    amb:0.38, rough:0.4, grain:0.35, grad:0.4, exposure:0, contrast:1.05, sat:1, temp:0, vig:0.1, ca:0,
+    colTop:"#caccd0", colHole:"#101214" }],
+  ["Ring grid", { mode:1, shape:3, zoom:1, pitchX:4.6, pitchY:4.6, stagger:0, len:0.8, rad:1.35,
+    rot:0, corner:0.5, bevel:0.2, profile:0.8, depth:1.3, metal:0.5, irid:0, glow:0, az:125, elev:50, key:1.1,
+    amb:0.3, rough:0.45, grain:0.4, grad:0.5, exposure:0, contrast:1.08, sat:1, temp:-0.15, vig:0.25, ca:0.1,
+    colTop:"#23262b", colHole:"#0a0b0c" }],
+  ["Brass crosses", { mode:1, shape:4, zoom:1, pitchX:4.2, pitchY:4.2, stagger:1, len:1.0, rad:0.9,
+    rot:0, corner:0.6, bevel:0.25, profile:0.9, depth:1.6, metal:0.85, irid:0, glow:0, az:118, elev:55, key:1.05,
+    amb:0.4, rough:0.35, grain:0.4, grad:0.4, exposure:0, contrast:1.05, sat:1.1, temp:0.25, vig:0.15, ca:0,
+    colTop:"#c9a35c", colHole:"#241a06" }],
+  ["Squircle white", { mode:1, shape:1, zoom:1, pitchX:4.0, pitchY:4.0, stagger:0, len:0.2, rad:1.3,
+    rot:0, corner:0.9, bevel:0.4, profile:1, depth:2.0, metal:0.1, irid:0, glow:0, az:110, elev:60, key:0.9,
+    amb:0.5, rough:0.55, grain:0.25, grad:0.3, exposure:0, contrast:1, sat:1, temp:0, vig:0.1, ca:0,
+    colTop:"#eceae6", colHole:"#202226" }],
+  ["Neon grid", { mode:1, shape:1, zoom:1.15, pitchX:3.2, pitchY:3.2, stagger:0, len:0.5, rad:0.8,
+    rot:0, corner:0.7, bevel:0.16, profile:0.7, depth:1.4, metal:0.4, irid:0, glow:0.9, az:125, elev:55, key:0.8,
+    amb:0.3, rough:0.5, grain:0.35, grad:0.35, exposure:0, contrast:1.08, sat:1.15, temp:-0.2, vig:0.35, ca:0.12,
+    colTop:"#101216", colHole:"#35e0ff" }],
+  ["Pistachio squircle", { mode:1, shape:1, zoom:1, pitchX:4.0, pitchY:4.0, stagger:0, len:0.2, rad:1.3,
+    rot:0, corner:0.9, bevel:0.38, profile:1, depth:1.9, metal:0.1, irid:0, glow:0, az:112, elev:60, key:0.92,
+    amb:0.5, rough:0.55, grain:0.3, grad:0.3, exposure:0, contrast:1.02, sat:1.05, temp:0.05, vig:0.1, ca:0,
+    colTop:"#b8c9a3", colHole:"#2e3524" }],
+  ["Cobalt rings", { mode:1, shape:3, zoom:1.05, pitchX:4.4, pitchY:4.4, stagger:1, len:0.7, rad:1.3,
+    rot:0, corner:0.5, bevel:0.2, profile:0.85, depth:1.4, metal:0.65, irid:0.25, glow:0, az:128, elev:52, key:1.1,
+    amb:0.32, rough:0.35, grain:0.35, grad:0.45, exposure:0, contrast:1.06, sat:1.15, temp:-0.2, vig:0.2, ca:0,
+    colTop:"#29499e", colHole:"#0a1030" }],
+  ["Sunset crosses", { mode:1, shape:4, zoom:1, pitchX:4.4, pitchY:4.4, stagger:1, len:1.1, rad:0.95,
+    rot:0, corner:0.6, bevel:0.26, profile:0.9, depth:1.6, metal:0.3, irid:0, glow:0, az:105, elev:50, key:1.05,
+    amb:0.42, rough:0.55, grain:0.4, grad:0.45, exposure:0, contrast:1.05, sat:1.15, temp:0.35, vig:0.2, ca:0.06,
+    colTop:"#e8a25f", colHole:"#57200e" }],
+  ["Lavender hex (flat)", { mode:0, shape:2, zoom:1.15, pitchX:2.6, pitchY:2.25, stagger:1, len:0, rad:1.0,
+    rot:0, corner:0.5, metal:0, irid:0, glow:0, exposure:0, contrast:1, sat:1, temp:0, vig:0, ca:0,
+    colTop:"#cdc3ea", colHole:"#322a4d" }]
+];
+
+const CANVAS_SIZES = [
+  ["iPhone", 1290, 2796],
+  ["Mac 5K", 5120, 2880],
+  ["Mac 6K", 6016, 3384],
+  ["Square 4K", 4096, 4096]
+];
+
+const shared = { canvasW: 5120, canvasH: 2880 };
+
+/* ================================================================
+   GL PLUMBING
+   ================================================================ */
+
+function compileProgram(gl, fragSrc){
+  const prog = gl.createProgram();
+  for(const [type, src] of [[gl.VERTEX_SHADER, VERT], [gl.FRAGMENT_SHADER, fragSrc]]){
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+      throw new Error(gl.getShaderInfoLog(s));
+    gl.attachShader(prog, s);
+  }
+  gl.linkProgram(prog);
+  if(!gl.getProgramParameter(prog, gl.LINK_STATUS))
+    throw new Error(gl.getProgramInfoLog(prog));
+  return prog;
+}
+
+function hexToRgb(hex){
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255];
+}
+
+const R = Math.PI / 180;
+
+function setUniforms(gl, prog, st, w, h){
+  const u = name => gl.getUniformLocation(prog, name);
+  gl.uniform2f(u("uRes"), w, h);
+  gl.uniform1i(u("uMode"), st.mode);
+  gl.uniform1i(u("uTrim"), st.trim);
+  if(st.shape !== undefined) gl.uniform1i(u("uShape"), st.shape);
+  const cutOn = st.cutOn ? 1 : 0;
+  const f = {
+    uZoom: st.zoom, uPitchX: st.pitchX, uPitchY: st.pitchY,
+    uStagger: st.stagger, uLen: st.len, uRad: st.rad, uRot: st.rot * R,
+    uMargin: st.margin,
+    uCutW: cutOn * st.cutW, uCutH: cutOn * st.cutH, uCutY: st.cutY,
+    uBevel: st.bevel, uProfile: st.profile, uDepth: st.depth,
+    uAz: st.az * R, uElev: st.elev * R, uKey: st.key, uAmb: st.amb,
+    uRough: st.rough, uGrain: st.grain, uGrad: st.grad,
+    uCorner: st.corner ?? 0.5, uMetal: st.metal ?? 0,
+    uBackX: st.backX ?? 0.5, uBackY: st.backY ?? 0.25, uBackR: st.backR ?? (st.rad ?? 1),
+    uIrid: st.irid ?? 0, uGlow: st.glow ?? 0,
+    uExposure: st.exposure ?? 0, uContrast: st.contrast ?? 1, uSat: st.sat ?? 1,
+    uTemp: st.temp ?? 0, uVig: st.vig ?? 0, uCA: st.ca ?? 0
+  };
+  for(const k in f) gl.uniform1f(u(k), f[k]);
+  gl.uniform3f(u("uColTop"), ...hexToRgb(st.colTop));
+  gl.uniform3f(u("uColHole"), ...hexToRgb(st.colHole));
+}
+
+/* ================================================================
+   PREVIEW
+   ================================================================ */
+
+const canvas = document.getElementById("c");
+const view = document.getElementById("view");
+const meta = document.getElementById("meta");
+let gl = null;
+const progs = {};
+let activeTab = 1;
+const states = { 1: state1, 2: state2 };
+const FRAGS = { 1: FRAG1, 2: FRAG2 };
+
+function showErr(msg){
+  const el = document.getElementById("err");
+  el.textContent = msg;
+  el.style.display = "flex";
+}
+
+try {
+  gl = canvas.getContext("webgl2", { preserveDrawingBuffer: true, antialias: false });
+  if(!gl) showErr("WebGL2 is not available in this browser.");
+  else {
+    progs[1] = compileProgram(gl, FRAG1);
+    progs[2] = compileProgram(gl, FRAG2);
+  }
+} catch(e){
+  showErr("Shader error: " + e.message);
+  gl = null;
+}
+
+function render(){
+  if(!gl) return;
+  const prog = progs[activeTab];
+  gl.useProgram(prog);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  setUniforms(gl, prog, states[activeTab], canvas.width, canvas.height);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+function layout(){
+  const availW = view.clientWidth - 56;
+  const availH = view.clientHeight - 56;
+  const k = Math.min(availW / shared.canvasW, availH / shared.canvasH, 1);
+  const cssW = Math.max(64, shared.canvasW * k);
+  const cssH = Math.max(64, shared.canvasH * k);
+  canvas.style.width = cssW + "px";
+  canvas.style.height = cssH + "px";
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(cssW * dpr);
+  canvas.height = Math.round(cssH * dpr);
+  meta.textContent = `${shared.canvasW} × ${shared.canvasH} px · preview ${Math.round(k * 100)}% · drag canvas to move the light`;
+  document.getElementById("dl").textContent = `Download PNG · ${shared.canvasW} × ${shared.canvasH}`;
+  render();
+}
+new ResizeObserver(layout).observe(view);
+
+/* ================================================================
+   UI
+   ================================================================ */
+
+const outputs = { 1: {}, 2: {} };
+
+function fmt(key, v){
+  return (key === "az" || key === "elev" || key === "rot") ? Math.round(v) + "°" : (+v).toFixed(2);
+}
+
+function buildSliders(tab, spec, st){
+  for(const gid in spec){
+    const box = document.getElementById(gid);
+    for(const [key, label, min, max, step] of spec[gid]){
+      const row = document.createElement("div");
+      row.className = "row";
+      const lab = document.createElement("label");
+      lab.textContent = label;
+      const inp = document.createElement("input");
+      inp.type = "range";
+      inp.min = min; inp.max = max; inp.step = step;
+      inp.value = st[key];
+      inp.dataset.key = key;
+      inp.dataset.tab = tab;
+      const out = document.createElement("output");
+      row.append(lab, inp, out);
+      box.append(row);
+      outputs[tab][key] = { inp, out, row };
+      inp.addEventListener("input", () => {
+        st[key] = parseFloat(inp.value);
+        out.textContent = fmt(key, st[key]);
+        render();
+      });
+      out.textContent = fmt(key, st[key]);
+    }
+  }
+}
+
+function addCheckbox(groupId, id, labelText, checked, onChange, prepend){
+  const div = document.createElement("div");
+  div.className = "check";
+  const cb = document.createElement("input");
+  cb.type = "checkbox";
+  cb.checked = checked;
+  cb.id = id;
+  const lab = document.createElement("label");
+  lab.htmlFor = id;
+  lab.textContent = labelText;
+  div.append(cb, lab);
+  const box = document.getElementById(groupId);
+  if(prepend) box.insertBefore(div, box.children[1] || null);
+  else box.append(div);
+  cb.addEventListener("change", () => onChange(cb.checked));
+  return div;
+}
+
+function buildModeSeg(segId, st, after){
+  for(const b of document.querySelectorAll("#" + segId + " button"))
+    b.addEventListener("click", () => { st.mode = +b.dataset.mode; after(); render(); });
+}
+
+function buildColors(tab, st){
+  for(const which of ["Top", "Hole"]){
+    const el = document.getElementById("col" + which + tab);
+    el.value = st["col" + which];
+    el.addEventListener("input", e => { st["col" + which] = e.target.value; render(); });
+  }
+}
+
+/* ---- built-in and user presets ---- */
+
+const LS_KEY = "cheesy-wallpapers-presets-v1";
+let userPresets = { 1: [], 2: [] };
+try {
+  const raw = localStorage.getItem(LS_KEY);
+  if(raw){
+    const parsed = JSON.parse(raw);
+    if(parsed && parsed[1] && parsed[2]) userPresets = parsed;
+  }
+} catch(e){ /* storage unavailable — saving disabled gracefully */ }
+
+function persistUserPresets(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify(userPresets)); }
+  catch(e){ alert("Couldn’t save: local storage is unavailable in this browser."); }
+}
+
+function applyPreset(tab, data){
+  Object.assign(states[tab], data);
+  syncTab(tab);
+  render();
+}
+
+function renderUserPresets(tab){
+  const box = document.getElementById("userPresets" + tab);
+  box.innerHTML = "";
+  for(const p of userPresets[tab]){
+    const b = document.createElement("button");
+    b.textContent = p.name;
+    const x = document.createElement("span");
+    x.className = "x";
+    x.textContent = "×";
+    x.title = "Delete preset";
+    x.addEventListener("click", ev => {
+      ev.stopPropagation();
+      userPresets[tab] = userPresets[tab].filter(q => q !== p);
+      persistUserPresets();
+      renderUserPresets(tab);
+    });
+    b.append(x);
+    b.addEventListener("click", () => applyPreset(tab, p.data));
+    box.append(b);
+  }
+}
+
+function buildPresets(tab, presets){
+  const box = document.getElementById("presets" + tab);
+  for(const [name, p] of presets){
+    const b = document.createElement("button");
+    b.textContent = name;
+    b.addEventListener("click", () => applyPreset(tab, p));
+    box.append(b);
+  }
+  renderUserPresets(tab);
+  document.getElementById("psave" + tab).addEventListener("click", () => {
+    const inp = document.getElementById("pname" + tab);
+    let name = inp.value.trim();
+    if(!name) name = "My preset " + (userPresets[tab].length + 1);
+    const data = { ...states[tab] };
+    const existing = userPresets[tab].find(q => q.name === name);
+    if(existing) existing.data = data;
+    else userPresets[tab].push({ name, data });
+    persistUserPresets();
+    renderUserPresets(tab);
+    inp.value = "";
+  });
+}
+
+/* ---- sync ---- */
+
+function syncTab(tab){
+  const st = states[tab];
+  for(const key in outputs[tab]){
+    outputs[tab][key].inp.value = st[key];
+    outputs[tab][key].out.textContent = fmt(key, st[key]);
+  }
+  document.getElementById("colTop" + tab).value = st.colTop;
+  document.getElementById("colHole" + tab).value = st.colHole;
+  document.getElementById("trimCb" + tab).checked = !!st.trim;
+  document.getElementById("cutCb" + tab).checked = !!st.cutOn;
+  for(const b of document.querySelectorAll("#modeSeg" + tab + " button"))
+    b.classList.toggle("on", +b.dataset.mode === st.mode);
+
+  const flat = st.mode === 0;
+  const cutRows = ["cutW", "cutH", "cutY"];
+  for(const k of cutRows) outputs[tab][k].row.classList.toggle("dim", !st.cutOn);
+
+  if(tab === 1){
+    document.getElementById("g-volume").classList.toggle("dim", flat);
+    document.getElementById("g-light").classList.toggle("dim", flat);
+  } else {
+    for(const gid of ["g2-surface", "g2-layers", "g2-material", "g2-light"])
+      document.getElementById(gid).classList.toggle("dim", flat);
+    for(const b of document.querySelectorAll("#shapeChips button"))
+      b.classList.toggle("on", +b.dataset.shape === st.shape);
+    /* back layer only exists for Grater 3D */
+    document.getElementById("g2-layers").style.display = st.shape === 5 ? "" : "none";
+    /* hide sliders that do nothing for the current shape */
+    for(const key in SHAPE_USES)
+      if(outputs[2][key])
+        outputs[2][key].row.style.display = SHAPE_USES[key].includes(st.shape) ? "" : "none";
+  }
+}
+
+/* ---- build tab 1 ---- */
+buildSliders(1, SLIDERS1, state1);
+addCheckbox("g-pattern", "trimCb1", "Whole holes only (trim at edges)", !!state1.trim,
+  v => { state1.trim = v ? 1 : 0; render(); });
+addCheckbox("g-cutout", "cutCb1", "Reserve a hole-free zone for the clock", !!state1.cutOn,
+  v => { state1.cutOn = v ? 1 : 0; syncTab(1); render(); }, true);
+buildPresets(1, PRESETS1);
+buildModeSeg("modeSeg1", state1, () => syncTab(1));
+buildColors(1, state1);
+document.getElementById("reset1").addEventListener("click", () => applyPreset(1, DEFAULTS[1]));
+
+/* ---- build tab 2 ---- */
+buildSliders(2, SLIDERS2, state2);
+addCheckbox("g2-pattern", "trimCb2", "Whole holes only (trim at edges)", !!state2.trim,
+  v => { state2.trim = v ? 1 : 0; render(); });
+addCheckbox("g2-cutout", "cutCb2", "Reserve a hole-free zone for the clock", !!state2.cutOn,
+  v => { state2.cutOn = v ? 1 : 0; syncTab(2); render(); }, true);
+buildPresets(2, PRESETS2);
+buildModeSeg("modeSeg2", state2, () => syncTab(2));
+buildColors(2, state2);
+document.getElementById("reset2").addEventListener("click", () => applyPreset(2, DEFAULTS[2]));
+
+const shapeBox = document.getElementById("shapeChips");
+SHAPES.forEach((name, idx) => {
+  const b = document.createElement("button");
+  b.textContent = name;
+  b.dataset.shape = idx;
+  b.addEventListener("click", () => { state2.shape = idx; syncTab(2); render(); });
+  shapeBox.append(b);
+});
+
+/* ---- tabs ---- */
+for(const b of document.querySelectorAll("#tabSeg button"))
+  b.addEventListener("click", () => {
+    activeTab = +b.dataset.tab;
+    for(const bb of document.querySelectorAll("#tabSeg button"))
+      bb.classList.toggle("on", bb === b);
+    document.getElementById("tab1").style.display = activeTab === 1 ? "" : "none";
+    document.getElementById("tab2").style.display = activeTab === 2 ? "" : "none";
+    render();
+  });
+
+/* ---- canvas size (shared) ---- */
+const expW = document.getElementById("expW");
+const expH = document.getElementById("expH");
+const sizeBox = document.getElementById("sizeChips");
+for(const [name, w, h] of CANVAS_SIZES){
+  const b = document.createElement("button");
+  b.textContent = name;
+  b.addEventListener("click", () => {
+    shared.canvasW = w; shared.canvasH = h;
+    expW.value = w; expH.value = h;
+    layout();
+  });
+  sizeBox.append(b);
+}
+for(const [inp, key] of [[expW, "canvasW"], [expH, "canvasH"]])
+  inp.addEventListener("change", () => {
+    shared[key] = Math.max(16, Math.min(12000, +inp.value | 0));
+    layout();
+  });
+
+/* ---- drag on canvas -> light azimuth ---- */
+let dragging = false;
+canvas.addEventListener("pointerdown", e => {
+  if(states[activeTab].mode !== 1) return;
+  dragging = true;
+  canvas.setPointerCapture(e.pointerId);
+  setLightFromPointer(e);
+});
+canvas.addEventListener("pointermove", e => { if(dragging) setLightFromPointer(e); });
+canvas.addEventListener("pointerup", () => { dragging = false; });
+
+function setLightFromPointer(e){
+  const st = states[activeTab];
+  const r = canvas.getBoundingClientRect();
+  const dx = e.clientX - (r.left + r.width / 2);
+  const dy = (r.top + r.height / 2) - e.clientY;
+  let a = Math.atan2(dy, dx) / R;
+  if(a < 0) a += 360;
+  st.az = Math.round(a);
+  const o = outputs[activeTab].az;
+  if(o){ o.inp.value = st.az; o.out.textContent = fmt("az", st.az); }
+  render();
+}
+
+/* ================================================================
+   EXPORT
+   ================================================================ */
+
+let expCanvas = null, expGl = null;
+const expProgs = {};
+document.getElementById("dl").addEventListener("click", () => {
+  const w = shared.canvasW, h = shared.canvasH;
+  if(!expCanvas){
+    expCanvas = document.createElement("canvas");
+    expGl = expCanvas.getContext("webgl2", { preserveDrawingBuffer: true, antialias: false });
+  }
+  if(!expGl){ alert("WebGL2 unavailable for export."); return; }
+  try {
+    if(!expProgs[activeTab]) expProgs[activeTab] = compileProgram(expGl, FRAGS[activeTab]);
+  } catch(e){ alert("Export failed: " + e.message); return; }
+  expCanvas.width = w;
+  expCanvas.height = h;
+  const prog = expProgs[activeTab];
+  expGl.useProgram(prog);
+  expGl.viewport(0, 0, w, h);
+  setUniforms(expGl, prog, states[activeTab], w, h);
+  expGl.drawArrays(expGl.TRIANGLES, 0, 3);
+  expCanvas.toBlob(blob => {
+    if(!blob){ alert("PNG encode failed (canvas too large for this browser?)"); return; }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    const tag = activeTab === 1 ? "perfo" : "lab";
+    a.download = `cheesy-${tag}-${states[activeTab].mode ? "volume" : "flat"}-${w}x${h}.png`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  }, "image/png");
+});
+
+/* ================================================================
+   SUPPORT MODAL
+   ================================================================ */
+
+const SUPPORT_ADDR = [
+  ["ERC-20", "0x1d85c6e54a913bb72ade855b9acf1b1c52638265"],
+  ["TRC-20", "TGDCUC8FUaH1BT8S1EXTNLUpV7gs2NQWSq"],
+  ["TON",    "UQBruJ6crcuOsWigHIP6ROCK6aZGC0Qcq5hQpk4a9GTBDI_7"]
+];
+
+const supOverlay = document.getElementById("supOverlay");
+{
+  const box = document.getElementById("supAddrs");
+  for(const [net, addr] of SUPPORT_ADDR){
+    const row = document.createElement("div");
+    row.className = "addr";
+    const tag = document.createElement("span");
+    tag.className = "net";
+    tag.textContent = net;
+    const code = document.createElement("code");
+    code.textContent = addr;
+    code.title = addr;
+    const btn = document.createElement("button");
+    btn.textContent = "Copy";
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(addr);
+      } catch(e){
+        const ta = document.createElement("textarea");
+        ta.value = addr;
+        document.body.append(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+      btn.textContent = "Copied";
+      setTimeout(() => { btn.textContent = "Copy"; }, 1400);
+    });
+    row.append(tag, code, btn);
+    box.append(row);
+  }
+}
+document.getElementById("supOpen").addEventListener("click", () => supOverlay.classList.add("open"));
+document.getElementById("supClose").addEventListener("click", () => supOverlay.classList.remove("open"));
+supOverlay.addEventListener("click", e => { if(e.target === supOverlay) supOverlay.classList.remove("open"); });
+window.addEventListener("keydown", e => { if(e.key === "Escape") supOverlay.classList.remove("open"); });
+
+/* ================================================================
+   GO
+   ================================================================ */
+expW.value = shared.canvasW;
+expH.value = shared.canvasH;
+syncTab(1);
+syncTab(2);
+layout();
+</script>
+</body>
+</html>
