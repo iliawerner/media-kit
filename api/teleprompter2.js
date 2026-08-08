@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing text' });
     }
 
-    const payload = JSON.stringify({ text: text.trim(), size: size || 72 });
+    const payload = JSON.stringify({ text: text.trim(), size: size || 176 });
 
     const gistRes = await fetch('https://api.github.com/gists', {
       method: 'POST',

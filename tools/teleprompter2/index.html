@@ -155,11 +155,10 @@
 
     #prompter-text {
       padding: 80vh 12vw;
-      font-size: 160px; line-height: 1.4;
+      font-size: 176px; line-height: 1.4;
       font-weight: 700; letter-spacing: -0.02em;
       color: var(--yellow); min-height: 100vh;
     }
-    #prompter-text.mirrored { transform: scaleY(-1); }
 
     .para { margin-bottom: 0.6em; white-space: pre-line; word-break: break-word; }
     .para:last-child { margin-bottom: 0; }
@@ -253,24 +252,17 @@
 
   <button class="btn-generate" id="btn-generate">
     <div class="spinner"></div>
-    <span id="btn-label">Сгенерировать ссылки</span>
+    <span id="btn-label">Сгенерировать ссылку</span>
   </button>
 
   <div class="error-msg" id="error-msg"></div>
 
   <div class="link-group" id="link-group">
     <div class="link-box">
-      <div class="link-label">Зеркальная ссылка (для телепромптера)</div>
+      <div class="link-label">Обычная ссылка</div>
       <div class="link-row">
-        <a class="link-url" id="link-mirror" href="#" target="_blank"></a>
-        <button class="btn-copy" id="copy-mirror">Copy</button>
-      </div>
-    </div>
-    <div class="link-box">
-      <div class="link-label">Тестовая ссылка (обычный текст)</div>
-      <div class="link-row">
-        <a class="link-url" id="link-test" href="#" target="_blank"></a>
-        <button class="btn-copy" id="copy-test">Copy</button>
+        <a class="link-url" id="link-url" href="#" target="_blank"></a>
+        <button class="btn-copy" id="btn-copy">Copy</button>
       </div>
     </div>
   </div>
@@ -279,8 +271,8 @@
     <h2>Как пользоваться</h2>
     <ol>
       <li>Вставь скрипт и нажми «Сгенерировать».</li>
-      <li>Открой тестовую ссылку, чтобы подобрать комфортную скорость на компьютере.</li>
-      <li>Открой зеркальную ссылку на Mac, перетащи окно на iPad через Sidecar.</li>
+      <li>Исходные переносы будут убраны: после запятой появится новая строка, после точки — пустая строка.</li>
+      <li>Скопируй обычную ссылку и открой её на нужном экране.</li>
       <li>Space — старт/пауза, стрелки ↑↓ — скорость ±5 WPM, стрелка ← — на абзац назад, R — сброс скорости.</li>
     </ol>
   </div>
@@ -292,7 +284,7 @@
       <span class="shortcut-key">↑</span><span class="shortcut-desc">Быстрее (+5 WPM)</span>
       <span class="shortcut-key">↓</span><span class="shortcut-desc">Медленнее (−5 WPM)</span>
       <span class="shortcut-key">←</span><span class="shortcut-desc">На абзац назад</span>
-      <span class="shortcut-key">R</span><span class="shortcut-desc">Сброс скорости к 140 WPM</span>
+      <span class="shortcut-key">R</span><span class="shortcut-desc">Сброс скорости к 160 WPM</span>
       <span class="shortcut-key">Esc</span><span class="shortcut-desc">Выйти</span>
     </div>
   </div>
@@ -314,7 +306,7 @@
 
 <div id="size-controls">
   <button class="size-btn" id="size-up">+</button>
-  <span class="size-label" id="size-val">160</span>
+  <span class="size-label" id="size-val">176</span>
   <button class="size-btn" id="size-down">−</button>
 </div>
 
@@ -324,7 +316,7 @@
   <div class="hud-divider"></div>
   <button class="hud-btn" id="hud-slower" title="−5 WPM (↓)">−</button>
   <button class="hud-btn hud-play" id="hud-play" title="Старт / Пауза (Space)">▶</button>
-  <span class="hud-wpm" id="hud-wpm">140 wpm</span>
+  <span class="hud-wpm" id="hud-wpm">160 wpm</span>
   <button class="hud-btn" id="hud-faster" title="+5 WPM (↑)">+</button>
   <div class="hud-divider"></div>
   <button class="hud-btn" id="hud-reset" title="Сброс скорости (R)">↺</button>
@@ -332,7 +324,8 @@
 
 <script>
   // ── Constants ──────────────────────────────────────
-  const DEFAULT_WPM = 140;
+  const DEFAULT_WPM = 160;
+  const DEFAULT_SIZE = 176;
   const WPM_STEP    = 5;
   const MIN_WPM     = 60;
   const MAX_WPM     = 300;
@@ -343,13 +336,10 @@
   // ── State ──────────────────────────────────────────
   let wpm       = DEFAULT_WPM;
   let isPlaying = false;
-  let fontSize  = 160;
+  let fontSize  = DEFAULT_SIZE;
   let wordCount = 0;
   let lastTime  = null;
   let paraPositions = []; // fraction [0..1] for start of each paragraph
-
-  // ── Mode: mirror vs test ──────────────────────────
-  const isMirrored = !new URLSearchParams(window.location.search).has('test');
 
   // ── Elements ──────────────────────────────────────
   const prompterView = document.getElementById('prompter-view');
@@ -359,10 +349,8 @@
   const btnGenerate  = document.getElementById('btn-generate');
   const btnLabel     = document.getElementById('btn-label');
   const linkGroup    = document.getElementById('link-group');
-  const linkMirror   = document.getElementById('link-mirror');
-  const linkTest     = document.getElementById('link-test');
-  const copyMirror   = document.getElementById('copy-mirror');
-  const copyTest     = document.getElementById('copy-test');
+  const linkUrl      = document.getElementById('link-url');
+  const btnCopy      = document.getElementById('btn-copy');
   const errorMsg     = document.getElementById('error-msg');
   const btnExit      = document.getElementById('btn-exit');
   const sizeUp       = document.getElementById('size-up');
@@ -414,14 +402,12 @@
   function getProgress() {
     const max = prompterView.scrollHeight - prompterView.clientHeight;
     if (max <= 0) return 0;
-    return isMirrored
-      ? 1 - prompterView.scrollTop / max
-      : prompterView.scrollTop / max;
+    return prompterView.scrollTop / max;
   }
 
   function setProgress(p) {
     const max = prompterView.scrollHeight - prompterView.clientHeight;
-    prompterView.scrollTop = isMirrored ? (1 - p) * max : p * max;
+    prompterView.scrollTop = p * max;
   }
 
   // ── Jump back one paragraph ───────────────────────
@@ -448,13 +434,8 @@
           const totalTimeSec = (wordCount / wpm) * 60;
           const delta = (totalDist / totalTimeSec) * dt;
 
-          if (isMirrored) {
-            prompterView.scrollTop -= delta;
-            if (prompterView.scrollTop <= 0) { isPlaying = false; hudPlay.textContent = '▶'; hudPlay.classList.remove('playing'); }
-          } else {
-            prompterView.scrollTop += delta;
-            if (prompterView.scrollTop >= totalDist) { isPlaying = false; hudPlay.textContent = '▶'; hudPlay.classList.remove('playing'); }
-          }
+          prompterView.scrollTop += delta;
+          if (prompterView.scrollTop >= totalDist) { isPlaying = false; hudPlay.textContent = '▶'; hudPlay.classList.remove('playing'); }
         }
       }
       lastTime = timestamp;
@@ -483,15 +464,35 @@
     if (e.code === 'Escape')    { exitPrompter(); }
   });
 
-  // ── Generate links ────────────────────────────────
+  // ── Script formatting ─────────────────────────────
+  function formatScript(rawText) {
+    const flattened = rawText.replace(/\s+/gu, ' ').trim();
+    return flattened
+      .replace(/,([\u00bb”"'’)\]]*)(?!\d)\s*/gu, ',$1\n')
+      .replace(/(\.+)([\u00bb”"'’)\]]*)(?:\s+|$)/gu, '$1$2\n\n')
+      .trim();
+  }
+
+  scriptInput.addEventListener('paste', (event) => {
+    const pastedText = event.clipboardData?.getData('text/plain');
+    if (typeof pastedText !== 'string') return;
+
+    event.preventDefault();
+    const start = scriptInput.selectionStart;
+    const end = scriptInput.selectionEnd;
+    scriptInput.setRangeText(formatScript(pastedText), start, end, 'end');
+  });
+
+  // ── Generate link ─────────────────────────────────
   btnGenerate.addEventListener('click', async () => {
-    const text = scriptInput.value.trim();
+    const text = formatScript(scriptInput.value);
     if (!text) {
       scriptInput.focus();
       scriptInput.style.borderColor = 'var(--accent)';
       setTimeout(() => scriptInput.style.borderColor = '', 800);
       return;
     }
+    scriptInput.value = text;
 
     btnGenerate.disabled = true;
     btnGenerate.classList.add('loading');
@@ -512,21 +513,18 @@
       const { id } = await res.json();
       const base = window.location.origin + '/tools/teleprompter2';
 
-      linkMirror.href = base + '#' + id;
-      linkMirror.textContent = base + '#' + id;
-      linkTest.href = base + '?test#' + id;
-      linkTest.textContent = base + '?test#' + id;
+      linkUrl.href = base + '#' + id;
+      linkUrl.textContent = base + '#' + id;
       linkGroup.classList.add('visible');
 
-      copyMirror.textContent = 'Copy'; copyMirror.classList.remove('copied');
-      copyTest.textContent = 'Copy';   copyTest.classList.remove('copied');
+      btnCopy.textContent = 'Copy'; btnCopy.classList.remove('copied');
     } catch (err) {
       errorMsg.textContent = 'Ошибка: ' + err.message;
       errorMsg.classList.add('visible');
     } finally {
       btnGenerate.disabled = false;
       btnGenerate.classList.remove('loading');
-      btnLabel.textContent = 'Сгенерировать ссылки';
+      btnLabel.textContent = 'Сгенерировать ссылку';
     }
   });
 
@@ -545,8 +543,7 @@
       });
     });
   }
-  setupCopy(copyMirror, linkMirror);
-  setupCopy(copyTest, linkTest);
+  setupCopy(btnCopy, linkUrl);
 
   // ── Exit prompter ────────────────────────────────
   function exitPrompter() {
@@ -575,12 +572,8 @@
 
       if (size && size >= MIN_SIZE && size <= MAX_SIZE) fontSize = size;
 
-      // Split into paragraphs (double newline); fallback to single newlines
-      let paras = text.split(/\n\s*\n/).filter(p => p.trim());
-      if (paras.length <= 1 && text.includes('\n')) {
-        const lines = text.split(/\n/).filter(l => l.trim());
-        if (lines.length > 1) paras = lines;
-      }
+      const formattedText = formatScript(text);
+      const paras = formattedText.split(/\n{2,}/).filter(p => p.trim());
 
       prompterText.innerHTML = '';
       wordCount = 0;
@@ -591,8 +584,6 @@
         prompterText.appendChild(div);
         wordCount += p.trim().split(/\s+/).length;
       });
-
-      if (isMirrored) prompterText.classList.add('mirrored');
 
       prompterText.style.fontSize = fontSize + 'px';
       sizeVal.textContent = fontSize;
