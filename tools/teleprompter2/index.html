@@ -160,8 +160,10 @@
       color: var(--yellow); min-height: 100vh;
     }
 
-    .para { margin-bottom: 0.6em; white-space: pre-line; word-break: break-word; }
+    .para { margin-bottom: 1.2em; word-break: break-word; }
     .para:last-child { margin-bottom: 0; }
+    .clause { margin-bottom: 0.6em; }
+    .clause:last-child { margin-bottom: 0; }
 
     /* ── EXIT BUTTON ── */
     #btn-exit {
@@ -271,7 +273,7 @@
     <h2>Как пользоваться</h2>
     <ol>
       <li>Вставь скрипт и нажми «Сгенерировать».</li>
-      <li>Исходные переносы будут убраны: после запятой появится новая строка, после точки — пустая строка.</li>
+      <li>Исходные переносы будут убраны: после запятой появится новая строка с небольшим отступом, после точки — двойной отступ.</li>
       <li>Скопируй обычную ссылку и открой её на нужном экране.</li>
       <li>Space — старт/пауза, стрелки ↑↓ — скорость ±5 WPM, стрелка ← — на абзац назад, R — сброс скорости.</li>
     </ol>
@@ -578,10 +580,15 @@
       prompterText.innerHTML = '';
       wordCount = 0;
       paras.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'para';
-        div.textContent = p.trim();
-        prompterText.appendChild(div);
+        const para = document.createElement('div');
+        para.className = 'para';
+        p.split(/\n+/).filter(clause => clause.trim()).forEach(clauseText => {
+          const clause = document.createElement('div');
+          clause.className = 'clause';
+          clause.textContent = clauseText.trim();
+          para.appendChild(clause);
+        });
+        prompterText.appendChild(para);
         wordCount += p.trim().split(/\s+/).length;
       });
 
