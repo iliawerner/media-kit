@@ -5,257 +5,48 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
   <meta name="referrer" content="no-referrer">
-  <title>Pre-Riyan Client Archive — Design Lovers</title>
+  <title>Pre-Riyan Client History — Design Lovers</title>
   <meta name="description" content="Private commercial handoff for Design Lovers.">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:ital,wght@0,400;0,600;0,700;0,800&family=Zalando+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:wght@600;700&family=Zalando+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg:#050505; --surface:#0b0b0c; --surface-2:#111113; --ink:#f6f5f3;
-      --muted:#96969f; --faint:#64646d; --line:rgba(255,255,255,.105);
-      --warm:#d2837e; --lime:#d7ff63; --purple:#9565ff; --orange:#ff8a3d;
-      --success:#62d49a; --warning:#ffc565; --danger:#ff7b7b;
-      --radius:20px; --max:1180px; --ease:cubic-bezier(.2,.8,.2,1);
-    }
-    *{box-sizing:border-box}
-    html{background:var(--bg);color-scheme:dark;scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zalando Sans",Arial,sans-serif;min-height:100vh;overflow-x:hidden}
-    button,input{font:inherit}
-    button,a{color:inherit}
-    ::selection{background:var(--lime);color:#111}
-    :focus-visible{outline:2px solid var(--lime);outline-offset:3px}
-    .ambient{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
-    .ambient:before,.ambient:after{content:"";position:absolute;width:58vw;height:58vw;border-radius:50%;filter:blur(130px);opacity:.13;animation:drift 18s var(--ease) infinite alternate}
-    .ambient:before{background:#51206d;top:-32vw;left:-19vw}
-    .ambient:after{background:#7c202b;right:-34vw;bottom:-30vw;animation-delay:-8s}
-    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
-    @keyframes drift{to{transform:translate3d(8vw,4vw,0) scale(1.08)}}
-    .hidden{display:none!important}
-
-    /* Access gate */
-    .gate{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:24px;background:#050505}
-    .gate-orbit{position:absolute;width:min(780px,110vw);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 38% 36%,rgba(149,101,255,.22),transparent 34%),radial-gradient(circle at 67% 61%,rgba(210,131,126,.2),transparent 32%);filter:blur(12px);animation:gateFloat 9s var(--ease) infinite alternate}
-    @keyframes gateFloat{to{transform:rotate(8deg) scale(1.04)}}
-    .gate-card{position:relative;width:min(460px,100%);padding:34px;border:1px solid rgba(210,131,126,.32);border-radius:28px;background:rgba(9,9,10,.82);backdrop-filter:blur(24px);box-shadow:0 30px 100px rgba(0,0,0,.55);animation:gateIn .7s var(--ease) both}
-    @keyframes gateIn{from{opacity:0;transform:translateY(18px) scale(.98)}}
-    .gate-brand{display:flex;align-items:center;gap:12px;margin-bottom:58px}
-    .gate-brand img,.brand img{width:42px;height:42px;border-radius:50%;object-fit:cover}
-    .eyebrow{font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);font-weight:700}
-    .gate h1{font-family:"Zalando Sans Expanded",sans-serif;font-size:clamp(34px,9vw,54px);line-height:.95;letter-spacing:-.05em;margin:13px 0 16px;text-wrap:balance}
-    .gate-copy{color:var(--muted);font-size:16px;line-height:1.55;margin:0 0 28px;max-width:36ch}
-    .password-row{display:flex;gap:10px}
-    .password-row input{min-width:0;flex:1;height:50px;border:1px solid var(--line);border-radius:999px;background:#111114;color:#fff;padding:0 20px;transition:border .2s,box-shadow .2s}
-    .password-row input:focus{border-color:rgba(215,255,99,.7);box-shadow:0 0 0 4px rgba(215,255,99,.08);outline:none}
-    .unlock{height:50px;border:0;border-radius:999px;padding:0 22px;background:#fff;color:#090909;font-weight:700;cursor:pointer;transition:transform .2s var(--ease),background .2s}
-    .unlock:hover{transform:translateY(-2px);background:var(--lime)}
-    .gate-error{min-height:20px;margin:12px 4px 0;color:#ff9d9d;font-size:13px}
-    .shake{animation:shake .38s ease}
-    @keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
-
-    /* App */
-    .app{position:relative;z-index:2;opacity:0;transition:opacity .55s ease}
-    .app.ready{opacity:1}
-    .shell{width:min(var(--max),calc(100% - 40px));margin:auto}
-    header{position:sticky;top:0;z-index:50;padding:12px 0;background:linear-gradient(to bottom,rgba(5,5,5,.95),rgba(5,5,5,.58),transparent);backdrop-filter:blur(4px)}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 10px 14px;border:1px solid rgba(255,255,255,.055);border-radius:999px;background:rgba(4,4,5,.72);backdrop-filter:blur(24px);box-shadow:0 10px 45px rgba(0,0,0,.32)}
-    .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
-    .brand strong{font-family:"Zalando Sans Expanded",sans-serif;font-size:16px;display:block;line-height:1.05}
-    .brand span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
-    .nav-actions{display:flex;align-items:center;gap:8px}
-    .nav-note{font-size:12px;color:var(--muted);margin-right:6px}
-    .lock-btn{border:1px solid var(--line);border-radius:999px;background:#111217;padding:10px 15px;cursor:pointer;transition:.2s}
-    .lock-btn:hover{border-color:rgba(255,255,255,.25);background:#17171a}
-
-    .hero{padding:98px 0 66px;display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:72px;align-items:end}
-    .private-pill{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(215,255,99,.22);border-radius:999px;padding:8px 12px;background:rgba(215,255,99,.06);color:#e8ff9f;font-size:11px;text-transform:uppercase;letter-spacing:.13em;font-weight:700}
-    .private-pill i{width:6px;height:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 13px var(--lime)}
-    .hero h1{font-family:"Zalando Sans Expanded",sans-serif;font-size:clamp(52px,8vw,102px);line-height:.86;letter-spacing:-.065em;margin:26px 0 30px;max-width:900px;text-wrap:balance}
-    .hero h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.52)}
-    .hero-copy{font-size:19px;line-height:1.55;color:#b6b6bd;max-width:670px;margin:0}
-    .hero-side{border-left:1px solid var(--line);padding-left:26px;padding-bottom:4px}
-    .hero-side p{margin:9px 0 0;color:var(--muted);font-size:14px;line-height:1.5}
-    .big-date{font-family:"Zalando Sans Expanded",sans-serif;font-size:28px;font-weight:700;letter-spacing:-.04em}
-
-    .metrics{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:56px}
-    .metric{padding:27px 22px 26px 0;position:relative}
-    .metric+.metric{padding-left:24px;border-left:1px solid var(--line)}
-    .metric-number{font-family:"Zalando Sans Expanded",sans-serif;font-size:clamp(30px,4vw,49px);font-weight:700;letter-spacing:-.045em;line-height:1}
-    .metric-label{color:var(--muted);font-size:12px;margin-top:10px}
-
-    .controls-wrap{position:sticky;top:82px;z-index:40;padding:12px 0 18px;background:linear-gradient(to bottom,var(--bg) 72%,transparent)}
-    .controls{display:grid;grid-template-columns:minmax(250px,1fr) auto;gap:16px;align-items:center}
-    .search{height:50px;display:flex;align-items:center;gap:12px;padding:0 17px;border:1px solid var(--line);border-radius:999px;background:rgba(15,15,17,.86);backdrop-filter:blur(18px);transition:border .2s}
-    .search:focus-within{border-color:rgba(215,255,99,.46)}
-    .search svg{width:17px;color:var(--muted);flex:0 0 auto}
-    .search input{width:100%;border:0;outline:0;background:transparent;color:#fff;font-size:15px}
-    .search input::placeholder{color:#71717a}
-    .filters{display:flex;gap:7px;overflow:auto;scrollbar-width:none}
-    .filter{height:42px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:#0e0e10;color:#aaaab2;font-size:13px;white-space:nowrap;cursor:pointer;transition:.2s}
-    .filter:hover{color:#fff;border-color:rgba(255,255,255,.24)}
-    .filter.active{background:#fff;color:#050505;border-color:#fff}
-    .results-meta{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 21px}
-    .results-meta h2{font-family:"Zalando Sans Expanded",sans-serif;margin:0;font-size:25px;letter-spacing:-.035em}
-    .result-count{color:var(--muted);font-size:13px}
-
-    .catalog{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding-bottom:120px}
-    .client{position:relative;min-height:360px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(145deg,rgba(20,20,22,.92),rgba(8,8,9,.95));overflow:hidden;cursor:pointer;opacity:0;transform:translateY(18px);transition:opacity .6s var(--ease),transform .6s var(--ease),border-color .25s,box-shadow .25s}
-    .client.visible{opacity:1;transform:none}
-    .client:hover{transform:translateY(-5px);border-color:rgba(210,131,126,.42);box-shadow:0 24px 65px rgba(0,0,0,.35),0 0 28px rgba(210,131,126,.06)}
-    .client:after{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at var(--x,50%) var(--y,50%),rgba(255,255,255,.065),transparent 42%);opacity:0;transition:opacity .25s;pointer-events:none}
-    .client:hover:after{opacity:1}
-    .card-visual{height:144px;position:relative;overflow:hidden;background:linear-gradient(125deg,var(--tone-a,#251b34),var(--tone-b,#101012))}
-    .card-visual.has-image:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(7,7,8,.94),transparent 68%)}
-    .card-visual img{width:100%;height:100%;object-fit:cover;filter:saturate(.78) contrast(1.05);opacity:.66;transform:scale(1.02);transition:transform .6s var(--ease),filter .4s}
-    .client:hover .card-visual img{transform:scale(1.06);filter:saturate(1) contrast(1.04)}
-    .monogram{position:absolute;right:20px;bottom:-21px;font-family:"Zalando Sans Expanded",sans-serif;font-size:118px;line-height:1;font-weight:800;letter-spacing:-.08em;color:rgba(255,255,255,.105);text-transform:uppercase}
-    .card-index{position:absolute;left:18px;top:16px;z-index:2;font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,.58)}
-    .card-body{position:relative;padding:19px 19px 21px;z-index:2}
-    .status-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
-    .status{display:inline-flex;align-items:center;gap:7px;color:#c7c7cc;font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:700}
-    .status-dot{width:7px;height:7px;border-radius:50%;background:var(--status,#aaa);box-shadow:0 0 12px color-mix(in srgb,var(--status,#aaa) 65%,transparent)}
-    .route{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:48%}
-    .client h3{font-family:"Zalando Sans Expanded",sans-serif;font-size:25px;line-height:1.04;letter-spacing:-.04em;margin:0 0 10px}
-    .when{font-size:13px;color:var(--muted);margin-bottom:22px}
-    .card-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;border-top:1px solid var(--line);padding-top:15px}
-    .amount{font-family:"Zalando Sans Expanded",sans-serif;font-size:18px;font-weight:700;letter-spacing:-.03em}
-    .amount small{display:block;font-family:"Zalando Sans",sans-serif;color:var(--faint);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
-    .open-arrow{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;transition:.2s}
-    .client:hover .open-arrow{background:#fff;color:#000;transform:rotate(-8deg)}
-    .empty{grid-column:1/-1;padding:80px 20px;border:1px dashed var(--line);border-radius:var(--radius);text-align:center;color:var(--muted)}
-
-    dialog{width:min(760px,calc(100% - 30px));max-height:min(860px,calc(100vh - 30px));padding:0;border:1px solid rgba(210,131,126,.28);border-radius:26px;color:var(--ink);background:#0a0a0b;box-shadow:0 40px 130px #000;overflow:hidden}
-    dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(11px)}
-    dialog[open]{animation:modalIn .38s var(--ease)}
-    @keyframes modalIn{from{opacity:0;transform:translateY(22px) scale(.98)}}
-    .modal-scroll{max-height:min(860px,calc(100vh - 30px));overflow:auto}
-    .modal-top{position:relative;min-height:210px;padding:27px;background:linear-gradient(135deg,var(--tone-a,#291c32),var(--tone-b,#101013));display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
-    .modal-top:after{content:attr(data-letter);position:absolute;right:18px;bottom:-48px;font-family:"Zalando Sans Expanded",sans-serif;font-size:230px;font-weight:800;color:rgba(255,255,255,.07);line-height:1}
-    .modal-close{position:absolute;right:18px;top:18px;z-index:3;width:42px;height:42px;border:1px solid rgba(255,255,255,.16);border-radius:50%;background:rgba(0,0,0,.38);color:#fff;cursor:pointer;font-size:21px}
-    .modal-top h2{position:relative;z-index:2;font-family:"Zalando Sans Expanded",sans-serif;font-size:clamp(37px,7vw,62px);letter-spacing:-.055em;line-height:.92;margin:13px 0 0;max-width:630px}
-    .modal-body{padding:28px}
-    .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:28px}
-    .detail{border:1px solid var(--line);border-radius:14px;padding:15px;background:#0f0f11}
-    .detail-label{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.12em;margin-bottom:7px;font-weight:700}
-    .detail-value{font-size:15px;line-height:1.45}
-    .section-title{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700;margin:30px 0 12px}
-    .modal-copy{font-size:16px;line-height:1.6;color:#d0d0d5;margin:0}
-    .videos,.contacts{display:grid;gap:8px}
-    .video-link,.contact-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:#0f0f11;text-decoration:none;transition:.2s}
-    .video-link:hover,.contact-row:hover{border-color:rgba(255,255,255,.22);background:#141416}
-    .video-title{font-size:14px;line-height:1.35}
-    .video-meta,.contact-role{color:var(--muted);font-size:11px;margin-top:4px}
-    .copy-contact{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:8px;white-space:nowrap}
-    .copy-contact:hover{color:var(--lime)}
-    footer{border-top:1px solid var(--line);padding:34px 0 56px;color:var(--faint);font-size:12px}
-    .footer-row{display:flex;justify-content:space-between;gap:24px}
-
-    @media(max-width:900px){
-      .hero{grid-template-columns:1fr;gap:34px;padding-top:74px}.hero-side{max-width:340px}
-      .metrics{grid-template-columns:repeat(2,1fr)}.metric:nth-child(3){border-left:0;border-top:1px solid var(--line);padding-left:0}.metric:nth-child(4){border-top:1px solid var(--line)}
-      .controls{grid-template-columns:1fr}.filters{padding-bottom:2px}
-      .catalog{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .nav-note{display:none}
-    }
-    @media(max-width:620px){
-      .shell{width:min(100% - 24px,var(--max))}.nav{padding:8px 9px}.brand img{width:38px;height:38px}.brand strong{font-size:14px}.brand span{font-size:10px}.lock-btn{padding:9px 12px;font-size:12px}
-      .hero{padding:61px 0 45px}.hero h1{font-size:clamp(48px,17vw,76px)}.hero-copy{font-size:16px}.hero-side{display:none}
-      .metrics{margin-bottom:38px}.metric{padding:20px 12px 20px 0}.metric+.metric{padding-left:14px}.metric-number{font-size:30px}
-      .controls-wrap{top:69px}.catalog{grid-template-columns:1fr;gap:12px;padding-bottom:80px}.client{min-height:342px}
-      .detail-grid{grid-template-columns:1fr}.modal-body{padding:20px}.modal-top{padding:22px;min-height:190px}.footer-row{display:block}.footer-row span{display:block;margin-top:8px}
-      .gate-card{padding:25px}.gate-brand{margin-bottom:40px}.password-row{display:grid}.unlock{width:100%}
-    }
-    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition-duration:.01ms!important}.client{opacity:1;transform:none}}
+    :root{--bg:#080808;--surface:#101010;--surface-hover:#141414;--text:#f3f3f1;--muted:#9b9b96;--subtle:#70706b;--line:#292927;--accent:#d6ff68;--paid:#8ee2ae;--open:#ffc875;--prospect:#a9a9a4;--max:1440px}
+    *{box-sizing:border-box}html{background:var(--bg);color-scheme:dark}body{margin:0;background:var(--bg);color:var(--text);font-family:"Zalando Sans",Arial,sans-serif;min-height:100vh}button,input,select{font:inherit}a{color:inherit}::selection{background:var(--accent);color:#111}:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.hidden{display:none!important}
+    .gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;background:var(--bg)}.gate-box{width:min(400px,100%)}.gate-brand{display:flex;align-items:center;gap:12px;margin-bottom:64px}.gate-brand img,.brand img{width:40px;height:40px;border-radius:50%;object-fit:cover}.gate-brand strong,.brand strong{font-family:"Zalando Sans Expanded",sans-serif;font-size:15px}.gate-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:4px}.gate h1{font-family:"Zalando Sans Expanded",sans-serif;font-size:40px;line-height:1.05;letter-spacing:-.04em;margin:0 0 14px}.gate p{color:var(--muted);line-height:1.55;margin:0 0 24px}.gate-form{display:flex;gap:8px}.gate input{height:48px;min-width:0;flex:1;background:var(--surface);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:0 14px}.gate input:focus{border-color:#555;outline:0}.primary{height:48px;border:0;border-radius:8px;background:var(--text);color:#090909;font-weight:700;padding:0 18px;cursor:pointer}.gate-error{min-height:20px;margin-top:10px;color:#ff9c9c;font-size:13px}
+    .app{opacity:0;transition:opacity .15s ease}.app.ready{opacity:1}.shell{width:min(var(--max),calc(100% - 40px));margin:auto}.topbar{position:sticky;top:0;z-index:30;background:rgba(8,8,8,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}.topbar-inner{height:68px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:11px;text-decoration:none}.brand span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.lock{height:36px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--muted);padding:0 12px;cursor:pointer}.lock:hover{color:var(--text);border-color:#444}
+    .intro{padding:54px 0 34px;border-bottom:1px solid var(--line)}.intro h1{font-family:"Zalando Sans Expanded",sans-serif;font-size:clamp(34px,5vw,58px);letter-spacing:-.05em;line-height:1;margin:0 0 16px}.intro-copy{max-width:760px;color:#c5c5c1;font-size:17px;line-height:1.55;margin:0}.ownership{margin-top:24px;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 24px;color:var(--muted);font-size:13px}.ownership strong{color:var(--text)}
+    .toolbar-wrap{position:sticky;top:68px;z-index:20;background:rgba(8,8,8,.97);border-bottom:1px solid var(--line)}.toolbar{min-height:72px;display:flex;align-items:center;gap:12px}.search{height:42px;min-width:240px;flex:1;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:0 12px}.search svg{width:16px;color:var(--muted)}.search input{width:100%;border:0;outline:0;background:transparent;color:var(--text)}.search input::placeholder{color:var(--subtle)}.segments{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}.segment{height:40px;border:0;border-right:1px solid var(--line);background:transparent;color:var(--muted);padding:0 13px;cursor:pointer;white-space:nowrap}.segment:last-child{border-right:0}.segment.active{background:var(--text);color:#090909}.sort{height:42px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--text);padding:0 34px 0 12px;cursor:pointer}
+    .content{padding:30px 0 90px}.section{margin-bottom:46px}.section-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 12px}.section-heading h2{font-family:"Zalando Sans Expanded",sans-serif;font-size:20px;letter-spacing:-.025em;margin:0}.section-heading span{font-size:12px;color:var(--muted)}
+    .records{border-top:1px solid var(--line)}.record-head,.record{display:grid;grid-template-columns:minmax(145px,.8fr) 125px minmax(260px,1.65fr) 155px minmax(220px,1.2fr);column-gap:22px}.record-head{padding:10px 14px;color:var(--subtle);font-size:10px;letter-spacing:.11em;text-transform:uppercase;font-weight:700}.record{position:relative;padding:22px 14px 20px;border-top:1px solid var(--line);background:transparent}.record:first-of-type{border-top:0}.record:hover{background:var(--surface-hover)}.company{min-width:0}.company-name{font-family:"Zalando Sans Expanded",sans-serif;font-size:18px;line-height:1.15;letter-spacing:-.025em;margin:0 0 8px}.route{font-size:12px;line-height:1.4;color:var(--muted)}.status{display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-size:11px;color:var(--muted)}.status i{width:7px;height:7px;border-radius:50%;background:var(--status)}.period{color:#c6c6c2;font-size:13px;line-height:1.45}.work{min-width:0}.summary{font-size:14px;line-height:1.45;margin:0 0 9px;color:#dededa}.videos{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.video{font-size:12px;line-height:1.35;color:#aaaaf0;text-decoration:none}.video:hover{text-decoration:underline;color:#cacaff}.video-meta{color:var(--subtle)}.money strong{font-family:"Zalando Sans Expanded",sans-serif;font-size:15px;display:block;line-height:1.25}.payment{font-size:12px;color:var(--muted);margin-top:7px}.contact{min-width:0;font-size:13px}.contact-name{font-weight:600;line-height:1.3}.contact-role{color:var(--muted);font-size:11px;margin:3px 0}.email{display:block;color:#c7c7c2;text-decoration:none;overflow-wrap:anywhere;line-height:1.35}.email:hover{text-decoration:underline}.more{margin-top:8px}.more summary{font-size:11px;color:var(--muted);cursor:pointer;list-style:none}.more summary::-webkit-details-marker{display:none}.more summary:before{content:'+ ';color:var(--accent)}.more[open] summary:before{content:'− '}.extra-contact{margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}.comment{grid-column:3/6;margin-top:16px;padding-top:13px;border-top:1px solid rgba(255,255,255,.06);font-size:13px;line-height:1.5;color:var(--muted)}.comment b{color:#c7c7c2;font-weight:600;margin-right:6px}.empty{padding:50px 14px;border-top:1px solid var(--line);color:var(--muted)}
+    footer{border-top:1px solid var(--line);padding:26px 0 38px;color:var(--subtle);font-size:11px}.footer-row{display:flex;justify-content:space-between;gap:20px}
+    @media(max-width:1050px){.record-head{display:none}.record{grid-template-columns:160px 115px 1fr 145px;gap:18px}.contact{grid-column:3/5;margin-top:10px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}.comment{grid-column:3/5;margin-top:10px}.toolbar{flex-wrap:wrap;padding:14px 0}.search{flex-basis:100%}.toolbar-wrap{position:relative;top:auto}}
+    @media(max-width:720px){.shell{width:calc(100% - 24px)}.intro{padding:38px 0 28px}.intro h1{font-size:36px}.intro-copy{font-size:15px}.ownership{display:block}.ownership span{display:block;margin-top:7px}.toolbar{align-items:stretch}.segments{width:100%;overflow:auto}.segment{flex:1}.sort{width:100%}.record{grid-template-columns:1fr auto;padding:20px 4px;column-gap:16px}.company{grid-column:1}.period{grid-column:2;text-align:right}.work,.money,.contact,.comment{grid-column:1/3}.work{margin-top:18px}.money{margin-top:15px;display:flex;align-items:baseline;gap:10px}.payment{margin-top:0}.contact{margin-top:15px}.comment{margin-top:14px}.record:hover{background:transparent}.footer-row{display:block}.footer-row span{display:block;margin-top:7px}.gate-form{display:grid}.primary{width:100%}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}
   </style>
 </head>
 <body>
-  <div class="ambient"></div><div class="grain"></div>
-
-  <section class="gate" id="gate" aria-labelledby="gate-title">
-    <div class="gate-orbit"></div>
-    <form class="gate-card" id="gateForm">
-      <div class="gate-brand">
-        <img src="/images/e155d041f9b8503f121f4881b396f029.jpeg" alt="Design Lovers">
-        <div><strong>Design Lovers</strong><div class="eyebrow" style="margin-top:5px">Commercial archive</div></div>
-      </div>
-      <div class="eyebrow">Restricted page · no index</div>
-      <h1 id="gate-title">Private<br>handoff.</h1>
-      <p class="gate-copy">Historical client relationships, commercial terms and direct contacts. Enter the shared password to continue.</p>
-      <div class="password-row">
-        <input id="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password" required>
-        <button class="unlock" type="submit">Open archive</button>
-      </div>
-      <div class="gate-error" id="gateError" role="alert"></div>
-    </form>
+  <section class="gate" id="gate" aria-labelledby="gateTitle">
+    <div class="gate-box">
+      <div class="gate-brand"><img src="/images/e155d041f9b8503f121f4881b396f029.jpeg" alt="Design Lovers"><div><strong>Design Lovers</strong><div class="gate-label">Private commercial archive</div></div></div>
+      <h1 id="gateTitle">Client history</h1>
+      <p>Enter the shared password to view commercial terms and contacts.</p>
+      <form id="gateForm"><div class="gate-form"><input id="password" type="password" autocomplete="current-password" placeholder="Password" required><button class="primary" type="submit">Open</button></div><div class="gate-error" id="gateError" role="alert"></div></form>
+    </div>
   </section>
-
-  <main class="app hidden" id="app">
-    <header>
-      <div class="shell nav">
-        <a class="brand" href="/" aria-label="Design Lovers home">
-          <img src="/images/e155d041f9b8503f121f4881b396f029.jpeg" alt="">
-          <div><strong>Design Lovers</strong><span>Pre-Riyan client archive</span></div>
-        </a>
-        <div class="nav-actions"><span class="nav-note">Private commercial handoff</span><button class="lock-btn" id="lockButton">Lock page</button></div>
-      </div>
-    </header>
-
-    <div class="shell">
-      <section class="hero">
-        <div>
-          <span class="private-pill"><i></i> Private commercial handoff</span>
-          <h1>Clients<br><em>before Riyan.</em></h1>
-          <p class="hero-copy">A verified archive of direct advertisers, agency relationships, published integrations, payments and unfinished conversations — reconstructed from four Gmail accounts and the private Design Lovers wiki.</p>
-        </div>
-        <aside class="hero-side"><div class="eyebrow">Evidence frozen</div><div class="big-date">11 AUG 2026</div><p>Ecovacs is classified as pre-Riyan. Two earlier Skillshare placements were already assisted by Riyan and are excluded from new leads.</p></aside>
-      </section>
-
-      <section class="metrics" aria-label="Archive summary">
-        <div class="metric"><div class="metric-number" id="relationshipCount">0</div><div class="metric-label">completed or substantive relationships</div></div>
-        <div class="metric"><div class="metric-number" id="prospectCount">0</div><div class="metric-label">unclosed prospects</div></div>
-        <div class="metric"><div class="metric-number" id="agencyCount">0</div><div class="metric-label">proven agency routes</div></div>
-        <div class="metric"><div class="metric-number">4</div><div class="metric-label">Gmail accounts searched read-only</div></div>
-      </section>
-
-      <section class="controls-wrap" aria-label="Catalog controls">
-        <div class="controls">
-          <label class="search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
-            <input id="searchInput" type="search" placeholder="Search brand, agency, contact or video…" autocomplete="off">
-          </label>
-          <div class="filters" id="filters" role="group" aria-label="Filter catalog">
-            <button class="filter active" data-filter="all">All</button>
-            <button class="filter" data-filter="paid">Paid</button>
-            <button class="filter" data-filter="open">Open money</button>
-            <button class="filter" data-filter="agency">Agency</button>
-            <button class="filter" data-filter="direct">Direct</button>
-            <button class="filter" data-filter="prospect">Prospects</button>
-          </div>
-        </div>
-      </section>
-
-      <div class="results-meta"><h2 id="sectionTitle">All relationships</h2><span class="result-count" id="resultCount"></span></div>
-      <section class="catalog" id="catalog" aria-live="polite"></section>
-    </div>
-
-    <footer><div class="shell footer-row"><strong>Design Lovers · Private commercial archive</strong><span>Not indexed · Last verified 11 August 2026</span></div></footer>
-  </main>
-
-  <dialog id="detailModal" aria-labelledby="modalTitle">
-    <div class="modal-scroll">
-      <div class="modal-top" id="modalTop" data-letter="D">
-        <button class="modal-close" id="modalClose" aria-label="Close">×</button>
-        <div class="status" id="modalStatus"></div>
-        <h2 id="modalTitle"></h2>
-      </div>
-      <div class="modal-body" id="modalBody"></div>
-    </div>
-  </dialog>
+  <div class="app hidden" id="app">
+    <header class="topbar"><div class="shell topbar-inner"><a class="brand" href="/"><img src="/images/e155d041f9b8503f121f4881b396f029.jpeg" alt=""><div><strong>Design Lovers</strong><span>Private client history</span></div></a><button class="lock" id="lockButton">Lock</button></div></header>
+    <main>
+      <section class="intro"><div class="shell"><h1>Pre-Riyan client history</h1><p class="intro-copy">Who we worked with, when, what was published, how much was agreed or paid, and who to contact next.</p><div class="ownership"><span><strong>Ecovacs</strong> is a pre-Riyan relationship.</span><span>Riyan’s only earlier involvement was <strong>two Skillshare placements</strong>.</span><span>Last verified <strong>11 August 2026</strong>.</span></div></div></section>
+      <div class="toolbar-wrap"><div class="shell toolbar"><label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input id="searchInput" type="search" placeholder="Search brand, agency, contact or video" autocomplete="off"></label><div class="segments" id="segments"><button class="segment active" data-scope="all">All</button><button class="segment" data-scope="relationship">Relationships</button><button class="segment" data-scope="paid">Paid</button><button class="segment" data-scope="open">Payment check</button><button class="segment" data-scope="prospect">Prospects</button></div><select class="sort" id="sortSelect" aria-label="Sort records"><option value="priority">Sort: priority</option><option value="name">Brand A–Z</option><option value="attention">Payment check first</option><option value="route">Agency / direct</option></select></div></div>
+      <div class="shell content" id="content"></div>
+    </main>
+    <footer><div class="shell footer-row"><strong>Design Lovers · Private commercial archive</strong><span>Not indexed · 29 verified records</span></div></footer>
+  </div>
 
   <script>
-  (() => {
-    'use strict';
+  (()=>{'use strict';
     const PASS_HASH = 'e04d6bcfaa6ba375dbf7d9b768ddf54132608b6fb2232f4a4a048c69a6fea1b4';
     const clients = [
       {id:'miro',name:'Miro',kind:'relationship',channel:'agency',route:'inBeat Agency',when:'Oct 2025 — Aug 2026',amount:'$1.2K + $1.2K + $4K',payment:'open',status:'Open balance',tone:['#30203f','#111015'],image:'g9wYD4-TAn4',summary:'Repeat mid-rolls and the two-video Canvas 26 London package.',contacts:[['Victoria Shubina','Campaign Coordinator','victoria.k@inbeat.agency'],['Santiago Gomez','Influencer Marketing Manager','santiago@inbeat.agency'],['Maria Çaglıyangil','Head of Influencer Marketing','maria@inbeat.agency'],['Nicole Judson','Miro','nicole.j@miro.com']],videos:[['Apple Design: The Interface We Lost for 2000 Years','2025 · $1,200 · receipt unclear','g9wYD4-TAn4'],['The Moment Apple Stopped Listening to Users','19 Feb 2026 · $1,200 · paid','iVS2DqDhfUI'],['The Liquid Glass Disaster','$1,200 · paid in repository','b2Omhq0ePgw'],['These Chats Are a Design Disaster','15 Jun 2026 · Canvas D1','rJ9rnJozVPk'],['The Chatbox Is BROKEN. Can We Fix It?','10 Jul 2026 · Canvas D2','KnZ-7fuK4ec']],comment:'Highest-priority historical agency relationship. The $4,000 Canvas invoice and analytics package are ready but have not been sent. Close payment before pitching new work.'},
@@ -289,87 +80,23 @@
       {id:'fifine',name:'Fifine',kind:'prospect',channel:'direct',route:'Legacy contact',when:'Oct — Dec 2024',amount:'Not agreed',payment:'none',status:'Low confidence',tone:['#342223','#110e0e'],image:null,summary:'Wireless microphone review discussion; compensation and shipment never settled.',contacts:[['Daisy','Marketing Promoter','daisyfifine@gmail.com']],videos:[],comment:'The email was addressed to “SimplyGreen Manager,” so its connection to Design Lovers is low-confidence.'},
       {id:'other',name:'Other inbound',kind:'prospect',channel:'direct',route:'Relume · BetterDisplay · FontLab · Krea',when:'Historical',amount:'Rates shared',payment:'none',status:'Unconfirmed',tone:['#26262a','#0e0e10'],image:null,summary:'Substantive replies or rate discussions without completed deals.',contacts:[],videos:[],comment:'Keep as prospects; do not present as former advertisers.'}
     ];
-
-    const els = {
-      gate:document.getElementById('gate'), app:document.getElementById('app'), form:document.getElementById('gateForm'),
-      pass:document.getElementById('password'), error:document.getElementById('gateError'), catalog:document.getElementById('catalog'),
-      search:document.getElementById('searchInput'), filters:document.getElementById('filters'), count:document.getElementById('resultCount'),
-      section:document.getElementById('sectionTitle'), modal:document.getElementById('detailModal'), modalTop:document.getElementById('modalTop'),
-      modalStatus:document.getElementById('modalStatus'), modalTitle:document.getElementById('modalTitle'), modalBody:document.getElementById('modalBody')
-    };
-    let activeFilter = 'all';
-
-    const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-    const statusColor = c => c.kind === 'prospect' ? '#ffc565' : c.payment === 'open' ? '#ff9e64' : c.status.toLowerCase().includes('cancel') ? '#ff7b7b' : '#62d49a';
-    const thumb = id => id ? `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg` : '';
-    const searchable = c => [c.name,c.route,c.when,c.amount,c.status,c.summary,c.comment,...c.contacts.flat()].join(' ').toLowerCase();
-
-    async function hash(text){
-      const bytes = new TextEncoder().encode(text);
-      const digest = await crypto.subtle.digest('SHA-256',bytes);
-      return [...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,'0')).join('');
-    }
-    function unlock(){
-      sessionStorage.setItem('dlPreRiyan','1');
-      els.gate.classList.add('hidden');
-      els.app.classList.remove('hidden');
-      requestAnimationFrame(()=>els.app.classList.add('ready'));
-      render();
-    }
-    els.form.addEventListener('submit',async e=>{
-      e.preventDefault(); els.error.textContent='';
-      if(await hash(els.pass.value)===PASS_HASH){ unlock(); }
-      else { els.error.textContent='That password does not match.'; els.form.classList.remove('shake'); void els.form.offsetWidth; els.form.classList.add('shake'); els.pass.select(); }
-    });
+    const gate=document.getElementById('gate'),app=document.getElementById('app'),form=document.getElementById('gateForm'),pass=document.getElementById('password'),error=document.getElementById('gateError'),content=document.getElementById('content'),search=document.getElementById('searchInput'),segments=document.getElementById('segments'),sortSelect=document.getElementById('sortSelect');
+    let scope='all';
+    const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    const color=c=>c.kind==='prospect'?'var(--prospect)':c.payment==='open'?'var(--open)':'var(--paid)';
+    const searchText=c=>[c.name,c.route,c.when,c.amount,c.status,c.summary,c.comment,...c.contacts.flat(),...c.videos.flat()].join(' ').toLowerCase();
+    async function hash(t){const d=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+    function unlock(){sessionStorage.setItem('dlPreRiyan','1');gate.classList.add('hidden');app.classList.remove('hidden');requestAnimationFrame(()=>app.classList.add('ready'));render()}
+    form.addEventListener('submit',async e=>{e.preventDefault();error.textContent='';if(await hash(pass.value)===PASS_HASH)unlock();else{error.textContent='That password does not match.';pass.select()}});
     document.getElementById('lockButton').addEventListener('click',()=>{sessionStorage.removeItem('dlPreRiyan');location.reload()});
-
-    function visibleClients(){
-      const q=els.search.value.trim().toLowerCase();
-      return clients.filter(c=>{
-        const filterMatch = activeFilter==='all' || (activeFilter==='paid' && c.payment==='paid') || (activeFilter==='open' && c.payment==='open') || (activeFilter==='prospect' && c.kind==='prospect') || (activeFilter==='agency' && c.channel==='agency' && c.kind==='relationship') || (activeFilter==='direct' && c.channel==='direct' && c.kind==='relationship');
-        return filterMatch && (!q || searchable(c).includes(q));
-      });
-    }
-    function render(){
-      const list=visibleClients();
-      const titles={all:'All relationships',paid:'Confirmed paid',open:'Open money',agency:'Agency relationships',direct:'Direct relationships',prospect:'Unclosed prospects'};
-      els.section.textContent=titles[activeFilter]; els.count.textContent=`${list.length} ${list.length===1?'record':'records'}`;
-      if(!list.length){els.catalog.innerHTML='<div class="empty">No relationships match this search.</div>';return;}
-      els.catalog.innerHTML=list.map((c,i)=>{
-        const image=c.image?`<img src="${thumb(c.image)}" alt="" loading="lazy">`:`<span class="monogram">${escapeHTML(c.name.charAt(0))}</span>`;
-        return `<article class="client" tabindex="0" role="button" aria-label="Open ${escapeHTML(c.name)}" data-id="${escapeHTML(c.id)}" style="--tone-a:${c.tone[0]};--tone-b:${c.tone[1]};--status:${statusColor(c)};transition-delay:${Math.min(i,8)*35}ms">
-          <div class="card-visual ${c.image?'has-image':''}"><span class="card-index">${String(i+1).padStart(2,'0')}</span>${image}</div>
-          <div class="card-body"><div class="status-row"><span class="status"><i class="status-dot"></i>${escapeHTML(c.status)}</span><span class="route">${escapeHTML(c.route)}</span></div><h3>${escapeHTML(c.name)}</h3><div class="when">${escapeHTML(c.when)}</div><div class="card-bottom"><div class="amount"><small>Commercial history</small>${escapeHTML(c.amount)}</div><span class="open-arrow">↗</span></div></div>
-        </article>`;
-      }).join('');
-      const cards=[...els.catalog.querySelectorAll('.client')];
-      requestAnimationFrame(()=>cards.forEach(x=>x.classList.add('visible')));
-      cards.forEach(card=>{
-        card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect();card.style.setProperty('--x',`${e.clientX-r.left}px`);card.style.setProperty('--y',`${e.clientY-r.top}px`)});
-        card.addEventListener('click',()=>openDetail(card.dataset.id));
-        card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetail(card.dataset.id)}});
-      });
-    }
-    function openDetail(id){
-      const c=clients.find(x=>x.id===id); if(!c)return;
-      els.modalTop.style.setProperty('--tone-a',c.tone[0]); els.modalTop.style.setProperty('--tone-b',c.tone[1]); els.modalTop.dataset.letter=c.name.charAt(0);
-      els.modalStatus.innerHTML=`<i class="status-dot" style="--status:${statusColor(c)}"></i>${escapeHTML(c.status)} · ${escapeHTML(c.route)}`;
-      els.modalTitle.textContent=c.name;
-      const contacts=c.contacts.length?`<div class="section-title">Contacts</div><div class="contacts">${c.contacts.map(x=>`<div class="contact-row"><div><div class="video-title">${escapeHTML(x[0])}</div><div class="contact-role">${escapeHTML(x[1])} · ${escapeHTML(x[2])}</div></div>${x[2].includes('@')?`<button class="copy-contact" data-copy="${escapeHTML(x[2])}">Copy email</button>`:''}</div>`).join('')}</div>`:'';
-      const videos=c.videos.length?`<div class="section-title">Published work</div><div class="videos">${c.videos.map(v=>v[2]?`<a class="video-link" href="https://www.youtube.com/watch?v=${encodeURIComponent(v[2])}" target="_blank" rel="noreferrer"><div><div class="video-title">${escapeHTML(v[0])}</div><div class="video-meta">${escapeHTML(v[1])}</div></div><span>↗</span></a>`:`<div class="video-link"><div><div class="video-title">${escapeHTML(v[0])}</div><div class="video-meta">${escapeHTML(v[1])}</div></div></div>`).join('')}</div>`:'';
-      els.modalBody.innerHTML=`<div class="detail-grid"><div class="detail"><div class="detail-label">Relationship period</div><div class="detail-value">${escapeHTML(c.when)}</div></div><div class="detail"><div class="detail-label">Commercial history</div><div class="detail-value">${escapeHTML(c.amount)}</div></div><div class="detail"><div class="detail-label">Route</div><div class="detail-value">${escapeHTML(c.route)}</div></div><div class="detail"><div class="detail-label">Classification</div><div class="detail-value">${c.kind==='prospect'?'Prospect — not a former client':'Substantive relationship'}</div></div></div><div class="section-title">What happened</div><p class="modal-copy">${escapeHTML(c.summary)}</p>${videos}${contacts}<div class="section-title">Handoff comment</div><p class="modal-copy">${escapeHTML(c.comment)}</p>`;
-      els.modalBody.querySelectorAll('[data-copy]').forEach(btn=>btn.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(btn.dataset.copy);btn.textContent='Copied';setTimeout(()=>btn.textContent='Copy email',1400)}catch{btn.textContent='Select manually'}}));
-      els.modal.showModal();
-    }
-    document.getElementById('modalClose').addEventListener('click',()=>els.modal.close());
-    els.modal.addEventListener('click',e=>{if(e.target===els.modal)els.modal.close()});
-    els.search.addEventListener('input',render);
-    els.filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;activeFilter=b.dataset.filter;els.filters.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));render()});
-
-    document.getElementById('relationshipCount').textContent=clients.filter(x=>x.kind==='relationship').length;
-    document.getElementById('prospectCount').textContent=clients.filter(x=>x.kind==='prospect').length;
-    document.getElementById('agencyCount').textContent=new Set(clients.filter(x=>x.channel==='agency'&&x.kind==='relationship').map(x=>x.route)).size;
-    if(sessionStorage.getItem('dlPreRiyan')==='1') unlock(); else setTimeout(()=>els.pass.focus(),350);
+    function filtered(){const q=search.value.trim().toLowerCase();let list=clients.filter(c=>{const ok=scope==='all'||scope===c.kind||(scope==='paid'&&c.payment==='paid')||(scope==='open'&&c.payment==='open');return ok&&(!q||searchText(c).includes(q))});const sort=sortSelect.value;if(sort==='name')list.sort((a,b)=>a.name.localeCompare(b.name));if(sort==='attention')list.sort((a,b)=>(a.payment==='open'?0:a.kind==='prospect'?1:2)-(b.payment==='open'?0:b.kind==='prospect'?1:2));if(sort==='route')list.sort((a,b)=>a.channel.localeCompare(b.channel)||a.route.localeCompare(b.route));return list}
+    function contactHTML(c){if(!c.contacts.length)return'<span class="contact-role">No handoff contact promoted</span>';const [first,...rest]=c.contacts;const one=x=>`<div class="contact-name">${esc(x[0])}</div><div class="contact-role">${esc(x[1])}</div>${x[2].includes('@')?`<a class="email" href="mailto:${esc(x[2])}">${esc(x[2])}</a>`:`<span class="email">${esc(x[2])}</span>`}`;return one(first)+(rest.length?`<details class="more"><summary>${rest.length} more ${rest.length===1?'contact':'contacts'}</summary>${rest.map(x=>`<div class="extra-contact">${one(x)}</div>`).join('')}</details>`:'')}
+    function videosHTML(c){if(!c.videos.length)return'';return`<div class="videos">${c.videos.map(v=>v[2]?`<a class="video" href="https://www.youtube.com/watch?v=${encodeURIComponent(v[2])}" target="_blank" rel="noreferrer">${esc(v[0])} <span class="video-meta">— ${esc(v[1])}</span></a>`:`<span class="video">${esc(v[0])} <span class="video-meta">— ${esc(v[1])}</span></span>`).join('')}</div>`}
+    function row(c){return`<article class="record"><div class="company"><h3 class="company-name">${esc(c.name)}</h3><div class="route">${esc(c.route)}</div><span class="status"><i style="--status:${color(c)}"></i>${esc(c.status)}</span></div><div class="period">${esc(c.when)}</div><div class="work"><p class="summary">${esc(c.summary)}</p>${videosHTML(c)}</div><div class="money"><strong>${esc(c.amount)}</strong><div class="payment">${c.payment==='paid'?'Confirmed paid':c.payment==='open'?'Payment check needed':c.kind==='prospect'?'No payment':'No payment'}</div></div><div class="contact">${contactHTML(c)}</div><div class="comment"><b>Comment</b>${esc(c.comment)}</div></article>`}
+    function section(title,list){if(!list.length)return'';return`<section class="section"><div class="section-heading"><h2>${title}</h2><span>${list.length} ${list.length===1?'record':'records'}</span></div><div class="records"><div class="record-head"><span>Brand / route</span><span>When</span><span>Work / published video</span><span>Money</span><span>Main contact</span></div>${list.map(row).join('')}</div></section>`}
+    function render(){const list=filtered();if(!list.length){content.innerHTML='<div class="empty">No records match this search.</div>';return}if(scope==='all'&&sortSelect.value==='priority'&&!search.value.trim()){content.innerHTML=section('Existing relationships',list.filter(x=>x.kind==='relationship'))+section('Negotiated, not completed',list.filter(x=>x.kind==='prospect'));return}content.innerHTML=section(scope==='prospect'?'Negotiated, not completed':'Results',list)}
+    search.addEventListener('input',render);sortSelect.addEventListener('change',render);segments.addEventListener('click',e=>{const b=e.target.closest('[data-scope]');if(!b)return;scope=b.dataset.scope;segments.querySelectorAll('.segment').forEach(x=>x.classList.toggle('active',x===b));render()});
+    if(sessionStorage.getItem('dlPreRiyan')==='1')unlock();else setTimeout(()=>pass.focus(),150);
   })();
   </script>
 </body>
