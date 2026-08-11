@@ -46,6 +46,10 @@
       "destination": "/analytics/index.html"
     },
     {
+      "source": "/pre-riyan-clients",
+      "destination": "/pre-riyan-clients/index.html"
+    },
+    {
       "source": "/behind",
       "destination": "/behind/index.html"
     },
